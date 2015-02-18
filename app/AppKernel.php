@@ -16,19 +16,15 @@ class AppKernel extends Kernel
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-            // new Tlt\ListBundle\TltListBundle(),
             // new Tlt\TicketsBundle\TltTicketsBundle(),
             new Tlt\AdmnBundle\TltAdmnBundle(),
-            // new Acme\TaskBundle\AcmeTaskBundle(),
 			new Craue\FormFlowBundle\CraueFormFlowBundle(),
             new Tlt\TicketBundle\TltTicketBundle(),
-			// new Craue\FormFlowDemoBundle\CraueFormFlowDemoBundle(),
             new Tlt\MainBundle\TltMainBundle(),
 			new Tlt\ProfileBundle\TltProfileBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
-            // $bundles[] = new Acme\DemoBundle\AcmeDemoBundle();
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();

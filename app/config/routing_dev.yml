@@ -12,14 +12,3 @@ _configurator:
 
 _main:
     resource: routing.yml
-
-login:
-    pattern:   /login
-    defaults:  { _controller: TltProfileBundle:Security:login }
-login_check:
-    pattern:   /login_check
-logout:
-    path:     /logout
-denied:
-    path:	/denied
-    defaults: {_controller: TltMainBundle:Default:denied}
