@@ -1,0 +1,86 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+        <div class="row">
+          <div class="col-lg-12">
+            <h1>Locatii in agentie/centru <small>Index</small></h1>
+            <ol class="breadcrumb">
+              <li><a href="{{ path('admin_locations_index') }}"><i class="icon-dashboard"></i> Administrare</a></li>
+              <li class="active"><i class="icon-file-alt"></i> Locatii in agentie/centru</li>
+            </ol>
+          </div>
+        </div><!-- /.row -->
+		
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="bs-example">
+              <div class="jumbotron">
+			  
+		{{ form_start(form) }}
+			<div class="form-group">
+				{{ form_label(form.branch) }}
+				{{ form_widget(form.branch, {'attr': {'class': 'form-control', 'placeholder':'introduceti denumirea'}}) }}
+			</div>
+			
+			{{ form_widget(form.Arata, {'attr': {'class': 'btn btn-primary'}}) }}
+			
+			{{ form_rest(form) }}
+		{{ form_end(form) }}
+		
+              </div>
+            </div>
+          </div>
+        </div><!-- /.row -->
+		
+
+		
+		<div class="row">
+          <div class="col-lg-8 text-left">
+                <h2>Lista locatiilor</h2>
+          </div>
+          <div class="col-lg-4 text-right">
+              <div class="panel-body">
+                <button type="submit" class="btn btn-primary" onclick="location.href='{{ path('admin_zone_locations_add') }}'">Adauga locatie</button>
+              </div>
+          </div>
+        </div><!-- /.row -->		
+		
+
+           <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped tablesorter">
+				<thead>
+					<tr>
+						<th>Denumire <i class="fa fa-sort"></i></th>
+						<th>Agentia/Centrul <i class="fa fa-sort"></i></th>
+						<th class="text-center" colspan="2">Optiuni</th>
+					</tr>
+               </thead>
+               <tbody>
+					{% if zoneLocations %}
+						{% for zoneLocation in zoneLocations %}
+							<tr>
+								<td>{{ zoneLocation.location.name }}</td>
+								<td>{{ zoneLocation.branch.name }}</td>
+								<td class="text-right"><a href="{{ path('admin_zone_locations_edit', {'id' : zoneLocation.id}) }}">modifica</a></td>
+								<td><a href="{{ path('admin_zone_locations_delete', {'id' : zoneLocation.id}) }}" onclick="return confirm('Sunteti sigur? Inregistrarea nu va putea fi recuperata!!!');">sterge</a></td>
+							</tr>
+						{% endfor %}
+					{% endif %}
+               </tbody>
+			   <tfoot>
+					<tr>
+						<th colspan="4" class="text-center">Total {{ zoneLocations|length }} locatii.</th>
+					</tr>
+			   </tfoot>
+            </table>
+        </div>
+
+{% endblock  %}
+
+{% block javascripts %}
+	{{ parent() }}
+		
+	<!-- Page Specific Plugins -->
+	<script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
+	<script src="{{ asset('js/tablesorter/tables.js') }}"></script>
+{% endblock %}

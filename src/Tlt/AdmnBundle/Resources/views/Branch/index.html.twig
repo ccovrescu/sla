@@ -1,0 +1,61 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+        <div class="row">
+          <div class="col-lg-12">
+            <h1>Agentii/Centre <small>Index</small></h1>
+            <ol class="breadcrumb">
+              <li><a href="{{ path('admin_index') }}"><i class="icon-dashboard"></i> Administrare</a></li>
+              <li class="active"><i class="icon-file-alt"></i> Agentii/Centre</li>
+            </ol>
+          </div>
+        </div><!-- /.row -->
+
+		
+		<div class="row">
+          <div class="col-lg-8 text-left">
+                <h2>Lista agentii/centre</h2>
+          </div>
+          <div class="col-lg-4 text-right">
+              <div class="panel-body">
+                <button type="submit" class="btn btn-primary" onclick="location.href='{{ path('admin_branches_add') }}'">Adauga agentie/centru</button>
+              </div>
+          </div>
+        </div><!-- /.row -->
+
+
+           <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped tablesorter">
+				<thead>
+					<tr>
+						<th>Denumire <i class="fa fa-sort"></i></th>
+						<th class="text-right">Optiuni</th>
+					</tr>
+               </thead>
+               <tbody>
+					{% if branches %}
+						{% for branch in branches %}
+							<tr>
+								<td>{{ branch.name }}</td>
+								<td class="text-right"><a href="{{ path('admin_branches_edit', {'id' : branch.id}) }}">modifica</a></td>
+							</tr>
+						{% endfor %}
+					{% endif %}
+               </tbody>
+			   <tfoot>
+					<tr>
+						<th colspan="2" class="text-center">Total {{ branches|length }} agentii/centre.</th>
+					</tr>
+			   </tfoot>
+            </table>
+        </div>
+
+{% endblock  %}
+
+{% block javascripts %}
+	{{ parent() }}
+		
+	<!-- Page Specific Plugins -->
+	<script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
+	<script src="{{ asset('js/tablesorter/tables.js') }}"></script>
+{% endblock %}

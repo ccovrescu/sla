@@ -1,0 +1,28 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+
+        <div class="row">
+          <div class="col-lg-12">
+            <h1>Departamente <small>Confirmare</small></h1>
+            <ol class="breadcrumb">
+              <li><a href="{{ path('admin_departments_index') }}"><i class="icon-dashboard"></i> Departamente</a></li>
+              <li class="active"><i class="icon-file-alt"></i> Confirmare</li>
+            </ol>
+          </div>
+        </div><!-- /.row -->
+		
+		
+        <div class="alert alert-dismissable alert-success">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+			
+			{% if action == 'add' %}
+				Actiunea de <strong>salvare</strong> s-a incheiat cu <strong>succes</strong>. <a href="{{ path('admin_departments_add') }}" class="alert-link">[ Adaugati ]</a> un nou departament sau reveniti la lista <a href="{{ path('admin_departments_index') }}"  class="alert-link">[ departamentelor ]</a>.
+			{% else %}
+				Actiunea de <strong>editare</strong> s-a incheiat cu <strong>succes</strong>. Reveniti la lista <a href="{{ path('admin_departments_index') }}"  class="alert-link">[ departamentelor ]</a>.
+			{% endif %}
+        </div>
+
+{% endblock %}
+
+

@@ -1,0 +1,127 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+        <div class="row">
+          <div class="col-lg-12">
+            <h1>Disponibilitate <small>Sisteme - serviciu</small></h1>
+            <ol class="breadcrumb">
+              <li><a href="{{ path('tickets') }}"><i class="icon-dashboard"></i> Disponibilitate</a></li>
+              <li class="active"><i class="icon-file-alt"></i> Sisteme - serviciu</li>
+            </ol>
+          </div>
+        </div><!-- /.row -->
+		
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="bs-example">
+              <div class="jumbotron">
+			  
+			{{ form_start(form) }}
+			<div class="form-group">
+				{{ form_label(form.department) }}
+				{{ form_widget(form.department, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(form.service) }}
+				{{ form_widget(form.service, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			{{ form_widget(form.Arata, {'attr': {'class': 'btn btn-primary'}}) }}
+			
+			{{ form_rest(form) }}
+		{{ form_end(form) }}
+		
+              </div>
+            </div>
+          </div>
+        </div><!-- /.row -->
+		
+		
+		<div class="row">
+			<div class="col-lg-8">
+				<h2>Metoda de calcul</h2>
+				<blockquote>
+					<p>Calculeaza disponibilitateta pentru fiecare sistem, tinand cont doar de echipamentele/aplicatiile/utilizatorii dintr-un anume serviciu, in functie de maparile facute.
+					<small>Spre ex.: Pentru sistemul ACTIVE DIRECTORY va calcula disponibilitatea tinand cont doar de serviciul CALCULATOARE, nu si de SERVERE, SISTEME INFORMATICE (utilizatori), ETC.</small>
+				</blockquote>
+			</div>
+			<div class="col-lg-4">
+			
+			<!--
+            <div class="panel panel-success">
+              <div class="panel-heading">
+                <div class="row">
+                  <div class="col-xs-6">
+                    <i class="fa fa-check fa-5x"></i>
+                  </div>
+                  <div class="col-xs-6 text-right">
+                    <p class="announcement-heading">12%</p>
+                    <p class="announcement-text">disponibilitate garantata prin SLA</p>
+                  </div>
+                </div>
+              </div>
+              <a href="#">
+                <div class="panel-footer announcement-bottom">
+                  <div class="row">
+                    <div class="col-xs-6">
+                      Nivel general
+                    </div>
+                    <div class="col-xs-6 text-right">
+                      <i class="fa fa-arrow-circle-right"></i>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+			-->
+
+			</div>
+        </div><!-- /.row -->
+		
+		<div id="bar-example" style="height: 500px;"></div>
+
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+	<script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script>
+
+	<script>
+		Morris.Bar({
+			element: 'bar-example',
+			data: [
+				{% for system in systems %}
+					{ y: "{{system.name}}", b: {{ system.disponibility }} },
+				{% endfor %}
+			],
+			xkey: 'y',
+			ykeys: 'b',
+			labels: ['Disponibilitate']
+		});
+	</script>
+	
+	<script type="text/javascript">
+    $(document).ready(function() {	
+		$("#choose_department").change(function(){
+			var data = {
+				department_id: $(this).val()
+			};
+
+
+            var url = '{{ path('tlt_admn_ajax_services', {'department_id': '%s'}) }}';
+			var department_id = ( $(this).val() == "" ? '0' : $(this).val() );
+			
+            $.post(url.replace(/%25s/, department_id)+'/0', function(data) {
+			
+                $('#choose_service option').remove();
+                for (i in data) {
+                    var option = $('<option></option>') . attr('value', data[i][0]) . text(data[i][1]);
+                    $('#choose_service').append(option);
+                }
+            }, 'json');
+        })
+	});
+	</script>
+{% endblock %}

@@ -1,0 +1,160 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+        <div class="row">
+          <div class="col-lg-12">
+            <h1>Echipamente <small>Index</small></h1>
+            <ol class="breadcrumb">
+              <li><a href="{{ path('tlt_admn_equipments_homepage') }}"><i class="icon-dashboard"></i> Echipamente</a></li>
+              <li class="active"><i class="icon-file-alt"></i> Echipamente</li>
+            </ol>
+          </div>
+        </div><!-- /.row -->
+		
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="bs-example">
+              <div class="jumbotron">
+			  
+		{{ form_start(form) }}
+			 {{ form_errors(form) }} 
+			 
+			<div class="form-group">
+				{{ form_label(form.owner) }}
+				{{ form_widget(form.owner, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(form.branch) }}
+				{{ form_widget(form.branch, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(form.location) }}
+				{{ form_widget(form.location, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(form.department) }}
+				{{ form_widget(form.department, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(form.service) }}
+				{{ form_widget(form.service, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			
+			{{ form_widget(form.Arata, {'attr': {'class': 'btn btn-primary'}}) }}
+			
+			{{ form_rest(form) }}
+		{{ form_end(form) }}
+		
+              </div>
+            </div>
+          </div>
+        </div><!-- /.row -->
+		
+
+		
+		<div class="row">
+          <div class="col-lg-8 text-left">
+                <h2>Lista echipamentelor</h2>
+          </div>
+          <div class="col-lg-4 text-right">
+              <div class="panel-body">
+                <button type="submit" class="btn btn-primary" onclick="location.href='{{ path('tlt_admn_equipments_add') }}'">Adauga echipament</button>
+              </div>
+          </div>
+        </div><!-- /.row -->		
+		
+
+           <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped tablesorter">
+				<thead>
+					<tr>
+						<th>Denumire <i class="fa fa-sort"></i></th>
+						<th>In PAM <i class="fa fa-sort"></i></th>
+						<th>Entitate <i class="fa fa-sort"></i></th>
+						<th>Locatie <i class="fa fa-sort"></i></th>
+						<th>Serviciu <i class="fa fa-sort"></i></th>
+						<th colspan="3" class="text-center">Optiuni</th>
+					</tr>
+               </thead>
+               <tbody>
+					{% if equipments %}
+						{% for equipment in equipments %}
+							<tr>
+								<td>
+									<a href="{{path('tlt_admn_equipments_details', {'id':equipment.id})}}">{{ equipment.equipment }}</a>
+									{% if equipment.total > 1 %}
+										<span class="badge">{{equipment.total}}</span>
+									{% endif %}
+								</td>
+								<td class="text-center"">
+									{% if equipment.inPam %}
+										<i class="fa fa-check"></i>
+									{% endif %}
+								</td>
+								<td>{{ equipment.owner }}</td>
+								<td>{{ equipment.location }}</td>
+								<td>{{ equipment.service }}</td>
+								<td class="text-right"><a href="{{ path('tlt_admn_equipments_edit', {'id' : equipment.id}) }}">modifica</a></td>
+								<td class="text-right"><a href="{{ path('tlt_admn_service_attr_values_homepage', {'equipment_id' : equipment.id}) }}">proprietati</a></td>
+								<td class="text-right"><a href="{{ path('tlt_admn_mappings_homepage', {'equipment_id' : equipment.id}) }}">mapari</a></td>
+							</tr>
+						{% endfor %}
+					{% endif %}
+               </tbody>
+			   <tfoot>
+					<tr>
+						<th colspan="8" class="text-center">Total {{ equipments|length }} echipamente.</th>
+					</tr>
+			   </tfoot>
+            </table>
+        </div>
+
+{% endblock  %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+<script type="text/javascript">
+
+    $(document).ready(function() {
+
+		$("#choose_branch").change(function(){
+			var data = {
+				branch_id: $(this).val()
+			};
+
+
+            var url = '{{ path('tlt_admn_ajax_locations', {'branch_id': '%s'}) }}';
+			var branch_id = ( $(this).val() == "" ? '0' : $(this).val() );
+			
+            $.post(url.replace(/%25s/, branch_id)+'/1', function(data) {
+			
+                $('#choose_location option').remove();
+                for (i in data) {
+                    var option = $('<option></option>') . attr('value', data[i][0]) . text(data[i][1]);
+                    $('#choose_location').append(option);
+                }
+            }, 'json');
+        })
+		
+		$("#choose_department").change(function(){
+			var data = {
+				department_id: $(this).val()
+			};
+
+
+            var url = '{{ path('tlt_admn_ajax_services', {'department_id': '%s'}) }}';
+			var department_id = ( $(this).val() == "" ? '0' : $(this).val() );
+			
+            $.post(url.replace(/%25s/, department_id)+'/1', function(data) {
+			
+                $('#choose_service option').remove();
+                for (i in data) {
+                    var option = $('<option></option>') . attr('value', data[i][0]) . text(data[i][1]);
+                    $('#choose_service').append(option);
+                }
+            }, 'json');
+        })
+	});
+</script>		
+{% endblock %}

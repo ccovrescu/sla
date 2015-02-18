@@ -1,0 +1,87 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+        <div class="row">
+          <div class="col-lg-12">
+            <h1>Detalii <small>{{ equipment.name }}</small></h1>
+            <ol class="breadcrumb">
+              <li><a href="{{ path('admin_equipments_index') }}"><i class="icon-dashboard"></i> Echipamente</a></li>
+              <li class="active"><i class="icon-file-alt"></i> Detalii</li>
+            </ol>
+          </div>
+        </div><!-- /.row -->
+
+		
+
+
+           <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped tablesorter">
+				<tr><!-- location -->
+					<th class="text-left">Entitatea:</th>
+					<td colspan="3">{{ equipment.owner.name }}</td>
+				</tr>		
+				<tr>
+					<th class="text-left">Sucursala:</th>
+					<td colspan="3">{{ equipment.location.branch.name }}</td>
+				</tr>		
+				<tr>
+					<th class="text-left">Locatie:</th>
+					<td colspan="3">{{ equipment.location.name }}</td>
+				</tr>
+				<tr>
+					<th class="text-left">Departament:</th>
+					<td colspan="3">{{ equipment.service.department.name }}</td>
+				</tr>
+				<tr>
+					<th class="text-left">Serviciu:</th>
+					<td colspan="3">{{ equipment.service.name }}</td>
+				</tr><!-- location -->
+				
+				<tr><!-- delimitare -->
+					<td colspan="4">&nbsp;</td>
+				</tr> <!-- delimitare -->
+				
+				<tr><!-- basic info -->
+					<th class="text-left">Numar:</th>
+					<td colspan="3">{{equipment.id}}</td>
+				</tr>
+				<tr>
+					<th class="text-left">Denumire:</th>
+					<td colspan="3">{{ equipment.name }}</td>
+				</tr>
+				<tr>
+					<th class="text-left">Cantitate:</th>
+					<td colspan="3">{{ equipment.total }}</td>
+				</tr>	
+				<tr>
+						<th class="text-left">Inclus in PAM:</th>
+						<td colspan="3">
+						{% if equipment.inPam %}
+							<i class="fa fa-check"></i>
+						{% endif %}
+						</td>
+				</tr>
+				
+				{% if equipment.getPropertiesValues %}
+					<tr><!-- delimitare -->
+						<td colspan="4">&nbsp;</td>
+					</tr><!-- delimitare -->
+					
+					{% for pv in equipment.getPropertiesValues %}
+						<tr>
+							<th class="text-left">{{pv.getProperty.name}}</th>
+							<td colspan="3">
+									{{pv.value}}
+							</td>
+						</tr>						
+					{% endfor %}
+				{% endif %}
+	
+            </table>
+        </div>
+
+{% endblock  %}
+
+{% block javascripts %}
+	{{ parent() }}		
+{% endblock %}

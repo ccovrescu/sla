@@ -1,0 +1,109 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+        <div class="row">
+          <div class="col-lg-12">
+            <h1>Echipamente <small>Adaugare</small></h1>
+            <ol class="breadcrumb">
+              <li><a href="{{ path('tlt_admn_equipments_homepage') }}"><i class="icon-dashboard"></i> Echipamente</a></li>
+              <li class="active"><i class="icon-file-alt"></i> Introducere</li>
+            </ol>
+          </div>
+        </div><!-- /.row -->
+
+		{{ form_start(form) }}
+			<div class="form-group">
+				{{ form_label(form.name) }}
+				{{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder':'introduceti denumirea'}}) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(form.total) }}
+				{{ form_widget(form.total, {'attr': {'class': 'form-control', 'placeholder':'introduceti numarul de bucati'}}) }}
+			</div>
+			<div class="form-group">
+				<label>PAM</label>
+                <div class="checkbox">
+                  <label>
+                    {{ form_widget(form.inPam)}}
+                    {{ form_label(form.inPam) }}
+                  </label>
+			</div>
+			<div class="form-group">
+				{{ form_label(form.department) }}
+				{{ form_widget(form.department, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(form.service) }}
+				{{ form_widget(form.service, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(form.owner) }}
+				{{ form_widget(form.owner, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(form.branch) }}
+				{{ form_widget(form.branch, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(form.location) }}
+				{{ form_widget(form.location, {'attr': {'class': 'form-control'}}) }}
+			</div>
+			
+			
+			{{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}
+			{{ form_widget(form.reseteaza, {'attr': {'class': 'btn btn-default'}}) }}
+			
+			{{ form_rest(form) }}
+		{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+<script type="text/javascript">
+$(document).ready(function() {
+$("#equipment_branch").change(function(){
+    var data = {
+        branch_id: $(this).val()
+    };
+ 
+    $.ajax({
+        type: 'post',
+        url: '{{ path("select_locations") }}',
+        data: data,
+        success: function(data) {
+            var $location_selector = $('#equipment_location');
+ 
+            $location_selector.html('<option>Alegeti o optiune</option>');
+ 
+            for (var i=0, total = data.length; i < total; i++) {
+                $location_selector.append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+            }
+        }
+    });
+});
+
+$("#equipment_department").change(function(){
+    var data = {
+        department_id: $(this).val()
+    };
+ 
+    $.ajax({
+        type: 'post',
+        url: '{{ path("select_services") }}',
+        data: data,
+        success: function(data) {
+            var $service_selector = $('#equipment_service');
+ 
+            $service_selector.html('<option>Alegeti o optiune</option>');
+ 
+            for (var i=0, total = data.length; i < total; i++) {
+                $service_selector.append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+            }
+        }
+    });
+});
+
+});
+</script>	
+{% endblock %}

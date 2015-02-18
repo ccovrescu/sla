@@ -1,0 +1,9 @@
+Tlt\AdmnBundle\Entity\Department:
+   properties:
+       name:
+           - NotBlank: ~
+           - Length:
+                   min: 2
+                   max: 64
+                   minMessage: "Denumirea departamentului trebuie sa contina cel putin {{ limit }} caractere."
+                   maxMessage: "Denumirea departamentului trebuie sa contina cel mult {{ limit }} caractere."

@@ -1,0 +1,61 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+        <div class="row">
+          <div class="col-lg-12">
+            <h1>Proprietati [{{equipment.name}}] <small>Index</small></h1>
+            <ol class="breadcrumb">
+              <li><a href="{{ path('admin_equipments_index') }}"><i class="icon-dashboard"></i> Echipamente</a></li>
+              <li class="active"><i class="icon-file-alt"></i> Proprietati</li>
+            </ol>
+          </div>
+        </div><!-- /.row -->
+		
+	
+
+		
+		<div class="row">
+          <div class="col-lg-8 text-left">
+                <h2>Lista proprietati</h2>
+          </div>
+          <div class="col-lg-4 text-right">
+              <div class="panel-body">
+                <button type="submit" class="btn btn-primary" onclick="location.href='{{ path('admin_sav_add', {'equipment_id': equipment.id}) }}'">Adauga proprietate</button>
+              </div>
+          </div>
+        </div><!-- /.row -->		
+		
+
+           <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped tablesorter">
+				<thead>
+					<tr>
+						<th>Proprietate <i class="fa fa-sort"></i></th>
+						<th>Valoare <i class="fa fa-sort"></i></th>
+						<th class="text-right">Optiuni</th>
+					</tr>
+               </thead>
+               <tbody>
+					{% if serviceAttributeValues %}
+						{% for serviceAttributeValue in serviceAttributeValues %}
+							<tr>
+								<td>{{ serviceAttributeValue.getServiceAttr }}</td>
+								<td>{{ serviceAttributeValue.value }}</td>
+								<td class="text-right"><a href="{{ path('admin_sav_edit', {'id' : serviceAttributeValue.id}) }}">modifica</a></td>
+							</tr>
+						{% endfor %}
+					{% endif %}
+               </tbody>
+			   <tfoot>
+					<tr>
+						<th colspan="3" class="text-center">Total {{ serviceAttributeValues|length }} proprietati.</th>
+					</tr>
+			   </tfoot>
+            </table>
+        </div>
+
+{% endblock  %}
+
+{% block javascripts %}
+	{{ parent() }}
+{% endblock %}

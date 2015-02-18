@@ -1,0 +1,90 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="alert alert-dismissable alert-success">
+				<h5><strong>2015.02.12</strong></h5>
+			</div>
+			<div class="alert alert-dismissable alert-info">
+				<h4>Noutati aduse:</h4>
+				<ul>
+				  <li>S-a renuntat la termenul de <b>Sucursala</b>. Acesta a fost inlocuit cu <b>Agentia/Centrul</b></li>
+				  <li>S-a propus inlocuirea termenului <b>Departament</b> cu <b>Tip serviciu</b>. Prin unele locuri am facut modificarea, prin unele NU. Ramane in dezbatere si ce se va hotari aceea va ramane.</li>
+				  <li>Au fost destule observatii legate de <b>locatie</b>. Reamintesc ca aici este vorba despre locatia fizica a echipamentelor/utilizatorilor, si nu o structura organizatorica din organigrama TEL. Prin urmare exista o rubrica cu <b>locatii generale</b> (lista predefinita pe care nu o puteti modifica). Din aceasta lista fiecare agentie/centru isi poate selecta o locatie si apoi o poate adauga in componenta sa ( rubrica <b>Locatii in agentie/centru</b>).</li>
+				  <li><b>Administrarea echipamentelor:</b></li>
+					<ul>
+					  <li>s-a rearanjat formularul de filtrare. Am tinut cont de sugestii dvs, iar drept urmare in acest formular apar doar rubricile unde exista echipamente. </li>
+					  <li>se pot introduce, modifica si sterge (logic) echipamente</li>
+					  <li>se pot introduce si sterge mapari, <em>doar conform cu macheta de mapari stabilita pe fiecare departament/tip de serviciu</em> </li>
+					  <li>se pot introduce si sterge proprietati. Proprietatile sunt o lista predefinita. Daca este nevoie de altele noi, va rog sa-mi trimiteti pe email.</li>
+					</ul>
+				</ul>
+				<br />
+				<h4><em>Astept sugestii/observatii legate doar de functionalitate. Va rog sa lasati chestiile de design/fineturi pentru cand vom termina toate functionalitatile.</em></h4>
+			</div>
+			<div class="alert alert-dismissable alert-danger">
+				<h4>Referitor la informatiile din tabelul de echipamente</h4>
+				<p>Aici nu pot sa afisez decat informatii "COMUNE" pentru toate echipamentele. In momentul de fata singurele informatii comune sunt: denumire, cantitate, serviciu/departament, locatie si entitatea.</p>
+				<p>Daca se doresc si altele gen: producator, model, etc atunci acestea vor trebui completatea pentru toate echipamentele din toate departamentele/tipurile de servicii. In momentul de fata acestea sunt proprietati optionale</p>
+			</div>
+			
+			<div class="alert alert-dismissable alert-success">
+				<h5><strong>2015.02.02</strong></h5>
+			</div>
+			<div class="alert alert-dismissable alert-danger">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				<strong>Notificare:</strong> Pentru inceput toate drepturile sunt doar de <a href="#" class="alert-link">vizualizare</a>. Daca este necesar a se face modificari la informatiile pe care le regasiti, va rog sa ma contactati (datele de contact le regasiti mai jos).
+				<br/>
+				<br/>
+				<strong><em>Le voi opera doar eu pana vom definitiva complet datele de intrare!</em></strong>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-1">
+		</div>
+		<div class="col-lg-10">
+			<div class="panel panel-warning">
+              <div class="panel-heading">
+                <div class="row">
+                  <div class="col-xs-6">
+                    <i class="fa fa-comments fa-5x"></i>
+                  </div>
+                  <div class="col-xs-6 text-right">
+                    <p class="announcement-heading">Catalin&nbsp;Bradescu</p>
+                    <p class="announcement-text">Agentia TELETRANS Craiova</p>
+                  </div>
+                </div>
+              </div>
+              <a href="#">
+                <div class="panel-footer announcement-bottom">
+                  <div class="row">
+                    <div class="col-xs-6">6354</div>
+                    <div class="col-xs-6 text-right">
+                      <i class="fa fa-arrow-circle-right"></i>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-6">0741 01 21 59</div>
+                    <div class="col-xs-6 text-right">
+                      <i class="fa fa-arrow-circle-right"></i>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-6">cbradescu@teletrans.ro</div>
+                    <div class="col-xs-6 text-right">
+                      <i class="fa fa-arrow-circle-right"></i>
+                    </div>
+                  </div>
+                </div>
+              </a>
+			</div>
+		</div>
+		<div class="col-lg-1">
+		</div>
+	</div>
+
+
+{% endblock %}

@@ -1,0 +1,331 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+		<div id="loading"></div>
+        <div class="row">
+          <div class="col-lg-12">
+            <h1>Echipamente <small>Index</small></h1>
+            <ol class="breadcrumb">
+              <li><a href="{{ path('admin_equipments_index') }}"><i class="icon-dashboard"></i> Administrare</a></li>
+              <li class="active"><i class="icon-file-alt"></i> Echipamente</li>
+            </ol>
+          </div>
+        </div><!-- /.row -->
+		
+		{{ form_start(form, {'attr': {'class':'breadcrumb'}}) }}
+			 {{ form_errors(form) }} 
+
+		  <div class="row">
+			  <div class="col-lg-6">			 
+					<div class="form-group">
+						{{ form_label(form.department) }}
+						{{ form_widget(form.department, {'attr': {'class': 'form-control'}}) }}
+					</div>
+					<div class="form-group">
+						{{ form_label(form.service) }}
+						{{ form_widget(form.service, {'attr': {'class': 'form-control'}}) }}
+					</div>
+				</div>
+
+			<div class="col-lg-6">
+					<div class="form-group">
+						{{ form_label(form.branch) }}
+						{{ form_widget(form.branch, {'attr': {'class': 'form-control'}}) }}
+					</div>
+					<div class="form-group">
+						{{ form_label(form.zoneLocation) }}
+						{{ form_widget(form.zoneLocation, {'attr': {'class': 'form-control'}}) }}
+					</div>
+						 
+					<div class="form-group">
+						{{ form_label(form.owner) }}
+						{{ form_widget(form.owner, {'attr': {'class': 'form-control'}}) }}
+					</div>
+			  </div>
+			</div><!-- /.row -->
+
+			 
+		  <div class="row">
+          <div class="col-lg-12">
+              <div class="jumbotron2">
+				<div class="form-group">
+					{{ form_widget(form.Arata, {'attr': {'class': 'btn btn-primary'}}) }}
+				</div>
+            </div>
+          </div>
+        </div><!-- /.row -->
+			
+			{{ form_rest(form) }}
+		{{ form_end(form) }}
+
+		
+		<div class="row">
+          <div class="col-lg-8 text-left">
+                <h2>Lista echipamentelor</h2>
+          </div>
+          <div class="col-lg-4 text-right">
+              <div class="panel-body">
+                <button type="submit" class="btn btn-primary" onclick="location.href='{{ path('admin_equipments_add') }}'">Adauga echipament</button>
+              </div>
+          </div>
+        </div><!-- /.row -->		
+		
+           <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped tablesorter">
+				<thead>
+					<tr>
+						<th>Denumire <i class="fa fa-sort"></i></th>
+						<th class="text-right">Buc <i class="fa fa-sort"></i></th>
+						<th>In PAM <i class="fa fa-sort"></i></th>
+						<th>Entitate <i class="fa fa-sort"></i></th>
+						<th>Locatia <i class="fa fa-sort"></i></th>
+						<th>Serviciu <i class="fa fa-sort"></i></th>
+						<th class="text-center">Optiuni</th>
+					</tr>
+               </thead>
+               <tbody>
+					{% set total = 0 %}
+					{% if equipments %}
+						{% for equipment in equipments %}
+							{% set total = total + equipment.total %}
+							<tr>
+								<td>
+									<a href="{{path('admin_equipments_details', {'id':equipment.id})}}">
+										{{equipment.getUniqueName}}
+									</a>
+								</td>
+								<td class="text-right">{{ equipment.total }}</td>
+								<td class="text-center">
+									{% if equipment.inPam %}
+										<i class="fa fa-check" style="color: green"></i>
+									{% else %}
+										<i class="fa fa-times" style="color: red"></i>
+									{% endif %}
+								</td>
+								<td>{{ equipment.owner }}</td>
+								<td>{{ equipment.zoneLocation.location }}</td>
+								<td>{{ equipment.service }}</td>
+								<td class="text-center">
+									<div class="btn-group" style="min-width: 90px">
+									  <button type="button" class="btn btn-default">alege</button>
+									  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+									  <ul class="dropdown-menu">
+										<li><a href="{{ path('admin_mappings_index', {'equipment_id' : equipment.id}) }}">Mapari</a></li>
+										<li><a href="{{ path('admin_sav_index', {'equipment_id' : equipment.id}) }}">Proprietati</a></li>
+										<li class="divider"></li>
+										<li><a href="{{ path('admin_equipments_edit', {'id' : equipment.id}) }}">Modifica</a></li>
+										<li class="divider"></li>
+										<li><a href="{{ path('admin_equipments_delete', {'equipment_id' : equipment.id}) }}"  onclick="return confirm('Sunteti sigur? Inregistrarea nu va putea fi recuperata!!!');">Sterge</a></li>
+									  </ul>
+									</div><!-- /btn-group -->
+								</td>
+							</tr>
+						{% endfor %}
+					{% endif %}
+               </tbody>
+			   <tfoot>
+					<tr>
+						<th colspan="7" class="text-center">Total {{total}} echipamente.</th>
+					</tr>
+			   </tfoot>
+            </table>
+        </div>		
+{% endblock  %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+<script type="text/javascript">
+
+$("#loading").dialog({
+        maxWidth:200,
+        maxHeight: 85,
+        width: 200,
+        height: 85,
+		modal: true,
+    autoOpen: false
+});
+$("#loading").siblings('div.ui-dialog-titlebar').remove();
+
+$("#filter_branch").change(function(){
+    var data = {
+		department_id: $('#filter_department').val(),
+		service_id: $('#filter_service').val(),
+        branch_id: $(this).val(),
+		location_id: $('#filter_location').val()
+    };
+	
+    $.ajax({
+        type: 'post',
+        url: '{{ path("filter_select_locations") }}',
+        data: data,
+		beforeSend: function(){
+		   $("#loading").dialog('open').html("<p style=\"font-size: 14pt\"><img src=\"{{ asset('css/loader.gif') }}\" /> Loading...</p>");
+		},
+        success: function(data) {
+            $('#filter_zoneLocation').html('<option value="">-- Toate --</option>');
+
+            for (var i=0, total = data.length; i < total; i++) {
+                $('#filter_zoneLocation').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+            }
+			
+			$('#loading').html("<p>Result Complete...</p>");
+			$('#loading').dialog("close");
+        }
+    });
+	
+    $.ajax({
+        type: 'post',
+        url: '{{ path("filter_select_owners") }}',
+        data: data,
+		beforeSend: function(){
+		   $("#loading").dialog('open').html("<p style=\"font-size: 14pt\"><img src=\"{{ asset('css/loader.gif') }}\" /> Loading...</p>");
+		},
+        success: function(data) {
+            $('#filter_owner').html('<option value="">-- Toate --</option>');
+
+            for (var i=0, total = data.length; i < total; i++) {
+                $('#filter_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+            }
+			
+			$('#loading').dialog("close");
+        }
+    });
+});
+
+
+$("#filter_zoneLocation").change(function(){
+    var data = {
+		department_id: $('#filter_department').val(),
+		service_id: $('#filter_service').val(),
+		branch_id: $('#filter_branch').val(),
+        location_id: $(this).val()		
+    };
+	
+    $.ajax({
+        type: 'post',
+        url: '{{ path("filter_select_owners") }}',
+        data: data,
+		beforeSend: function(){
+		   $("#loading").dialog('open').html("<p style=\"font-size: 14pt\"><img src=\"{{ asset('css/loader.gif') }}\" /> Loading...</p>");
+		},
+        success: function(data) {
+            $('#filter_owner').html('<option value="">-- Toate --</option>');
+ 
+            for (var i=0, total = data.length; i < total; i++) {
+                $('#filter_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+            }
+			
+			$('#loading').dialog("close");
+        }
+    });
+});
+
+
+$("#filter_department").change(function(){
+    var data = {
+        department_id: $(this).val(),
+		service_id: $('#filter_service').val(),
+		branch_id: $('#filter_branch').val(),
+        location_id: $('#filter_zoneLocation').val()		
+    };
+	
+    $.ajax({
+        type: 'post',
+        url: '{{ path("filter_select_services") }}',
+        data: data,
+        beforeSend: function(){
+           $("#loading").dialog('open').html("<p style=\"font-size: 14pt\"><img src=\"{{ asset('css/loader.gif') }}\" /> Loading...</p>");
+        },
+        success: function(data) {
+            $('#filter_service').html('<option value="">-- Toate --</option>');
+ 
+            for (var i=0, total = data.length; i < total; i++) {
+                $('#filter_service').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+            }
+        }
+    });
+	
+    $.ajax({
+        type: 'post',
+        url: '{{ path("filter_select_branches") }}',
+        data: data,
+        success: function(data) {
+            $('#filter_branch').html('<option value="">-- Toate --</option>');
+			$('#filter_zoneLocation').html('<option value="">-- Toate --</option>');
+ 
+            for (var i=0, total = data.length; i < total; i++) {
+                $('#filter_branch').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+            }
+        }
+    });
+	
+    $.ajax({
+        type: 'post',
+        url: '{{ path("filter_select_owners") }}',
+        data: data,
+        success: function(data) {
+			$('#filter_owner').html('<option value="">-- Toate --</option>');
+ 
+            for (var i=0, total = data.length; i < total; i++) {
+                $('#filter_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+            }
+			
+			$('#loading').dialog("close");
+        }
+    });
+});
+
+$("#filter_service").change(function(){
+    var data = {
+        department_id: $('#filter_department').val(),
+        service_id: $(this).val(),
+		branch_id: $('#filter_branch').val(),
+        location_id: $('#filter_zoneLocation').val()		
+    };
+	
+	if ($(this).val() > 0)
+	{
+		$.ajax({
+			type: 'post',
+			url: '{{ path("filter_select_branches") }}',
+			data: data,
+			beforeSend: function(){
+			   $("#loading").dialog('open').html("<p style=\"font-size: 14pt\"><img src=\"{{ asset('css/loader.gif') }}\" /> Loading...</p>");
+			},
+			success: function(data) {
+				$('#filter_branch').html('<option value="">-- Toate --</option>');
+				$('#filter_zoneLocation').html('<option value="">-- Toate --</option>');
+	 
+				for (var i=0, total = data.length; i < total; i++) {
+					$('#filter_branch').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+				}
+			}
+		});
+		
+		$.ajax({
+			type: 'post',
+			url: '{{ path("filter_select_owners") }}',
+			data: data,
+			success: function(data) {
+				$('#filter_owner').html('<option value="">-- Toate --</option>');
+
+				for (var i=0, total = data.length; i < total; i++) {
+					$('#filter_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+				}
+				
+				$('#loading').dialog("close");
+			}
+		});
+	}
+	else
+	{
+		$('#filter_department').change();
+	}
+});
+</script>
+
+	<!-- Page Specific Plugins -->
+	<script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
+	<script src="{{ asset('js/tablesorter/tables.js') }}"></script>
+{% endblock %}

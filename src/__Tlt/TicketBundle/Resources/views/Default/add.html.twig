@@ -1,0 +1,41 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+        <div class="row">
+          <div class="col-lg-12">
+            <h1>Tichete <small>Adaugare</small></h1>
+            <ol class="breadcrumb">
+              <li><a href="{{ path('tickets') }}"><i class="icon-dashboard"></i> Tichete</a></li>
+              <li class="active"><i class="icon-file-alt"></i> Introducere</li>
+            </ol>
+          </div>
+        </div><!-- /.row -->
+
+		{{ form_start(form) }}
+			<div class="form-group">
+				{{ form_label(form.occuredAt) }}
+				{{ form_widget(form.occuredAt) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(form.announcedAt) }}
+				{{ form_widget(form.announcedAt) }}
+			</div>
+			<div class="form-group">
+				{{ form_label(form.announcedBy) }}
+				{{ form_widget(form.announcedBy, {'attr': {'class': 'form-control', 'placeholder':'numele persoanei care a anuntat'}}) }}
+			</div>			
+			<div class="form-group">
+				{{ form_label(form.ticketAllocations) }}
+				{{ form_widget(form.ticketAllocations, {'attr': {'class': 'form-control'}}) }}
+			</div>			
+			<div class="form-group">
+				{{ form_label(form.description) }}
+				{{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder':'scurta descriere'}}) }}
+			</div>			
+			{{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}
+			{{ form_widget(form.reseteaza, {'attr': {'class': 'btn btn-default'}}) }}
+			
+			{{ form_rest(form) }}
+		{{ form_end(form) }}
+
+{% endblock %}

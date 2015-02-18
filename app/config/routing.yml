@@ -1,0 +1,24 @@
+tlt_main:
+    resource: "@TltMainBundle/Controller/"
+    type:     annotation
+    prefix:   /
+tlt_admn:
+    resource: "@TltAdmnBundle/Controller/"
+    type:     annotation
+    prefix:   /admin
+tlt_ticket:
+    resource: "@TltTicketBundle/Controller/DefaultController.php"
+    type:   annotation
+tlt_ajax:
+    resource: "@TltAdmnBundle/Controller/AjaxController.php"
+    type:   annotation
+login:
+    pattern:   /login
+    defaults:  { _controller: TltProfileBundle:Security:login }
+login_check:
+    pattern:   /login_check
+logout:
+    path:     /logout
+denied:
+    path:	/denied
+    defaults: {_controller: TltMainBundle:Default:denied}
