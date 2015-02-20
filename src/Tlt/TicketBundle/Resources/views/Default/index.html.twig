@@ -29,7 +29,7 @@
 				<thead>
 					<tr>
 						<th>Nr <i class="fa fa-sort"></i></th>
-						<th>Entitatea <i class="fa fa-sort"></i></th>
+						<th>Agentia/Centrul <i class="fa fa-sort"></i></th>
 						<th colspan="2" class="text-left">Descriere</th>
 					</tr>
                </thead>
@@ -39,11 +39,13 @@
 							<tr {% if ticket.ticketFix %} class="success" {% else %} class="warning" {% endif %}>
 								<td>{{ ticket.id }}</td>
 								<td>
-									{% for ta in ticket.ticketAllocations %}
-										{{ ta.owner.name }}
-									{% endfor %}
+									{{ ticket.ticketAllocations.first.branch.name }}
 								</td>
-								<td class="text-left"><a href="{{ path('ticket_details', {'id' : ticket.id}) }}">{{ticket.description}}</a></td>
+								<td class="text-left">
+                                    <a href="{{ path('ticket_details', {'id' : ticket.id}) }}">
+                                        {{ticket.description}}
+                                    </a>
+                                </td>
 							</tr>
 						{% endfor %}
 					{% endif %}

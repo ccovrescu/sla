@@ -3,13 +3,15 @@ namespace Tlt\TicketBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+
 use Tlt\AdmnBundle\Entity\AbstractEntity;
+use Tlt\AdmnBundle\Entity\Branch;
 
 /**
  * TicketCreate
  *
  * @ORM\Table(name="ticket_create")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Tlt\TicketBundle\Entity\TicketCreateRepository")
  * @ORM\HasLifecycleCallbacks()
  */
 class TicketCreate extends AbstractEntity
@@ -21,11 +23,6 @@ class TicketCreate extends AbstractEntity
 	*/
 	protected $id;
 	
-	/**
-	* @ORM\Column(name="inserted_at", type="datetime")
-	*/
-	// protected $insertedAt;
-
 	/**
 	* @ORM\Column(name="occured_at", type="datetime")
 	*/
@@ -50,6 +47,7 @@ class TicketCreate extends AbstractEntity
 	
 	/**
 	 * @ORM\OneToMany(targetEntity="TicketAllocation", mappedBy="ticketCreate", cascade={"persist"})
+     * @ORM\OrderBy({"insertedAt" = "DESC"})
 	 */
 	protected $ticketAllocations;
 	
@@ -96,18 +94,6 @@ class TicketCreate extends AbstractEntity
     {
         return $this->id;
     }
-	
-	
-    /**
-     * Get insertedAt
-     *
-     * @return DateTime 
-     */
-    // public function getInsertedAt()
-    // {
-        // return $this->insertedAt;
-    // }
-	
 	
     /**
      * Set occuredAt
@@ -217,18 +203,15 @@ class TicketCreate extends AbstractEntity
 	/**
      * Set ticketAllocations
      *
-     * @param \Tlt\AdmnBundle\Entity\Owner $owner
+     * @param Branch $branch
      * @return TicketCreate
      */
-    public function setTicketAllocations(\Tlt\AdmnBundle\Entity\Owner $owner)
+    public function setTicketAllocations(Branch $branch)
     {
 		$ticketAllocation = new TicketAllocation();
-		$ticketAllocation->setOwner( $owner );
-		$ticketAllocation->setAllocatedBy('test-allocated-by');
-		
-		// set tticketIns for update tticketIns ID to database.
+		$ticketAllocation->setBranch( $branch );
+
 		$ticketAllocation->setTicketCreate($this);
-		
         $this->ticketAllocations->add( $ticketAllocation );
 
         return $this;
@@ -282,16 +265,17 @@ class TicketCreate extends AbstractEntity
         $this->ticketFix = $ticketFix;
 
         return $this;
-    }	
+    }
 
-	
-    /**
-     * Gets triggered only on insert
-     * 
-     * @ORM\PrePersist
-     */
-    // public function onPrePersist()
-    // {
-        // $this->insertedAt = new \DateTime("now");
-    // }
+    public function updateTicketAllocation()
+    {
+        $ticketAllocation = $this->ticketAllocations->last();
+        $this->ticketAllocations->removeElement($ticketAllocation);
+
+        $ticketAllocation->setInsertedBy($this->getInsertedBy());
+        $ticketAllocation->setModifiedBy($this->getModifiedBy());
+        $ticketAllocation->setFromHost($this->getFromHost());
+
+        $this->ticketAllocations->add($ticketAllocation);
+    }
 }

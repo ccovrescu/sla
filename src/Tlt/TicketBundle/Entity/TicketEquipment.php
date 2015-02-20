@@ -4,6 +4,14 @@ namespace Tlt\TicketBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Tlt\AdmnBundle\Entity\Branch;
+use Tlt\AdmnBundle\Entity\Department;
+use Tlt\AdmnBundle\Entity\Service;
+use Tlt\AdmnBundle\Entity\System;
+use Tlt\AdmnBundle\Entity\Equipment;
+use Tlt\AdmnBundle\Entity\ZoneLocation;
+use Tlt\AdmnBundle\Entity\Owner;
+
 /**
  * TicketEquipment
  *
@@ -36,11 +44,33 @@ class TicketEquipment
 	 * @ORM\OneToMany(targetEntity="TicketSystem", mappedBy="ticketEquipment", cascade={"persist"})
 	 */
 	protected $ticketSystems;
-	
-	public $branch;
-	public $location;
-	public $service;
-	
+
+    /**
+     * @var Department
+     */
+    public $department;
+
+    /**
+     * @var Service
+     */
+    public $service;
+
+    /**
+     * @var Branch
+     */
+    public $branch;
+
+    /**
+     * @var ZoneLocation
+     */
+	public $zoneLocation;
+
+    /**
+     * @var Owner
+     */
+    public $owner;
+
+
 	/**
      * Constructor
      */
@@ -98,10 +128,10 @@ class TicketEquipment
     /**
      * Set equipment
      *
-     * @param \Tlt\AdmnBundle\Entity\Equipment $equipment
+     * @param Equipment $equipment
 	 * @return TicketEquipment
      */
-    public function setEquipment(\Tlt\AdmnBundle\Entity\Equipment $equipment)
+    public function setEquipment(Equipment $equipment)
     {
         $this->equipment = $equipment;
 		
@@ -111,7 +141,7 @@ class TicketEquipment
     /**
      * Get equipment
      *
-     * @return Tlt\AdmnBundle\Entity\Equipment 
+     * @return Equipment
      */
     public function getEquipment()
     {
@@ -124,7 +154,7 @@ class TicketEquipment
 		return $this->ticketSystems;
 	}
 	
-	public function addTicketSystems(\Tlt\AdmnBundle\Entity\System $system)
+	public function addTicketSystems(System $system)
 	{
 		$ticketSystem = new TicketSystem();
 		$ticketSystem->setTicketEquipment( $this );
@@ -141,4 +171,117 @@ class TicketEquipment
 		$this->ticketSystems = new ArrayCollection();
 		return $this;
 	}
+
+    /**
+     * Set department
+     *
+     * @param Department $department
+     * @return TicketEquipment
+     */
+    public function setDepartment($department)
+    {
+        $this->department = $department;
+    }
+
+    /**
+     * Get department
+     *
+     * @return Department
+     */
+    public function getDepartment()
+    {
+        return $this->department;
+    }
+
+    /**
+     * Get branch
+     *
+     * @return Branch
+     */
+    public function getBranch()
+    {
+        return $this->branch;
+    }
+
+    /**
+     * Set branch
+     * @param Branch $branch
+     *
+     * @return TicketEquipment
+     */
+    public function setBranch($branch)
+    {
+        $this->branch	=	$branch;
+
+        return $this;
+    }
+
+    /**
+     * Get service
+     *
+     * @return Service
+     */
+    public function getService()
+    {
+        return $this->service;
+    }
+
+    /**
+     * Set service
+     * @param Service $service
+     *
+     * @return TicketEquipment
+     */
+    public function setService($service)
+    {
+        $this->service	=	$service;
+
+        return $this;
+    }
+
+    /**
+     * Get zoneLocation
+     *
+     * @return ZoneLocation
+     */
+    public function getZoneLocation()
+    {
+        return $this->zoneLocation;
+    }
+
+    /**
+     * Set zoneLocation
+     * @param ZoneLocation $zoneLocation
+     *
+     * @return TicketEquipment
+     */
+    public function setZoneLocation($zoneLocation)
+    {
+        $this->zoneLocation	=	$zoneLocation;
+
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return Owner
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * Set owner
+     * @param Owner $owner
+     *
+     * @return TicketEquipment
+     */
+    public function setOwner($owner)
+    {
+        $this->owner	=	$owner;
+
+        return $this;
+    }
 }

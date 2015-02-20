@@ -73,7 +73,7 @@ security:
         - { path: ^/admin/systems/index, roles: ROLE_USER }
         - { path: ^/admin/index, roles: ROLE_USER }
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/tickets, roles: ROLE_ADMIN }
+        - { path: ^/tickets, roles: ROLE_USER }
         - { path: ^/anexa, roles: ROLE_ADMIN }
         - { path: ^/sla, roles: ROLE_ADMIN }
         - { path: ^/sys, roles: ROLE_ADMIN }

@@ -1,25 +1,50 @@
 <?php
 namespace Tlt\TicketBundle\Form\Type;
 
-use Tlt\TicketBundle\Entity\TicketReallocate;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Doctrine\ORM\EntityRepository;
+
+use Tlt\TicketBundle\Entity\TicketReallocate;
+use Tlt\ProfileBundle\Entity\User;
+
 class TicketReallocateType extends AbstractType {
+
+    private $user;
+
+    public function __construct(User $user = null)
+    {
+        $this->user	=	$user;
+    }
+
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options) {
+        $userBranches		=	$this->user->getBranchesIds();
+
 		$builder->add(
-			'owner', 'entity', array(
-				'class'			=>	'Tlt\AdmnBundle\Entity\Owner',
+			'branch', 'entity', array(
+				'class'			=>	'Tlt\AdmnBundle\Entity\Branch',
 				'property'		=>	'name',
-				'empty_value'	=>	'alegeti o optiune',
-				'label'			=>	'Noua entitate:',
+				'empty_value'	=>	'-- Alegeti o optiune --',
+				'label'			=>	'Agentia/Centrul:',
 				'required'		=>	true
-			));
+
+/*                'query_builder' => function (EntityRepository $repository) use ($userBranches) {
+                                        $qb = $repository->createQueryBuilder('br')
+                                                            ->andWhere('br.id IN (:userBranches)')
+                                                            ->setParameter('userBranches', $userBranches)
+                                                            ->orderby('br.name', 'ASC');
+
+                                        return $qb;
+                                    }*/
+
+                )
+        );
 		$builder->add('salveaza', 'submit');
 		$builder->add('reseteaza', 'reset', array());
 	}

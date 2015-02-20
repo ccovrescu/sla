@@ -8,16 +8,17 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Doctrine\ORM\EntityRepository;
 
-use Tlt\AdmnBundle\Entity\Department;
-use Tlt\AdmnBundle\Entity\Location;
- 
+use Tlt\ProfileBundle\Entity\User;
+
 class DepartmentListener implements EventSubscriberInterface
 {
 	private $user;
+    private $showAll;
  
-    public function __construct(\Tlt\ProfileBundle\Entity\User $user = null)
+    public function __construct(User $user = null, $showAll = true)
     {
-		$this->user			=	$user;
+		$this->user = $user;
+        $this->showAll = $showAll;
     }
 
     public static function getSubscribedEvents()
@@ -28,17 +29,21 @@ class DepartmentListener implements EventSubscriberInterface
         );
     }
 	
-    private function addDepartmentForm($form, $department = null)
+    private function addDepartmentForm($form, $department_id = null)
     {
         $formOptions = array(
             'class'         => 'TltAdmnBundle:Department',
-			'required'		=>	false,
             'label'         => 'Tip serviciu',
-            'empty_value'   => '-- Toate --',
             'attr'          => array(
                 'class' => 'department_selector',
             ),
         );
+
+        if ($this->showAll)
+        {
+            $formOptions['required'] = false;
+            $formOptions['empty_value'] = '-- Toate --';
+        }
 		
 		$userDepartments	=	$this->user->getDepartmentsIds();
 		
@@ -50,10 +55,10 @@ class DepartmentListener implements EventSubscriberInterface
 													return $qb;
 												};
 		
-		if ($department) {
-            $formOptions['data'] = $department;
-        }
- 
+		if ($department_id) {
+            $formOptions['data'] = $department_id;
+      }
+
         $form->add('department', 'entity', $formOptions);
     }
 
@@ -61,22 +66,24 @@ class DepartmentListener implements EventSubscriberInterface
     {
         $data = $event->getData();
         $form = $event->getForm();
- 
+
         if (null === $data) {
             return;
         }
  
-        $accessor = PropertyAccess::getPropertyAccessor();
- 
-        $department	=	($accessor->getValue($data, 'department')) ? $accessor->getValue($data, 'department')[0] : null;
-		
-        $this->addDepartmentForm($form, $department);
+        $accessor = PropertyAccess::createPropertyAccessor();
+        $department_id	=	($accessor->getValue($data, 'department')) ? $accessor->getValue($data, 'department') : null;
+
+        $this->addDepartmentForm($form, $department_id);
     }
  
     public function preSubmit(FormEvent $event)
     {
         $form = $event->getForm();
+        $data = $event->getData();
+
+        $department_id = array_key_exists('department', $data) ? $data['department'] : null;
  
-        $this->addDepartmentForm($form);
+        $this->addDepartmentForm($form, $department_id);
     }
 }

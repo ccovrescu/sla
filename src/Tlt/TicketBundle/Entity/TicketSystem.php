@@ -3,6 +3,8 @@ namespace Tlt\TicketBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Tlt\AdmnBundle\Entity\System;
+
 /**
  * TTicketSystem
  *
@@ -80,7 +82,7 @@ class TicketSystem
 	/**
      * Set system
      *
-     * @param Tlt\AdmnBundle\System $system
+     * @param System $system
      * @return TicketSystem
      */
 	public function setSystem($system)
@@ -93,7 +95,7 @@ class TicketSystem
 	/**
      * Get system
      *
-     * @return Tlt\AdmnBundle\System 
+     * @return System
      */
 	public function getSystem()
 	{

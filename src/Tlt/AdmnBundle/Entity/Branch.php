@@ -33,8 +33,11 @@ class Branch extends AbstractEntity
      * @ORM\OneToMany(targetEntity="ZoneLocation", mappedBy="branch")
      */
     private $zoneLocations;
-	
 
+    /**
+     * @ORM\OneToMany(targetEntity="Tlt\TicketBundle\Entity\TicketAllocation", mappedBy="branch")
+     */
+    private $ticketAllocation;
 	
     /**
      * Constructor
@@ -122,8 +125,17 @@ class Branch extends AbstractEntity
     {
         return $this->zoneLocations;
     }
-	
-	
+
+    /**
+     * Get ticketAllocation
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTicketAllocations()
+    {
+        return $this->ticketAllocation;
+    }
+
 	public function __toString()
 	{
 		return $this->getName();

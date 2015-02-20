@@ -6,6 +6,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
+use Symfony\Component\Security\Acl\Exception\Exception;
+use Tlt\TicketBundle\Entity\Ticket;
 use Tlt\TicketBundle\Entity\TicketCreate;
 use Tlt\TicketBundle\Entity\TicketAllocation;
 use Tlt\TicketBundle\Entity\TicketEquipment;
@@ -27,8 +29,9 @@ class DefaultController extends Controller
     {
 		$tickets = $this->getDoctrine()
 			->getRepository('TltTicketBundle:TicketCreate')
-			->findAll();
-			
+			->findTicketsByBranches($this->getUser()->getBranchesIds());
+
+
 		return $this->render(
 			'TltTicketBundle:Default:index.html.twig',
 			array(
@@ -43,15 +46,18 @@ class DefaultController extends Controller
     public function addAction(Request $request)
     {
 		$ticketCreate = new TicketCreate();
-		$form = $this->createForm( new TicketCreateType(), $ticketCreate);
+		$form = $this->createForm( new TicketCreateType($this->getUser()), $ticketCreate);
 		
 		$form->handleRequest($request);
 		
 		if ($form->isValid()) {
 			$user	=	$this->getUser();
+
 			$ticketCreate->setInsertedBy($user->getUsername());
 			$ticketCreate->setModifiedBy($user->getUsername());
 			$ticketCreate->setFromHost($this->container->get('request')->getClientIp());
+
+            $ticketCreate->updateTicketAllocation();
 			
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
@@ -83,16 +89,22 @@ class DefaultController extends Controller
 		$ticketCreate = $this->getDoctrine()
 			->getRepository('TltTicketBundle:TicketCreate')
 			->findOneById($id);
+
+        $ticketAllocation = new TicketAllocation();
 		
-		$form = $this->createForm( new TicketReallocateType(), new TicketAllocation() );
+		$form = $this->createForm( new TicketReallocateType($this->getUser()), $ticketAllocation );
 		
 		$form->handleRequest($request);
 		
 		if ($form->isValid()) {
-			$ticketAllocation = $form->getData();
-			$ticketAllocation->setTicketCreate( $ticketCreate );
-			$ticketAllocation->setAllocatedBy('controller');
-			
+            $user	=	$this->getUser();
+
+            $ticketAllocation->setInsertedBy($user->getUsername());
+            $ticketAllocation->setModifiedBy($user->getUsername());
+            $ticketAllocation->setFromHost($this->container->get('request')->getClientIp());
+
+            $ticketAllocation->setTicketCreate( $ticketCreate );
+
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
 			$em->persist($ticketAllocation);
@@ -122,16 +134,93 @@ class DefaultController extends Controller
      */
 	public function addEquipmentTicket(Request $request, $id)
 	{
-		$ticketCreate = $this->getDoctrine()
-			->getRepository('TltTicketBundle:TicketCreate')
-			->findOneById($id);
-			
+        /* Finding first department of current user. */
+        $currentDepartment = $this->getDoctrine()
+            ->getRepository('TltAdmnBundle:Department')
+            ->findOneById($this->getUser()->getDepartmentsIds());
+
+
+        /* Finding the first service of current user. */
+        $req = new Request();
+        $req->request->set('department_id', $currentDepartment->getId());
+
+        $response = $this->forward('TltAdmnBundle:Ajax:filterServices', array(
+            'request'  => $req
+        ));
+
+        $currentService = $this->getDoctrine()
+            ->getRepository('TltAdmnBundle:Service')
+            ->findOneById(json_decode($response->getContent())[0]->id);
+
+
+        /* Finding first zone of current user. */
+        $req = new Request();
+        $req->request->set('department_id', $currentDepartment->getId());
+        $req->request->set('service_id', $currentService->getId());
+
+        $response = $this->forward('TltAdmnBundle:Ajax:filterBranches', array(
+            'request'  => $req
+        ));
+
+        $currentZone = $this->getDoctrine()
+            ->getRepository('TltAdmnBundle:Branch')
+            ->findOneById(json_decode($response->getContent())[0]->id);
+
+
+        /* Finding first zoneLocation of current user. */
+        $req = new Request();
+        $req->request->set('branch_id', $currentZone->getId());
+        $req->request->set('service_id', $currentService->getId());
+
+        $response = $this->forward('TltAdmnBundle:Ajax:filterLocations', array(
+            'request'  => $req
+        ));
+
+        $currentZoneLocation = $this->getDoctrine()
+            ->getRepository('TltAdmnBundle:ZoneLocation')
+            ->findOneById(json_decode($response->getContent())[0]->id);
+
+
+        /* Finding first owner of current user. */
+        $req = new Request();
+        $req->request->set('department_id', $currentDepartment->getId());
+        $req->request->set('service_id', $currentService->getId());
+        $req->request->set('branch_id', $currentZone->getId());
+        $req->request->set('location_id', $currentZoneLocation->getId());
+
+        $response = $this->forward('TltAdmnBundle:Ajax:filterOwners', array(
+            'request'  => $req
+        ));
+
+        $currentOwner = $this->getDoctrine()
+            ->getRepository('TltAdmnBundle:Owner')
+            ->findOneById(json_decode($response->getContent())[0]->id);
+
+
+
+        $ticketCreate = $this->getDoctrine()
+            ->getRepository('TltTicketBundle:TicketCreate')
+            ->findOneById($id);
+
 		$ticketEquipment =  new TicketEquipment();
 		$ticketEquipment->setTicketCreate($ticketCreate);
-		
+        $ticketEquipment->setDepartment($currentDepartment);
+        $ticketEquipment->setService($currentService);
+        $ticketEquipment->setBranch($currentZone);
+        $ticketEquipment->setZoneLocation($currentZoneLocation);
+        $ticketEquipment->setOwner($currentOwner);
+
 		$form = $this->createForm(
-			new TicketEquipmentType($ticketCreate->getTicketAllocations()->last()->getOwner()->getId()),
-			$ticketEquipment
+			new TicketEquipmentType($this->getUser()),
+			$ticketEquipment,
+            array(
+                'department'    =>  true,
+                'service'  =>  true,
+                'zone' => true,
+                'zoneLocation' => true,
+                'owner' => true,
+                'equipment' => true
+            )
 		);
 		
 		
@@ -139,12 +228,13 @@ class DefaultController extends Controller
 		
 		
 		if ($form->isValid()) {
+
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
 			$em->persist($ticketEquipment);
 			$em->flush();
-			
-			
+
+
 			return $this->redirect(
 				$this->generateUrl(
 					'success_ticket',
@@ -155,7 +245,7 @@ class DefaultController extends Controller
 				)
 			);
 		}
-		
+
 		return
 			array(
 				'ticket' => $ticketCreate,

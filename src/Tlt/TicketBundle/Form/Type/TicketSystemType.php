@@ -12,16 +12,16 @@ use Tlt\TicketBundle\Form\DataTransformer\SystemToNumberTransformer;
 class TicketSystemType extends AbstractType
 {
 	protected $equipment;
-	
+
 	public function __construct ($equipment = null)
 	{
 		$this->equipment = $equipment;
 	}
-	
+
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$equipment = $this->equipment;
-		
+
 		$builder
 			->add('system', 'entity', array(
 				'label'			=> 'Sistem',

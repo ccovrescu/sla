@@ -168,9 +168,6 @@ $("#filter_branch").change(function(){
             for (var i=0, total = data.length; i < total; i++) {
                 $('#filter_zoneLocation').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
             }
-			
-			$('#loading').html("<p>Result Complete...</p>");
-			$('#loading').dialog("close");
         }
     });
 	
@@ -178,9 +175,6 @@ $("#filter_branch").change(function(){
         type: 'post',
         url: '{{ path("filter_select_owners") }}',
         data: data,
-		beforeSend: function(){
-		   $("#loading").dialog('open').html("<p style=\"font-size: 14pt\"><img src=\"{{ asset('css/loader.gif') }}\" /> Loading...</p>");
-		},
         success: function(data) {
             $('#filter_owner').html('<option value="">-- Toate --</option>');
 

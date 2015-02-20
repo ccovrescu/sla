@@ -3,16 +3,16 @@
 namespace Tlt\TicketBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Tlt\AdmnBundle\Entity\Owner;
+use Tlt\AdmnBundle\Entity\AbstractEntity;
+use Tlt\AdmnBundle\Entity\Branch;
 
 /**
 * TicketAllocation
 *
 * @ORM\Table(name="ticket_allocations")
 * @ORM\Entity
-* @ORM\HasLifecycleCallbacks()
 */
-class TicketAllocation
+class TicketAllocation extends AbstractEntity
 {
 	/**
 	* @ORM\Column(type="integer")
@@ -28,26 +28,16 @@ class TicketAllocation
 	protected $ticketCreate;
 	
 	/**
-    * @ORM\ManyToOne(targetEntity="Tlt\AdmnBundle\Entity\Owner", inversedBy="ticketAllocation")
-	* @ORM\JoinColumn(name="owner", referencedColumnName="id")
+    * @ORM\ManyToOne(targetEntity="Tlt\AdmnBundle\Entity\Branch", inversedBy="ticketAllocation")
+	* @ORM\JoinColumn(name="branch", referencedColumnName="id")
 	*/	
-	protected $owner;
-	
-	/**
-	* @ORM\Column(name="allocated_at", type="datetime")
-	*/
-	protected $allocatedAt;
-	
-	/**
-	* @ORM\Column(name="allocated_by", type="string")
-	*/
-	protected $allocatedBy;
+	protected $branch;
 	
     /**
      * Set id
      *
      * @param integer $id
-	 * @return TicketAllocationation
+	 * @return TicketAllocation
      */
     public function setId($id)
     {
@@ -70,7 +60,7 @@ class TicketAllocation
      * Set ticketCreate
      *
      * @param TicketCreate $ticketCreate
-     * @return TicketAllocationation
+     * @return TicketAllocation
      */
     public function setTicketCreate(TicketCreate $ticketCreate = null)
     {
@@ -90,48 +80,25 @@ class TicketAllocation
     }
 	
     /**
-     * Set owner
+     * Set branch
      *
-     * @param Owner $owner
+     * @param Branch $branch
      * @return TicketAllocation
      */
-    public function setOwner(Owner $owner = null)
+    public function setBranch(Branch $branch = null)
     {
-        $this->owner = $owner;
+        $this->branch = $branch;
 
         return $this;
     }
 
     /**
-     * Get owner
+     * Get branch
      *
-     * @return Owner
+     * @return Branch
      */
-    public function getOwner()
+    public function getBranch()
     {
-        return $this->owner;
+        return $this->branch;
     }
-
-	/**
-	* @ORM\PrePersist
-	*/
-	public function setAllocatedAt()
-	{
-		$this->allocatedAt = new \DateTime();
-	}
-	
-	public function getAllocatedAt()
-	{
-		return $this->allocatedAt;
-	}
-	
-	public function setAllocatedBy($allocatedBy)
-	{
-			$this->allocatedBy = $allocatedBy;
-	}
-	
-	public function getAllocatedBy()
-	{
-		return $this->allocatedBy;
-	}
 }

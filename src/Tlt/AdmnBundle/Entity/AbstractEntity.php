@@ -100,6 +100,6 @@ abstract class AbstractEntity
 
 	public function getFromHost()
 	{
-		return $this->insertedAt;
+		return $this->fromHost;
 	}	
 }

@@ -165,7 +165,7 @@ class AjaxController extends Controller
 	public function services2Action(Request $request)
 	{
 		$department_id = $request->request->get('department_id');
- 
+
 		$em = $this->getDoctrine()->getManager();
 		$qb = $em->getRepository('TltAdmnBundle:Service')
 					->createQueryBuilder('service')
@@ -340,7 +340,7 @@ class AjaxController extends Controller
 	/**
 	 * @Route("/filter-owners", name="filter_select_owners")
 	 */
-	public function filterOwnersByLocationAction(Request $request)
+	public function filterOwnersAction(Request $request)
 	{
 		$department_id	= $request->request->get('department_id');
 		$service_id		= $request->request->get('service_id');
@@ -390,7 +390,7 @@ class AjaxController extends Controller
 	/**
 	 * @Route("/filter-branches", name="filter_select_branches")
 	 */
-	public function filterBranchesByDepartmentAction(Request $request)
+	public function filterBranchesAction(Request $request)
 	{
 		$department_id = $request->request->get('department_id');
 		$service_id = $request->request->get('service_id');
@@ -428,7 +428,62 @@ class AjaxController extends Controller
 		
 		return new JsonResponse($owners);
 	}
-	
+
+    /**
+     * @Route("/filter-equipments", name="filter_select_equipments")
+     */
+    public function filterEquipmentsAction(Request $request)
+    {
+        $department_id = $request->request->get('department_id');
+        $service_id = $request->request->get('service_id');
+        $branch_id = $request->request->get('branch_id');
+        $zoneLocation_id = $request->request->get('location_id');
+        $owner_id = $request->request->get('owner_id');
+
+        $userBranches		=	$this->getUser()->getBranchesIds();
+        $userDepartments	=	$this->getUser()->getDepartmentsIds();
+
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->getRepository('TltAdmnBundle:Equipment')
+            ->createQueryBuilder('eq')
+            ->select('distinct eq.id, eq.name')
+
+            ->innerJoin('eq.zoneLocation', 'zl')
+            ->innerJoin('eq.service', 'sv')
+            ->where('eq.isActive = :isActive')
+            ->andWhere('zl.branch IN (:userBranches)')
+            ->andWhere('sv.department IN (:userDepartments)')
+            ->setParameter('isActive', true)
+            ->setParameter('userBranches', $userBranches)
+            ->setParameter('userDepartments', $userDepartments)
+            ->orderby('eq.name', 'ASC');
+
+        if ($owner_id) {
+            $qb->andWhere('eq.owner = :owner')
+                ->setParameter('owner', $owner_id);
+        }
+
+        if ($zoneLocation_id) {
+            $qb->andWhere('eq.zoneLocation = :zoneLocation')
+                ->setParameter('zoneLocation', $zoneLocation_id);
+        } elseif ($branch_id) {
+            $qb->andWhere('zl.branch = :branch')
+                ->setParameter('branch', $branch_id);
+        }
+
+        if ($service_id) {
+            $qb->andWhere('eq.service = :service')
+                ->setParameter('service', $service_id);
+        } elseif ($department_id) {
+            $qb->andWhere('sv.department = :department')
+                ->setParameter('department', $department_id);
+        }
+
+        $equipments	= $qb->getQuery()->getResult();
+
+        return new JsonResponse($equipments);
+    }
+
 	// /**
 	 // * @Route("/filter-branches-by-service", name="filter_select_branches_by_service")
 	 // */

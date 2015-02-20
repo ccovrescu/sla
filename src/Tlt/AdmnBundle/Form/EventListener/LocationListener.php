@@ -8,11 +8,18 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Doctrine\ORM\EntityRepository;
 
-use Tlt\AdmnBundle\Entity\Branch;
-use Tlt\AdmnBundle\Entity\Location;
- 
+use Tlt\ProfileBundle\Entity\User;
+
 class LocationListener implements EventSubscriberInterface
 {
+    private $showAll;
+
+    public function __construct(User $user = null, $showAll = true)
+    {
+        $this->user = $user;
+        $this->showAll = $showAll;
+    }
+
     public static function getSubscribedEvents()
     {
         return array(
@@ -21,17 +28,23 @@ class LocationListener implements EventSubscriberInterface
         );
     }
 	
-    private function addLocationForm($form, $department_id = null, $service_id = null, $branch_id = null )
+    private function addLocationForm($form, $department_id = null, $service_id = null, $branch_id = null, $zoneLocation_id = null )
     {
         $formOptions = array(
 						'class'         => 'TltAdmnBundle:ZoneLocation',
-						'required'		=>	false,
-						'empty_value'   => '-- Toate --',
 						'label'         => 'Locatia',
 						'attr'          => array(
 							'class' => 'location_selector',
-						),
-						'query_builder'	=>	function (EntityRepository $repository) use ($branch_id, $service_id, $department_id) {
+						)
+        );
+
+        if ($this->showAll=='view')
+        {
+            $formOptions['required'] = false;
+            $formOptions['empty_value'] = '-- Toate --';
+        }
+
+        $formOptions['query_builder']	=	function (EntityRepository $repository) use ($branch_id, $service_id, $department_id) {
 												$qb = $repository->createQueryBuilder('zl')
 													->innerJoin('zl.location', 'l')
 													->innerJoin('zl.equipments', 'eq')
@@ -51,9 +64,12 @@ class LocationListener implements EventSubscriberInterface
 												}
 								 
 												return $qb;
-											}
-						);
- 
+											};
+
+        if ($zoneLocation_id) {
+            $formOptions['data'] = $zoneLocation_id;
+        }
+
         $form->add('zoneLocation', 'entity', $formOptions);
     }
 	
@@ -67,8 +83,18 @@ class LocationListener implements EventSubscriberInterface
         }
 		
         $accessor	= PropertyAccess::createPropertyAccessor();
- 		
-        $this->addLocationForm($form, null, null, null );
+
+        $zoneLocation = $accessor->getValue($data, 'zoneLocation');
+        $zone = $accessor->getValue($data, 'branch');
+        $service = $accessor->getValue($data, 'service');
+        $department = $accessor->getValue($data, 'department');
+        $zoneLocation_id = ($zoneLocation) ? $zoneLocation->getId() : null;
+        $zone_id = ($zone) ? $zone->getId() : null;
+        $service_id = ($service) ? $service->getId() : null;
+        $department_id = ($department) ? $department->getId() : null;
+
+
+        $this->addLocationForm($form, $department_id, $service_id, $zone_id, $zoneLocation_id );
     }
 	
     public function preSubmit(FormEvent $event)
@@ -79,7 +105,8 @@ class LocationListener implements EventSubscriberInterface
 		$department_id = array_key_exists('department', $data) ? $data['department'] : null;
 		$service_id	= array_key_exists('service', $data) ? $data['service'] : null;
         $branch_id	= array_key_exists('branch', $data) ? $data['branch'] : null;
+        $zoneLocation_id	= array_key_exists('branch', $data) ? $data['branch'] : null;
  
-        $this->addLocationForm($form, $department_id, $service_id, $branch_id);
+        $this->addLocationForm($form, $department_id, $service_id, $branch_id, $zoneLocation_id);
     }	
 }

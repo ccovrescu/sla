@@ -8,16 +8,17 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Doctrine\ORM\EntityRepository;
 
-use Tlt\AdmnBundle\Entity\Branch;
-use Tlt\AdmnBundle\Entity\Owner;
- 
+use Tlt\ProfileBundle\Entity\User;
+
 class OwnerListener implements EventSubscriberInterface
 {
 	private $user;
+    private $showAll;
 	
-    public function __construct(\Tlt\ProfileBundle\Entity\User $user = null)
+    public function __construct(User $user = null, $showAll = true)
     {
 		$this->user	=	$user;
+        $this->showAll = $showAll;
     }
 
     public static function getSubscribedEvents()
@@ -28,20 +29,26 @@ class OwnerListener implements EventSubscriberInterface
         );
     }
 	
-    private function addOwnerForm($form, $department_id = null, $service_id = null, $branch_id = null, $zoneLocation_id = null)
+    private function addOwnerForm($form, $department_id = null, $service_id = null, $branch_id = null, $zoneLocation_id = null, $owner_id = null)
     {
 		$userBranches		=	$this->user->getBranchesIds();
 		$userDepartments	=	$this->user->getDepartmentsIds();
 		
         $formOptions = array(
             'class'         => 'TltAdmnBundle:Owner',
-			'required'		=>	false,
-            'empty_value'   => '-- Toate --',
             'label'         => 'Entitatea',
             'attr'          => array(
                 'class' => 'owner_selector',
-            ),
-            'query_builder' => function (EntityRepository $repository) use ($department_id, $service_id, $branch_id, $zoneLocation_id, $userBranches, $userDepartments) {
+            )
+        );
+
+        if ($this->showAll)
+        {
+            $formOptions['required'] = false;
+            $formOptions['empty_value'] = '-- Toate --';
+        }
+
+        $formOptions['query_builder'] = function (EntityRepository $repository) use ($department_id, $service_id, $branch_id, $zoneLocation_id, $userBranches, $userDepartments) {
                 $qb = $repository->createQueryBuilder('ow')
                     ->innerJoin('ow.equipments', 'eq')
 					->innerJoin('eq.zoneLocation', 'zl')
@@ -71,9 +78,12 @@ class OwnerListener implements EventSubscriberInterface
 					}
  
                 return $qb;
-            }
-        );
- 
+            };
+
+        if ($owner_id) {
+            $formOptions['data'] = $owner_id;
+        }
+
         $form->add( 'owner', 'entity', $formOptions);
     }
 	
@@ -88,9 +98,19 @@ class OwnerListener implements EventSubscriberInterface
  
         $accessor	= PropertyAccess::createPropertyAccessor();
 		
-		// $department	=	$accessor->getValue($data, 'department');
+		$owner =	$accessor->getValue($data, 'owner');
+        $zoneLocation =	$accessor->getValue($data, 'zoneLocation');
+        $zone =	$accessor->getValue($data, 'branch');
+        $service =	$accessor->getValue($data, 'service');
+        $department =	$accessor->getValue($data, 'department');
+
+        $owner_id =	($owner) ? $owner->getId() : null;
+        $zoneLocation_id =	($zoneLocation) ? $zoneLocation->getId() : null;
+        $zone_id =	($zone) ? $zone->getId() : null;
+        $service_id =	($service) ? $service->getId() : null;
+        $department_id =	($department) ? $department->getId() : null;
  
-        $this->addOwnerForm($form);
+        $this->addOwnerForm($form, $department_id, $service_id, $zone_id, $zoneLocation_id, $owner_id);
     }
 	
     public function preSubmit(FormEvent $event)
@@ -102,7 +122,8 @@ class OwnerListener implements EventSubscriberInterface
 		$service_id			= array_key_exists('service', $data) ? $data['service'] : null;
 		$branch_id			= array_key_exists('branch', $data) ? $data['branch'] : null;
 		$zoneLocation_id	= array_key_exists('zoneLocation', $data) ? $data['zoneLocation'] : null;
+        $owner_id       	= array_key_exists('owner', $data) ? $data['owner'] : null;
  
-        $this->addOwnerForm($form, $department_id, $service_id, $branch_id, $zoneLocation_id);
+        $this->addOwnerForm($form, $department_id, $service_id, $branch_id, $zoneLocation_id, $owner_id);
     }	
 }

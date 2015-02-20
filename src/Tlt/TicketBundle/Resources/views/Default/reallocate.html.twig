@@ -16,14 +16,14 @@
 				<div class="form-group">
 					<label for="disabledSelect">Vechea entitate</label>
 					<select id="disabledSelect" class="form-control">
-						<option>{{ticket.ticketAllocations.last.owner}}</option>
+						<option>{{ticket.ticketAllocations.last.branch}}</option>
 					</select>				
 				</div>
 			</fieldset>
 			
 			<div class="form-group">
-				{{ form_label(form.owner) }}
-				{{ form_widget(form.owner, {'attr': {'class': 'form-control'}}) }}
+				{{ form_label(form.branch) }}
+				{{ form_widget(form.branch, {'attr': {'class': 'form-control'}}) }}
 			</div>			
 			
 			{{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}
