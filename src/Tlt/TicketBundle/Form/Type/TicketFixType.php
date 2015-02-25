@@ -18,7 +18,7 @@ class TicketFixType extends AbstractType {
 			));
 		$builder->add(
 			'isReal', 'checkbox', array(
-				'label'		=>	'Este REAL:',
+				'label'		=>	'DA',
 				'required'	=>	false
 			));
 			

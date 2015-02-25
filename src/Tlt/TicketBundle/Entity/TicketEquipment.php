@@ -41,7 +41,7 @@ class TicketEquipment
 	protected $equipment;
 	
 	/**
-	 * @ORM\OneToMany(targetEntity="TicketSystem", mappedBy="ticketEquipment", cascade={"persist"})
+	 * @ORM\OneToMany(targetEntity="TicketSystem", mappedBy="ticketEquipment", cascade={"persist", "remove"})
 	 */
 	protected $ticketSystems;
 

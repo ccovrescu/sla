@@ -14,10 +14,10 @@
 		{{ form_start(form) }}
 			<div class="form-group">
 				{{ form_label(form.obs) }}
-				{{ form_widget(form.obs, {'attr': {'class': 'form-control', 'placeholder':'mod de rezolvare'}}) }}
+				{{ form_widget(form.obs, {'attr': {'class': 'form-control', 'placeholder':'Completati modul de rezolvare'}}) }}
 			</div>			
 			<div class="form-group">
-				<label>Incidentul este real</label>
+				<label>Incidentul este real?</label>
                 <div class="checkbox">
                   <label>
                     {{ form_widget(form.isReal)}}
@@ -27,7 +27,7 @@
 			{% if form.notAffectedReason is defined %}
 				<div class="form-group">
 					{{ form_label(form.notAffectedReason) }}
-					{{ form_widget(form.notAffectedReason, {'attr': {'class': 'form-control', 'placeholder':'motivati de ce nu a afectat vreun sistem'}}) }}
+					{{ form_widget(form.notAffectedReason, {'attr': {'class': 'form-control', 'placeholder':'Motivati de ce nu a afectat vreun sistem'}}) }}
 				</div>			
 			{% endif %}
 			<div class="form-group">

@@ -45,7 +45,7 @@ class TicketFix
 	protected $resolvedAt;
 	
 	/**
-	 * @ORM\Column(name="not_affected_reason", type="string", length=256)
+	 * @ORM\Column(name="not_affected_reason", type="string", length=256, nullable=true)
 	 */	
 	protected $notAffectedReason;
 	
@@ -216,10 +216,11 @@ class TicketFix
 		$ticketEquipments = $this->getTicketCreate()->getTicketEquipments();
 		foreach ($ticketEquipments as $ticketEquipment) {
 			if (count($ticketEquipment->getTicketSystems())>0) {
+
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 	

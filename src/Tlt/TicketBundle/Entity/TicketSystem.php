@@ -27,9 +27,11 @@ class TicketSystem
 	protected $ticketEquipment;
 	
 	/**
-	 * @ORM\OneToOne(targetEntity="\Tlt\AdmnBundle\Entity\System")
+	 * @ORM\ManyToOne(targetEntity="\Tlt\AdmnBundle\Entity\System")
 	 * @ORM\JoinColumn(name="system", referencedColumnName="id")
 	 */
+
+
 	protected $system;
 	
 	

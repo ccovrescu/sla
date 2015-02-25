@@ -44,7 +44,9 @@
 	
 	
 	<tr>
-		<th rowspan="{{ticket.ticketAllocations|length+(ticket.ticketEquipments is empty ? 2 : 1) }}" class="text-left"  style="vertical-align: middle;">Arondat</th>
+		<th rowspan="{{1+ticket.ticketAllocations|length+((ticket.ticketFix is defined and ticket.ticketFix|length>0) or (ticket.ticketEquipments is defined and ticket.ticketEquipments|length>0) ? 0 : 1) }}" class="text-left"  style="vertical-align: middle;">
+            Arondat
+        </th>
 
 		<th class="text-left">Entitatea</th>
 		<th class="text-left">Persoana</th>
@@ -52,65 +54,110 @@
 	</tr>		
 	{% for allocation in ticket.ticketAllocations %}
 		<tr>
-			<td>{{allocation.branch}}</td>
-			<td>{{allocation.insertedBy}}</td>
-			<td>{{allocation.insertedAt|date('Y-m-d H:i')}}</td>
+			<td>
+                    {%  if not loop.first %}
+                        <strike>{{allocation.branch}}</strike>
+                    {%  else %}
+                        {{allocation.branch}}
+                    {%  endif %}
+            </td>
+			<td>
+                {%  if not loop.first %}
+                    <strike>{{allocation.insertedBy}}</strike>
+                {%  else %}
+                    {{allocation.insertedBy}}
+                {%  endif %}
+            </td>
+			<td>
+                {%  if not loop.first %}
+                    <strike>{{allocation.insertedAt|date('Y-m-d H:i')}}</strike>
+                {%  else %}
+                    {{allocation.insertedAt|date('Y-m-d H:i')}}
+                {%  endif %}
+            </td>
 		</tr>
 	{% endfor %}
-	
-	{% if ticket.ticketEquipments is empty %}
-	<tr>
-		<td colspan="3" class="text-center">
-			<button type="button" class="btn btn-info btn-md" onclick="location.href='{{ path('reallocate_ticket', {'id' : ticket.id}) }}'">Realocare</button>
-		</td>
-	</tr>
-	{% endif %}
+
+    {% if ticket.ticketFix is not defined or ticket.ticketFix|length==0 %}
+        {% if ticket.ticketEquipments is not defined or ticket.ticketEquipments|length==0 %}
+        <tr>
+            <td colspan="3" class="text-center">
+                <button type="button" class="btn btn-info btn-md" onclick="location.href='{{ path('reallocate_ticket', {'id' : ticket.id}) }}'">Realocare</button>
+            </td>
+        </tr>
+        {% endif %}
+    {% endif %}
 
 	
 	<tr>
 		<td colspan="4">&nbsp;</td>
 	</tr>
 
-	
+    <!-- Echipamente/Utilizatori afectati -->
 	<tr>
-		<th colspan="3">Echipamente/Utilizatori afectati</th>
-		<th>Optiuni</th>
+        {% if ticket.ticketFix is not defined or ticket.ticketFix|length==0 %}
+            <th colspan="3">Echipamente/Utilizatori afectati</th>
+		    <th>Optiuni</th>
+        {% else %}
+            <th colspan="4">Echipamente/Utilizatori afectati</th>
+        {% endif %}
 	</tr>
+
 	{% for te in ticket.ticketEquipments %}
 		<tr>
-			<th rowspan="{{te.ticketSystems|length+2}}" style="vertical-align: middle;"><a href="{{ path('admin_equipments_details', {'id' : te.equipment.id}) }}">{{ te.equipment }}</a></th>
-			<th>Sisteme afectate</th>
-			<th>Optiuni</th>
-			<th rowspan="{{te.ticketSystems|length+2}}" class="text-center"  style="vertical-align: middle;">
-				<button type="button" class="btn btn-danger btn-md {% if ticket.ticketFix is defined and ticket.ticketFix or te.ticketSystems|length>0 %} disabled {% endif %}" onclick="location.href='{{ path('rem_equip_from_ticket', {'id' : te.id}) }}'">Elimina echipament</button>
-			</th>
+			<th rowspan="{{te.ticketSystems|length+1+(ticket.ticketFix is defined and ticket.ticketFix|length>0 ? 0:1)}}" style="vertical-align: middle;">
+                <a href="{{ path('admin_equipments_details', {'id' : te.equipment.id}) }}">{{ te.equipment }}</a>
+            </th>
+
+            {% if ticket.ticketFix is not defined or ticket.ticketFix|length==0 %}
+                <th>Sisteme afectate</th>
+                <th>Optiuni</th>
+                <th rowspan="{{te.ticketSystems|length+2}}" class="text-center"  style="vertical-align: middle;">
+                    <button type="button" class="btn btn-danger btn-md {% if ticket.ticketFix is defined and ticket.ticketFix or te.ticketSystems|length>0 %} disabled {% endif %}" onclick="location.href='{{ path('rem_equip_from_ticket', {'id' : te.id}) }}'">Elimina echipament</button>
+                </th>
+            {% else %}
+                <th colspan="3">Sisteme afectate</th>
+            {% endif %}
 		</tr>
+
 		{% for sa in te.ticketSystems %}
 			<tr>
-				<td>{{sa.system.name}}</td>
-				<td class="text-center">
-					<button type="button" class="btn btn-warning btn-xs {% if ticket.ticketFix is defined and ticket.ticketFix%} disabled {% endif %}" onclick="location.href='{{ path('rem_sys_from_equip', {'id' : sa.id}) }}'">Elimina sistem</button>
-				</td>
+
+                {% if ticket.ticketFix is not defined or ticket.ticketFix|length==0 %}
+                    <td>{{sa.system.name}}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-warning btn-xs {% if ticket.ticketFix is defined and ticket.ticketFix%} disabled {% endif %}" onclick="location.href='{{ path('rem_sys_from_equip', {'id' : sa.id}) }}'">Elimina sistem</button>
+                    </td>
+                {% else %}
+                    <td colspan="3">{{sa.system.name}}</td>
+                {% endif %}
 			</tr>
 		{% endfor %}
-		<tr>
-			<td colspan="2" class="text-center">
-					<button type="button" class="btn btn-info btn-xs {% if ticket.ticketFix is defined and ticket.ticketFix is not null %} disabled {% endif %}" onclick="location.href='{{ path('add_sys_to_equip', {'id' : te.id}) }}'">Adauga sistem</button>
-			</td>
-		</tr>
+
+        {% if ticket.ticketFix is not defined or ticket.ticketFix|length==0 %}
+        <tr>
+            <td colspan="2" class="text-center">
+                    <button type="button" class="btn btn-info btn-xs {% if ticket.ticketFix is defined and ticket.ticketFix is not null %} disabled {% endif %}" onclick="location.href='{{ path('add_sys_to_equip', {'id' : te.id}) }}'">Adauga sistem</button>
+            </td>
+        </tr>
+        {% endif %}
 	{% endfor %}
-	
-	<tr>
-		<td colspan="4" class="text-center">
-				<button type="button" class="btn btn-primary btn-md {% if ticket.ticketFix is defined and ticket.ticketFix is not null %} disabled {% endif %}" onclick="location.href='{{ path('add_equip_to_ticket', {'id' : ticket.id}) }}'">Adauga echipament</button>
-		</td>
-	</tr>
-	
+
+    {% if ticket.ticketFix is not defined or ticket.ticketFix|length==0 %}
+        <tr>
+            <td colspan="4" class="text-center">
+                    <button type="button" class="btn btn-primary btn-md {% if ticket.ticketFix is defined and ticket.ticketFix is not null %} disabled {% endif %}" onclick="location.href='{{ path('add_equip_to_ticket', {'id' : ticket.id}) }}'">Adauga echipament</button>
+            </td>
+        </tr>
+    {% endif %}
+    <!-- Echipamente/Utilizatori afectati -->
+
 	
 	<tr>
 		<td colspan="4">&nbsp;</td>
 	</tr>
-	
+
+    <!-- Rezolvare -->
 	{% if ticket.ticketFix %}
 		<tr>
 			<th class="text-left">Mode de rezolvare:</th>
@@ -124,10 +171,12 @@
 			{% endif %}
 			</td>
 		</tr>
+        {% if not ticket.ticketFix.hasSystems %}
 		<tr>
 			<th class="text-left">De ce nu a afectat:</th>
 			<td colspan="3">{{ticket.ticketFix.notAffectedReason}}</td>
 		</tr>
+        {% endif %}
 		<tr>
 			<th class="text-left">Momentul rezolvarii:</th>
 			<td colspan="3">{{ticket.ticketFix.resolvedAt|date('Y-m-d H:i:s')}}</td>
@@ -139,7 +188,7 @@
 			</td>
 		</tr>	
 	{% endif %}
-
+    <!-- Rezolvare -->
 	
 	<tr>
 		<td colspan="4">&nbsp;</td>
