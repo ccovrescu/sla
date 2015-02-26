@@ -1,0 +1,1 @@
+#1: In bundle-ul de tichete la index si detalii nu afiseaza cine a anuntat, iar la detalii nu afiseaza cine a rezolvat.

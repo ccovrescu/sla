@@ -295,7 +295,13 @@ class Equipment extends AbstractEntity
 	
 	public function __toString()
 	{
-		return $this->name;
+//        $name = $this->name;
+//        foreach ($this->getPropertiesValues() as $property)
+//        {
+//            $name .= '|' . $property->getValue();
+//        }
+//		return $name;
+        return $this->name;
 	}
 	
 	public function setBranch(\Tlt\AdmnBundle\Entity\Branch $branch)

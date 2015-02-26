@@ -30,6 +30,8 @@
 					<tr>
 						<th>Nr <i class="fa fa-sort"></i></th>
 						<th>Agentia/Centrul <i class="fa fa-sort"></i></th>
+                        <th>Anuntat de</th>
+                        <th>Anuntat la</th>
 						<th colspan="2" class="text-left">Descriere</th>
 					</tr>
                </thead>
@@ -41,6 +43,8 @@
 								<td>
 									{{ ticket.ticketAllocations.first.branch.name }}
 								</td>
+                                <td>{{ ticket.announcedBy }}</td>
+                                <td>{{ ticket.announcedAt|date('Y-m-d H:i:s') }}</td>
 								<td class="text-left">
                                     <a href="{{ path('ticket_details', {'id' : ticket.id}) }}">
                                         {{ticket.description}}
@@ -52,7 +56,7 @@
                </tbody>
 			   <tfoot>
 					<tr>
-						<th colspan="3" class="text-center">Total {{ tickets|length }} tichete.</th>
+						<th colspan="5" class="text-center">Total {{ tickets|length }} tichete.</th>
 					</tr>
 			   </tfoot>
             </table>

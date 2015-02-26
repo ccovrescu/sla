@@ -2,6 +2,7 @@
 namespace Tlt\TicketBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Tlt\AdmnBundle\Entity\AbstractEntity;
 
 /**
  * TicketFix
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="Tlt\TicketBundle\Entity\TicketFixRepository")
  * @ORM\HasLifecycleCallbacks()
  */
-class TicketFix
+class TicketFix extends AbstractEntity
 {
 	/**
 	* @ORM\Column(type="integer")

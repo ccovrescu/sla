@@ -447,16 +447,19 @@ class AjaxController extends Controller
         $qb = $em->getRepository('TltAdmnBundle:Equipment')
             ->createQueryBuilder('eq')
             ->select('distinct eq.id, eq.name')
+//            ->select('distinct eq.id, CONCAT(eq.name, Group_Concat(pv.value SEPARATOR \'|\')) as name')
 
             ->innerJoin('eq.zoneLocation', 'zl')
             ->innerJoin('eq.service', 'sv')
+//            ->innerJoin('eq.propertiesValues', 'pv')
             ->where('eq.isActive = :isActive')
             ->andWhere('zl.branch IN (:userBranches)')
             ->andWhere('sv.department IN (:userDepartments)')
             ->setParameter('isActive', true)
             ->setParameter('userBranches', $userBranches)
             ->setParameter('userDepartments', $userDepartments)
-            ->orderby('eq.name', 'ASC');
+            ->groupBy('eq.id')
+            ->orderBy('eq.name', 'ASC');
 
         if ($owner_id) {
             $qb->andWhere('eq.owner = :owner')
