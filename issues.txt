@@ -2,3 +2,4 @@
 #2: Nu are optiune de afisare default cand lipseste informatia pentru: Preluat sesizarea, Mode de transmitere sesizare, Tip interventie, Compartiment
 #3: Afisare Tip serviciu in lista tichetelor.
 #4: Nu mai functiona ajax.
+#5: Nu afisa motivul pentru nu a afectat vreun sistem.

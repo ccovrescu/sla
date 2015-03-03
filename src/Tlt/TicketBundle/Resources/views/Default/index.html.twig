@@ -58,7 +58,7 @@
                                     {% endif %}
                                 </td>
                                 <td>{{ ticket.announcedBy }}</td>
-                                <td>{{ ticket.announcedAt|date('Y-m-d H:i:s') }}</td>
+                                <td>{{ ticket.announcedAt|date('d-m-Y H:i') }}</td>
 								<td class="text-left">
                                     <a href="{{ path('ticket_details2', {'id' : ticket.id}) }}">
                                         {{ticket.description}}

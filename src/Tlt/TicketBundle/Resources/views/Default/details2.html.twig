@@ -202,6 +202,14 @@
                                 <pre><abbr title="attribute">{{ ticket.ticketFix.resources|default('n/a') }}</abbr></pre>
                             </td>
                         </tr>
+                        {% if ticket.ticketFix.notAffectedReason %}
+                            <tr>
+                                <td colspan="2">
+                                    <strong>Motivul pentru care NU a afectat sisteme:</strong>
+                                    <pre><abbr title="attribute">{{ ticket.ticketFix.notAffectedReason|default('n/a') }}</abbr></pre>
+                                </td>
+                            </tr>
+                        {% endif %}
                     </table>
                 </tr>
         {% else %}

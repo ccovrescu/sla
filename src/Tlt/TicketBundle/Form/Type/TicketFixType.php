@@ -16,11 +16,11 @@ class TicketFixType extends AbstractType {
             'label' => 'Tip interventie',
             'empty_value' => '-- Selectati --',
             'choices' => array(
-                '1' => 'mentenanta preventiva',
-                '2' => 'adaptiva',
-                '3' => 'corectiva',
-                '4' => 'consumabile',
-                '5' => 'diverse'
+                '1' => 'Mentenanta preventiva',
+                '2' => 'Mentenanta adaptiva',
+                '3' => 'Mentenanta corectiva',
+                '4' => 'Consumabile',
+                '5' => 'Diverse'
             ),
             'multiple' => false,
             'expanded' => false,
