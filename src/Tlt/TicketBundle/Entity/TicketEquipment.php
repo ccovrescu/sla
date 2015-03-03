@@ -35,7 +35,7 @@ class TicketEquipment
 	protected $ticketCreate;
 
 	/**
-	 * @ORM\OneToOne(targetEntity="\Tlt\AdmnBundle\Entity\Equipment")
+	 * @ORM\ManyToOne(targetEntity="\Tlt\AdmnBundle\Entity\Equipment")
 	 * @ORM\JoinColumn(name="equipment", referencedColumnName="id")
 	 */
 	protected $equipment;

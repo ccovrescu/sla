@@ -2,6 +2,7 @@
 
 namespace Tlt\ProfileBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -23,23 +24,49 @@ class User implements UserInterface, \Serializable
      */
     private $username;
 
-   /**
+    /**
+     * @ORM\Column(name="status", type="boolean")
+     */
+    private $status;
+
+    /**
+     * @ORM\Column(type="string", length=25)
+     */
+    private $lastname;
+
+    /**
+     * @ORM\Column(type="string", length=25)
+     */
+    private $firstname;
+
+    /**
+     * @ORM\Column(type="string", length=60, unique=true)
+     */
+    private $email;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $emailNotification;
+
+
+    /**
      * @ORM\ManyToMany(targetEntity="Tlt\AdmnBundle\Entity\Branch")
      * @ORM\JoinTable(name="users_branches",
-     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="branch_id", referencedColumnName="id")}
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="branch_id", referencedColumnName="id", onDelete="CASCADE")}
      *      )
      **/
-	private $branches;
+    private $branches;
 
-   /**
+    /**
      * @ORM\ManyToMany(targetEntity="Tlt\AdmnBundle\Entity\Department")
      * @ORM\JoinTable(name="users_departments",
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="department_id", referencedColumnName="id")}
      *      )
      **/
-	private $departments;
+    private $departments;
 
     /**
      * @ORM\Column(type="string", length=32)
@@ -52,36 +79,49 @@ class User implements UserInterface, \Serializable
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=60, unique=true)
-     */
-    private $email;
-
-    /**
-     * @ORM\Column(name="is_active", type="boolean")
-     */
-    private $isActive;
-
-    /**
      * @ORM\ManyToMany(targetEntity="Role", inversedBy="users")
-     *
      */
     private $roles;
 
-	
+
     public function __construct()
     {
-        $this->isActive		= true;
-        $this->salt			= md5(uniqid(null, true));
-		$this->branches		= new \Doctrine\Common\Collections\ArrayCollection();
-		$this->departments	= new \Doctrine\Common\Collections\ArrayCollection();
+        $this->salt = md5(uniqid(null, true));
+        $this->branches = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->departments = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
-     * @inheritDoc
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Get username
+     *
+     * @return string
      */
     public function getUsername()
     {
         return $this->username;
+    }
+
+    /**
+     * Set username
+     *
+     * @param string $username
+     * @return User
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+
+        return $this;
     }
 
     /**
@@ -93,7 +133,7 @@ class User implements UserInterface, \Serializable
     {
         return $this->branches;
     }
-	
+
     /**
      * Get departments
      *
@@ -104,30 +144,30 @@ class User implements UserInterface, \Serializable
         return $this->departments;
     }
 
-	public function getBranchesIds()
-	{
-		$ids = array();
-		foreach ($this->branches as $branch)
-			$ids[] = $branch->getId();
-		
-		if( empty($ids) )
-			return null;
-		else
-			return $ids;
-	}
-	
-	public function getDepartmentsIds()
-	{
-		$ids = array();
-		foreach ($this->departments as $department)
-			$ids[] = $department->getId();
-		
-		if( empty($ids) )
-			return null;
-		else
-			return $ids;
-	}	
-	
+    public function getBranchesIds()
+    {
+        $ids = array();
+        foreach ($this->branches as $branch)
+            $ids[] = $branch->getId();
+
+        if (empty($ids))
+            return null;
+        else
+            return $ids;
+    }
+
+    public function getDepartmentsIds()
+    {
+        $ids = array();
+        foreach ($this->departments as $department)
+            $ids[] = $department->getId();
+
+        if (empty($ids))
+            return null;
+        else
+            return $ids;
+    }
+
 
     /**
      * @inheritDoc
@@ -138,7 +178,9 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * @inheritDoc
+     * Get password
+     *
+     * @return string
      */
     public function getPassword()
     {
@@ -146,18 +188,145 @@ class User implements UserInterface, \Serializable
     }
 
     /**
+     * Set password
+     *
+     * @param string $password
+     * @return User
+     */
+    public function setPassword($password)
+    {
+        $this->password = sha1($password);
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return User
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get emailNotification
+     *
+     * @return boolean
+     */
+    public function getEmailNotification()
+    {
+        return $this->emailNotification;
+    }
+
+    /**
+     * Set emailNotification
+     *
+     * @param boolean $emailNotification
+     * @return User
+     */
+    public function setEmailNotification($emailNotification)
+    {
+        $this->emailNotification = $emailNotification;
+
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getRoles()
     {
-		$roles = array();
-		foreach ($this->roles as $role)
-		{
-			$roles[]	=	$role->getRole();
-		}
-		// var_dump($roles);die();
-		return $roles;
+        $roles = array();
+        foreach ($this->roles as $role) {
+            $roles[] = $role->getRole();
+        }
+        // var_dump($roles);die();
+        return $roles;
         // return (($this->username == 'admin' || $this->username == 'mihaela' || $this->username || 'radu') ? array('ROLE_ADMIN') : array('ROLE_USER'));
+    }
+
+    /**
+     * Get status
+     *
+     * @return boolean
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set status
+     *
+     * @param boolean $status
+     * @return User
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get lastname
+     *
+     * @return string
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+
+    /**
+     * Set lastname
+     *
+     * @param string $lastname
+     * @return User
+     */
+    public function setLastname($lastname)
+    {
+        $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    /**
+     * Get firstname
+     *
+     * @return string
+     */
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+
+    /**
+     * Set firstname
+     *
+     * @param string $firstname
+     * @return User
+     */
+    public function setFirstname($firstname)
+    {
+        $this->firstname = $firstname;
+
+        return $this;
     }
 
     /**

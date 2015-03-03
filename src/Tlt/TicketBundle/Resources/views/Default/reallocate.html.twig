@@ -11,21 +11,29 @@
           </div>
         </div><!-- /.row -->
 
-		{{ form_start(form) }}
-			<fieldset disabled>
-				<div class="form-group">
-					<label for="disabledSelect">Vechea entitate</label>
-					<select id="disabledSelect" class="form-control">
-						<option>{{ticket.ticketAllocations.last.branch}}</option>
-					</select>				
-				</div>
-			</fieldset>
-			
-			<div class="form-group">
-				{{ form_label(form.branch) }}
-				{{ form_widget(form.branch, {'attr': {'class': 'form-control'}}) }}
-			</div>			
-			
+		{{ form_start(form, {'attr': {'class':'breadcrumb'}}) }}
+            {{ form_errors(form) }}
+
+        <div class="row">
+            <div class="col-lg-6">
+                <fieldset disabled>
+                    <div class="form-group">
+                        <label for="disabledSelect">Vechea optiune:</label>
+                        <select id="disabledSelect" class="form-control">
+                            <option>{{ticket.ticketAllocations.last.branch}}</option>
+                        </select>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    {{ form_label(form.branch) }}
+                    {{ form_widget(form.branch, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+        </div>
+
+
 			{{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}
 			{{ form_widget(form.reseteaza, {'attr': {'class': 'btn btn-default'}}) }}
 			

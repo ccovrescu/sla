@@ -26,12 +26,43 @@ class TicketFix extends AbstractEntity
 	 */
 	protected $ticketCreate;
 
-	/**
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="type", type="integer", length=1)
+     */
+    protected $type;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="compartment", type="string", length=64)
+     */
+    protected $compartment;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="fixed_by", type="string", length=256)
+     */
+    protected $fixedBy;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="obs", type="string", length=256)
      */
 	protected $obs;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="resources", type="string", length=256, nullable=true)
+     */
+    protected $resources;
+
 
 	/**
      * @var boolean
@@ -118,15 +149,37 @@ class TicketFix extends AbstractEntity
     }
 
     /**
-     * Get obs
+     * Get resources
      *
      * @return string 
+     */
+    public function getResources()
+    {
+        return $this->resources;
+    }
+
+    /**
+     * Set resources
+     *
+     * @param string $resources
+     * @return TicketFix
+     */
+    public function setResources($resources)
+    {
+        $this->resources = $resources;
+
+        return $this;
+    }
+
+    /**
+     * Get obs
+     *
+     * @return string
      */
     public function getObs()
     {
         return $this->obs;
     }
-
 
 	/**
      * Set isReal
@@ -298,4 +351,86 @@ class TicketFix extends AbstractEntity
 		
 		return ($workminutes > 0 ? $workminutes : 0);
 	}
+
+    /**
+     * Set type
+     *
+     * @param integer $type
+     * @return TicketFix
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return integer
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set compartment
+     *
+     * @param string $compartment
+     * @return TicketFix
+     */
+    public function setCompartment($compartment)
+    {
+        $this->compartment = $compartment;
+
+        return $this;
+    }
+
+    /**
+     * Get compartment
+     *
+     * @return string 
+     */
+    public function getCompartment()
+    {
+        return $this->compartment;
+    }
+
+    /**
+     * Set fixedBy
+     *
+     * @param string $fixedBy
+     * @return TicketFix
+     */
+    public function setFixedBy($fixedBy)
+    {
+        $this->fixedBy = $fixedBy;
+
+        return $this;
+    }
+
+    /**
+     * Get fixedBy
+     *
+     * @return string 
+     */
+    public function getFixedBy()
+    {
+        return $this->fixedBy;
+    }
+
+    /**
+     * Set resolvedIn
+     *
+     * @param integer $resolvedIn
+     * @return TicketFix
+     */
+    public function setResolvedIn($resolvedIn)
+    {
+        $this->resolvedIn = $resolvedIn;
+
+        return $this;
+    }
 }

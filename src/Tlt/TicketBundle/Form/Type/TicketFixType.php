@@ -12,14 +12,45 @@ class TicketFixType extends AbstractType {
 	 * {@inheritDoc}
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options) {
-		$builder->add(
-			'obs', 'textarea', array(
-				'label' => 'Mod de rezolvare:'
+        $builder->add('type', 'choice', array(
+            'label' => 'Tip interventie',
+            'empty_value' => '-- Selectati --',
+            'choices' => array(
+                '1' => 'Tip 1',
+                '2' => 'Tip 2'
+            ),
+            'multiple' => false,
+            'expanded' => false,
+            'required' => true
+        ));
+        $builder->add(
+			'compartment', 'text', array(
+				'label' => 'Compartiment:'
 			));
+        $builder->add(
+            'fixedBy', 'text', array(
+                'label' => 'Persoana care rezolva:'
+            ));
+        $builder->add(
+            'obs', 'textarea', array(
+                'label' => 'Mod de rezolvare:'
+            ));
+        $builder->add(
+            'resources', 'textarea', array(
+                'label' => 'Resurse utilizate:',
+                'required' => false
+            ));
 		$builder->add(
-			'isReal', 'checkbox', array(
-				'label'		=>	'DA',
-				'required'	=>	false
+			'isReal', 'choice', array(
+				'label' => 'Incidentul este real',
+                'empty_value' => '-- Selectati --',
+                'choices' => array(
+                    '0' => 'Nu',
+                    '1' => 'Da'
+                ),
+                'multiple' => false,
+                'expanded' => false,
+				'required' => true
 			));
 			
 		if ($options['hasSystems']==false)
@@ -33,7 +64,7 @@ class TicketFixType extends AbstractType {
 			'resolvedAt', 'datetime', array(
 				'date_widget' => "single_text",
 				'time_widget' => "single_text",
-				'label' => 'Rezolvat la:',
+				'label' => 'Data si ora rezolvarii:',
 				'data' => new \DateTime(),
 			));
 		$builder->add('salveaza', 'submit');

@@ -1,11 +1,16 @@
 <?php
 namespace Tlt\ProfileBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\SecurityContext;
 
 class SecurityController extends Controller
 {
+    /**
+     * @Route("/login", name="login")
+     */
     public function loginAction()
     {
         $request = $this->getRequest();

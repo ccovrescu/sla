@@ -64,6 +64,9 @@
 				<li><a href="{{ path('admin_equipments_index') }}">Echipamente</a></li>
 				<li><a href="{{ path('admin_systems_index') }}">Sisteme</a></li>
 				<li><a href="{{ path('admin_sts_index') }}">Mapari sisteme pe servicii</a></li>
+                  {% if is_granted('ROLE_ADMIN') %}
+                    <li><a href="{{ path('profile_user_index') }}">Utilizatori</a></li>
+                  {% endif %}
               </ul>
             </li>
 			{% if is_granted('ROLE_ADMIN') %}
@@ -129,9 +132,10 @@
 				<!--
 				<li><a href="#"><i class="fa fa-user"></i> Profile</a></li>
                 <li><a href="#"><i class="fa fa-envelope"></i> Inbox <span class="badge">7</span></a></li>
-                <li><a href="#"><i class="fa fa-gear"></i> Settings</a></li>
-                <li class="divider"></li>
 				-->
+                <li><a href="{{ path('profile_user_details') }}"><i class="fa fa-user"></i> Profil utilizator</a></li>
+                <li><a href="{{ path('profile_user_chpwd') }}"><i class="fa fa-gear"></i> Schimbare parola</a></li>
+                <li class="divider"></li>
                 <li><a href="{{ path('logout') }}"><i class="fa fa-power-off"></i> Log Out</a></li>
               </ul>
             </li>

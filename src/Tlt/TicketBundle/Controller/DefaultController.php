@@ -46,6 +46,9 @@ class DefaultController extends Controller
     public function addAction(Request $request)
     {
 		$ticketCreate = new TicketCreate();
+        $ticketCreate->setTakenBy($this->getUser()->getLastname() . ' ' . $this->getUser()->getFirstname());
+        $ticketCreate->setSentType('call center');
+
 		$form = $this->createForm( new TicketCreateType($this->getUser()), $ticketCreate);
 		
 		$form->handleRequest($request);
@@ -372,6 +375,7 @@ class DefaultController extends Controller
 			->findOneById($id);
 			
 		$ticketFix = new TicketFix();
+        $ticketFix->setFixedBy($this->getUser()->getLastName() . ' ' . $this->getUser()->getFirstName());
 		$ticketFix->setTicketCreate($ticketCreate);
 		
 		$form = $this->createForm(
@@ -386,8 +390,12 @@ class DefaultController extends Controller
 		$form->handleRequest($request);
 		
 		if ($form->isValid()) {
-			$ticketFix = $form->getData();
-			$ticketFix->setTicketCreate( $ticketCreate );
+            $user	=	$this->getUser();
+
+            $ticketFix->setInsertedBy($user->getUsername());
+            $ticketFix->setModifiedBy($user->getUsername());
+            $ticketFix->setFromHost($this->container->get('request')->getClientIp());
+
 			
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
@@ -427,7 +435,23 @@ class DefaultController extends Controller
 				'ticket' => $ticket
 			);
     }
-	
+
+    /**
+     * @Route("/ticket_details2/{id}", name="ticket_details2")
+     * @Template("TltTicketBundle:Default:details2.html.twig")
+     */
+    public function details2Action($id)
+    {
+        $ticket = $this->getDoctrine()
+            ->getRepository('TltTicketBundle:TicketCreate')
+            ->findOneById($id);
+
+        return
+            array(
+                'ticket' => $ticket
+            );
+    }
+
 	/**
      * @Route("/success_ticket/{action}/{id}/{parent}", requirements={"id" = "\d+"}, defaults={"parent" = null}, name="success_ticket")
      * @Template()

@@ -77,6 +77,7 @@ security:
         - { path: ^/anexa, roles: ROLE_ADMIN }
         - { path: ^/sla, roles: ROLE_ADMIN }
         - { path: ^/sys, roles: ROLE_ADMIN }
+        - { path: ^/user/edit, roles: ROLE_ADMIN }
         - { path: ^/, roles: ROLE_USER }
         # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
     access_denied_url: /denied

@@ -11,8 +11,6 @@
           </div>
         </div><!-- /.row -->
 
-		
-
 
            <div class="table-responsive">
             <table class="table table-bordered table-hover table-striped tablesorter">
@@ -62,9 +60,9 @@
 		<tr>
 			<td>
                     {%  if not loop.first %}
-                        <strike>{{allocation.branch}}</strike>
+                        <strike>{{allocation.branch.name}}</strike>
                     {%  else %}
-                        {{allocation.branch}}
+                        {{allocation.branch.name}}
                     {%  endif %}
             </td>
 			<td>
@@ -169,6 +167,10 @@
 			<th class="text-left">Mode de rezolvare:</th>
 			<td colspan="3">{{ticket.ticketFix.obs}}</td>
 		</tr>
+        <tr>
+            <th class="text-left">Resurse utilizate:</th>
+            <td colspan="3">{{ticket.ticketFix.resources}}</td>
+        </tr>
         <tr>
             <th class="text-left">Rezolvat de:</th>
             <td colspan="3">{{ ticket.ticketFix.modifiedBy }}</td>

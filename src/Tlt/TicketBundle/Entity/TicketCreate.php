@@ -3,6 +3,8 @@ namespace Tlt\TicketBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use Tlt\AdmnBundle\Entity\AbstractEntity;
 use Tlt\AdmnBundle\Entity\Branch;
@@ -34,13 +36,38 @@ class TicketCreate extends AbstractEntity
 	protected $announcedAt;
 
 	/**
-	* @var string
-	*
-	* @ORM\Column(name="announced_by", type="string", length=128)
-	*/
+	 * @var string
+	 *
+	 * @ORM\Column(name="announced_by", type="string", length=128)
+     *
+     * @Assert\Length(
+     *     min = 7,
+     *     max = 128,
+     *     minMessage = "Numele sesizantului trebuie sa contina cel putin 7 caractere.",
+     *     maxMessage = "Numele sesizantului trebuie sa contina cel mult 128 caractere."
+     * ),
+     * @Assert\Regex(
+     *     pattern = "/^[a-zA-z\s]+$/",
+     *     message = "Valoarea {{ value }} contine caractere invalide."
+     * )
+     */
 	protected $announcedBy;
-	
-	/**
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="taken_by", type="string", length=128)
+     */
+    protected $takenBy;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="sent_type", type="string", length=64)
+     */
+    protected $sentType;
+
+    /**
 	* @ORM\Column(type="string", length=255)
 	*/
 	protected $description;
@@ -277,5 +304,110 @@ class TicketCreate extends AbstractEntity
         $ticketAllocation->setFromHost($this->getFromHost());
 
         $this->ticketAllocations->add($ticketAllocation);
+    }
+
+    /**
+     * Set takenBy
+     *
+     * @param string $takenBy
+     * @return TicketCreate
+     */
+    public function setTakenBy($takenBy)
+    {
+        $this->takenBy = $takenBy;
+
+        return $this;
+    }
+
+    /**
+     * Get takenBy
+     *
+     * @return string 
+     */
+    public function getTakenBy()
+    {
+        return $this->takenBy;
+    }
+
+    /**
+     * Set sentType
+     *
+     * @param string $sentType
+     * @return TicketCreate
+     */
+    public function setSentType($sentType)
+    {
+        $this->sentType = $sentType;
+
+        return $this;
+    }
+
+    /**
+     * Get sentType
+     *
+     * @return string 
+     */
+    public function getSentType()
+    {
+        return $this->sentType;
+    }
+
+    /**
+     * Add ticketAllocations
+     *
+     * @param \Tlt\TicketBundle\Entity\TicketAllocation $ticketAllocations
+     * @return TicketCreate
+     */
+    public function addTicketAllocation(\Tlt\TicketBundle\Entity\TicketAllocation $ticketAllocations)
+    {
+        $this->ticketAllocations[] = $ticketAllocations;
+
+        return $this;
+    }
+
+    /**
+     * Remove ticketAllocations
+     *
+     * @param \Tlt\TicketBundle\Entity\TicketAllocation $ticketAllocations
+     */
+    public function removeTicketAllocation(\Tlt\TicketBundle\Entity\TicketAllocation $ticketAllocations)
+    {
+        $this->ticketAllocations->removeElement($ticketAllocations);
+    }
+
+    /**
+     * Add ticketEquipments
+     *
+     * @param \Tlt\TicketBundle\Entity\TicketEquipment $ticketEquipments
+     * @return TicketCreate
+     */
+    public function addTicketEquipment(\Tlt\TicketBundle\Entity\TicketEquipment $ticketEquipments)
+    {
+        $this->ticketEquipments[] = $ticketEquipments;
+
+        return $this;
+    }
+
+    /**
+     * Remove ticketEquipments
+     *
+     * @param \Tlt\TicketBundle\Entity\TicketEquipment $ticketEquipments
+     */
+    public function removeTicketEquipment(\Tlt\TicketBundle\Entity\TicketEquipment $ticketEquipments)
+    {
+        $this->ticketEquipments->removeElement($ticketEquipments);
+    }
+
+    /**
+     * Set ticketFix
+     *
+     * @param \Tlt\TicketBundle\Entity\TicketFix $ticketFix
+     * @return TicketCreate
+     */
+    public function setTicketFix(\Tlt\TicketBundle\Entity\TicketFix $ticketFix = null)
+    {
+        $this->ticketFix = $ticketFix;
+
+        return $this;
     }
 }

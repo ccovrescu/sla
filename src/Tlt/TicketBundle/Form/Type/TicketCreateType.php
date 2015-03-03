@@ -38,10 +38,20 @@ class TicketCreateType extends AbstractType {
 				'label' => 'Anuntat la:',
 				'data' => new \DateTime(),
 			));
-		$builder->add(
+        $builder->add(
+            'takenBy', 'text', array(
+                'max_length' => 128,
+                'label' => 'Preluat sesizarea:'
+            ));
+        $builder->add(
+            'sentType', 'text', array(
+                'max_length' => 128,
+                'label' => 'Mod de transmitere sesizare:'
+            ));
+        $builder->add(
 			'announcedBy', 'text', array(
 				'max_length' => 128,
-				'label' => 'Anuntat de:'			
+				'label' => 'Nume sesizant:'
 			));
 		$builder->add(
 			'ticketAllocations', 'entity', array(

@@ -18,7 +18,7 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             // new Tlt\TicketsBundle\TltTicketsBundle(),
             new Tlt\AdmnBundle\TltAdmnBundle(),
-			new Craue\FormFlowBundle\CraueFormFlowBundle(),
+//			new Craue\FormFlowBundle\CraueFormFlowBundle(),
             new Tlt\TicketBundle\TltTicketBundle(),
             new Tlt\MainBundle\TltMainBundle(),
 			new Tlt\ProfileBundle\TltProfileBundle(),
