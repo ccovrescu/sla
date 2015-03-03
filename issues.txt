@@ -3,3 +3,4 @@
 #3: Afisare Tip serviciu in lista tichetelor.
 #4: Nu mai functiona ajax.
 #5: Nu afisa motivul pentru nu a afectat vreun sistem.
+#6: Definire si implementare entitate TicketType.

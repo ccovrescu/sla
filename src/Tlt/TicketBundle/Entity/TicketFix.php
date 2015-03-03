@@ -28,9 +28,9 @@ class TicketFix extends AbstractEntity
 
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="type", type="integer", length=1)
+     * @ORM\ManyToOne(targetEntity="TicketType", inversedBy="ticketFix")
+     * @ORM\JoinColumn(name="type", referencedColumnName="id")
+     * @ORM\OrderBy({"name" = "ASC"})
      */
     protected $type;
 

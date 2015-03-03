@@ -12,16 +12,11 @@ class TicketFixType extends AbstractType {
 	 * {@inheritDoc}
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('type', 'choice', array(
+        $builder->add('type', 'entity', array(
+            'class' => 'Tlt\TicketBundle\Entity\TicketType',
+            'property' => 'name',
             'label' => 'Tip interventie',
             'empty_value' => '-- Selectati --',
-            'choices' => array(
-                '1' => 'Mentenanta preventiva',
-                '2' => 'Mentenanta adaptiva',
-                '3' => 'Mentenanta corectiva',
-                '4' => 'Consumabile',
-                '5' => 'Diverse'
-            ),
             'multiple' => false,
             'expanded' => false,
             'required' => true

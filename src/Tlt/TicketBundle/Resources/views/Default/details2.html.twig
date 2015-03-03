@@ -179,7 +179,7 @@
         <tr>
             <table class="table table-bordered">
                 <tr>
-                    <td><strong>Tip interventie:</strong> <samp><abbr title="attribute">{{ ticket.ticketFix.type|default('n/a') }}</abbr></samp></td>
+                    <td><strong>Tip interventie:</strong> <samp><abbr title="attribute">{{ ticket.ticketFix.type.name|default('n/a') }}</abbr></samp></td>
                     <td><strong>Compartiment:</strong> <samp><abbr title="attribute">{{ ticket.ticketFix.compartment|default('n/a') }}</abbr></samp></td>
                 </tr>
             </table>
