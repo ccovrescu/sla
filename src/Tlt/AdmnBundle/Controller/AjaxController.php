@@ -160,7 +160,7 @@ class AjaxController extends Controller
 	}
 
 	/**
-	 * @Route("/services2", name="select_services")
+	 * @Route("/ajax/services2", name="select_services")
 	 */
 	public function services2Action(Request $request)
 	{

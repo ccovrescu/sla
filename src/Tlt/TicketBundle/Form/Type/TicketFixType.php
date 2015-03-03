@@ -16,8 +16,11 @@ class TicketFixType extends AbstractType {
             'label' => 'Tip interventie',
             'empty_value' => '-- Selectati --',
             'choices' => array(
-                '1' => 'Tip 1',
-                '2' => 'Tip 2'
+                '1' => 'mentenanta preventiva',
+                '2' => 'adaptiva',
+                '3' => 'corectiva',
+                '4' => 'consumabile',
+                '5' => 'diverse'
             ),
             'multiple' => false,
             'expanded' => false,
