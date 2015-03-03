@@ -30,6 +30,7 @@
 					<tr>
 						<th>Nr <i class="fa fa-sort"></i></th>
 						<th>Agentia/Centrul <i class="fa fa-sort"></i></th>
+                        <th>Tip serviciu <i class="fa fa-sort"></i></th>
                         <th>Anuntat de</th>
                         <th>Anuntat la</th>
 						<th colspan="2" class="text-left">Descriere</th>
@@ -43,6 +44,19 @@
 								<td>
 									{{ ticket.ticketAllocations.first.branch.name }}
 								</td>
+                                <td>
+                                    {% if ticket.ticketEquipments is defined and ticket.ticketEquipments|length>0 %}
+                                        {% if ticket.ticketEquipments.first.equipment.service.department.id == "1" %}
+                                            IP
+                                        {% elseif ticket.ticketEquipments.first.equipment.service.department.id == "2" %}
+                                            TC
+                                        {% elseif ticket.ticketEquipments.first.equipment.service.department.id == "3" %}
+                                            TI
+                                        {% endif %}
+                                    {% else %}
+                                        <samp><abbr title="attribute">n/a</abbr></samp>
+                                    {% endif %}
+                                </td>
                                 <td>{{ ticket.announcedBy }}</td>
                                 <td>{{ ticket.announcedAt|date('Y-m-d H:i:s') }}</td>
 								<td class="text-left">
