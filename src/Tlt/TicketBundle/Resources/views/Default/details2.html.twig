@@ -63,7 +63,7 @@
                                 <strong>Data:</strong> <samp><abbr title="data aparitiei">{{ ticket.occuredAt|date('d-m-Y') }}</abbr></samp><br/>
                                 <strong>Ora:</strong> <samp><abbr title="attribute">{{ ticket.occuredAt|date('H:m') }}</abbr></samp>
                             </td>
-                            <td><strong>Preluat sesizarea:</strong> <samp><abbr title="attribute">{{ ticket.takenBy }}</abbr></samp></td>
+                            <td><strong>Preluat sesizarea:</strong> <samp><abbr title="attribute">{{ ticket.takenBy|default('n/a') }}</abbr></samp></td>
                         </tr>
                     </table>
                 </tr>
@@ -82,10 +82,10 @@
                                     </abbr>
                                 </samp>
                             </td>
-                            <td><strong>Nume sesizant:</strong> <samp><abbr title="attribute">{{ ticket.announcedBy }}</abbr></samp></td>
+                            <td><strong>Nume sesizant:</strong> <samp><abbr title="attribute">{{ ticket.announcedBy|default('n/a') }}</abbr></samp></td>
                         </tr>
                         <tr>
-                            <td><strong>Mod de transmitere sesizare:</strong> <samp><abbr title="attribute">{{ ticket.sentType }}</abbr></samp></td>
+                            <td><strong>Mod de transmitere sesizare:</strong> <samp><abbr title="attribute">{{ ticket.sentType|default('n/a') }}</abbr></samp></td>
                             <td><strong>Numar inregistrare sesizare:</strong> <samp><abbr title="attribute">[propunere sa dispara]</abbr></samp></td>
                         </tr>
                     </table>
@@ -179,8 +179,8 @@
         <tr>
             <table class="table table-bordered">
                 <tr>
-                    <td><strong>Tip interventie:</strong> <samp><abbr title="attribute">{{ ticket.ticketFix.type }}</abbr></samp></td>
-                    <td><strong>Compartiment:</strong> <samp><abbr title="attribute">{{ ticket.ticketFix.compartment }}</abbr></samp></td>
+                    <td><strong>Tip interventie:</strong> <samp><abbr title="attribute">{{ ticket.ticketFix.type|default('n/a') }}</abbr></samp></td>
+                    <td><strong>Compartiment:</strong> <samp><abbr title="attribute">{{ ticket.ticketFix.compartment|default('n/a') }}</abbr></samp></td>
                 </tr>
             </table>
         </tr>
