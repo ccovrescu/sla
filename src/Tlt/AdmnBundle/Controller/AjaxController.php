@@ -249,7 +249,7 @@ class AjaxController extends Controller
 	}
 
 	/**
-	 * @Route("/filter-locations", name="filter_select_locations")
+	 * @Route("/ajax/filter-locations", name="filter_select_locations")
 	 */
 	public function filterLocationsAction(Request $request)
 	{
@@ -285,7 +285,7 @@ class AjaxController extends Controller
 	}
 	
 	/**
-	 * @Route("/filter-services", name="filter_select_services")
+	 * @Route("/ajax/filter-services", name="filter_select_services")
 	 */
 	public function filterServicesAction(Request $request)
 	{
@@ -338,7 +338,7 @@ class AjaxController extends Controller
 	// }
 	
 	/**
-	 * @Route("/filter-owners", name="filter_select_owners")
+	 * @Route("/ajax/filter-owners", name="filter_select_owners")
 	 */
 	public function filterOwnersAction(Request $request)
 	{
@@ -388,7 +388,7 @@ class AjaxController extends Controller
 	}
 	
 	/**
-	 * @Route("/filter-branches", name="filter_select_branches")
+	 * @Route("/ajax/filter-branches", name="filter_select_branches")
 	 */
 	public function filterBranchesAction(Request $request)
 	{
@@ -430,7 +430,7 @@ class AjaxController extends Controller
 	}
 
     /**
-     * @Route("/filter-equipments", name="filter_select_equipments")
+     * @Route("/ajax/filter-equipments", name="filter_select_equipments")
      */
     public function filterEquipmentsAction(Request $request)
     {
