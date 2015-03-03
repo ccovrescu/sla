@@ -1,0 +1,61 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>Agentii/Centre <small>Index</small></h1>
+            <ol class="breadcrumb">
+                <li><a href="{{ path('admin_index') }}"><i class="icon-dashboard"></i> Administrare</a></li>
+                <li class="active"><i class="icon-file-alt"></i> Utilizatori</li>
+            </ol>
+        </div>
+    </div><!-- /.row -->
+
+
+    <div class="row">
+        <div class="col-lg-8 text-left">
+            <h2>Lista utilizatori</h2>
+        </div>
+        <div class="col-lg-4 text-right">
+            <div class="panel-body">
+                <button type="submit" class="btn btn-primary" onclick="location.href='{{ path('admin_branches_add') }}'">Adauga utilizator</button>
+            </div>
+        </div>
+    </div><!-- /.row -->
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped tablesorter">
+            <thead>
+            <tr>
+                <th>Denumire <i class="fa fa-sort"></i></th>
+                <th class="text-right">Optiuni</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if users %}
+                {% for user in users %}
+                    <tr>
+                        <td><a href="#">{{ user.username }}</a></td>
+                        <td class="text-right"><a href="{{ path('profile_user_edit', {'id' : user.id}) }}">modifica</a></td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <th colspan="2" class="text-center">Total {{ users|length }} utilizatori.</th>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+{% endblock  %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <!-- Page Specific Plugins -->
+    <script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
+    <script src="{{ asset('js/tablesorter/tables.js') }}"></script>
+{% endblock %}
