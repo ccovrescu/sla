@@ -75,8 +75,8 @@ class DefaultController extends Controller
 
             // perform some action, such as saving the task to the database
             $em = $this->getDoctrine()->getManager();
-//            $em->persist($ticket);
-//            $em->flush();
+            $em->persist($ticket);
+            $em->flush();
 
 
             $mailer = $this->get('mailer');
