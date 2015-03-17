@@ -103,7 +103,7 @@
                     <td colspan="2">
                         <samp>
                             <abbr title="attribute">
-                                {% if ticket.emergency.id == 2 %}
+                                {% if ticket.emergency is not null and ticket.emergency.id == 2 %}
                                     Non Urgent <i class="fa fa-check-square-o"></i>
                                 {% else %}
                                     Non Urgnet <i class="fa fa-square-o"></i>
