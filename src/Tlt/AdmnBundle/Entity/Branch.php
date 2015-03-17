@@ -30,6 +30,13 @@ class Branch extends AbstractEntity
     private $name;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="emails", type="string", length=256)
+     */
+    private $emails;
+
+    /**
      * @ORM\OneToMany(targetEntity="ZoneLocation", mappedBy="branch")
      */
     private $zoneLocations;
@@ -140,5 +147,61 @@ class Branch extends AbstractEntity
     public function __toString()
     {
         return $this->name;
+    }
+
+    /**
+     * Set emails
+     *
+     * @param string $emails
+     * @return Branch
+     */
+    public function setEmails($emails)
+    {
+        $this->emails = $emails;
+
+        return $this;
+    }
+
+    /**
+     * Get emails
+     *
+     * @return string 
+     */
+    public function getEmails()
+    {
+        return $this->emails;
+    }
+
+    /**
+     * Add ticketAllocation
+     *
+     * @param \Tlt\TicketBundle\Entity\TicketAllocation $ticketAllocation
+     * @return Branch
+     */
+    public function addTicketAllocation(\Tlt\TicketBundle\Entity\TicketAllocation $ticketAllocation)
+    {
+        $this->ticketAllocation[] = $ticketAllocation;
+
+        return $this;
+    }
+
+    /**
+     * Remove ticketAllocation
+     *
+     * @param \Tlt\TicketBundle\Entity\TicketAllocation $ticketAllocation
+     */
+    public function removeTicketAllocation(\Tlt\TicketBundle\Entity\TicketAllocation $ticketAllocation)
+    {
+        $this->ticketAllocation->removeElement($ticketAllocation);
+    }
+
+    /**
+     * Get ticketAllocation
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTicketAllocation()
+    {
+        return $this->ticketAllocation;
     }
 }

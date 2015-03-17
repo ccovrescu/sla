@@ -2,8 +2,12 @@
 
 namespace Tlt\ProfileBundle\Entity;
 
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+
+use Tlt\AdmnBundle\Entity\Branch;
+use Tlt\AdmnBundle\Entity\Department;
+
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -84,16 +88,23 @@ class User implements UserInterface, \Serializable
     private $password;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Role", inversedBy="users")
-     */
-    private $roles;
+     * @ORM\ManyToMany(targetEntity="Tlt\ProfileBundle\Entity\Role")
+     * @ORM\JoinTable(name="user_role",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id")}
+     *      )
+     **/
+    private $roluri;
 
 
     public function __construct()
     {
-        $this->salt = md5(uniqid(null, true));
-        $this->branches = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->departments = new \Doctrine\Common\Collections\ArrayCollection();
+        // TODO: de implementat salt.
+//        $this->salt = md5(uniqid(null, true));
+        $this->salt = '';
+        $this->branches = new ArrayCollection();
+        $this->departments = new ArrayCollection();
+        $this->roluri = new ArrayCollection();
     }
 
     /**
@@ -254,15 +265,19 @@ class User implements UserInterface, \Serializable
     /**
      * @inheritDoc
      */
+    public function getRoluri()
+    {
+        return $this->roluri;
+    }
+
     public function getRoles()
     {
         $roles = array();
-        foreach ($this->roles as $role) {
+        foreach ($this->roluri as $role) {
             $roles[] = $role->getRole();
         }
-        // var_dump($roles);die();
+
         return $roles;
-        // return (($this->username == 'admin' || $this->username == 'mihaela' || $this->username || 'radu') ? array('ROLE_ADMIN') : array('ROLE_USER'));
     }
 
     /**
@@ -400,10 +415,10 @@ class User implements UserInterface, \Serializable
     /**
      * Add branches
      *
-     * @param \Tlt\AdmnBundle\Entity\Branch $branches
+     * @param Branch $branches
      * @return User
      */
-    public function addBranch(\Tlt\AdmnBundle\Entity\Branch $branches)
+    public function addBranch(Branch $branches)
     {
         $this->branches[] = $branches;
 
@@ -413,9 +428,9 @@ class User implements UserInterface, \Serializable
     /**
      * Remove branches
      *
-     * @param \Tlt\AdmnBundle\Entity\Branch $branches
+     * @param Branch $branches
      */
-    public function removeBranch(\Tlt\AdmnBundle\Entity\Branch $branches)
+    public function removeBranch(Branch $branches)
     {
         $this->branches->removeElement($branches);
     }
@@ -423,10 +438,10 @@ class User implements UserInterface, \Serializable
     /**
      * Add departments
      *
-     * @param \Tlt\AdmnBundle\Entity\Department $departments
+     * @param Department $departments
      * @return User
      */
-    public function addDepartment(\Tlt\AdmnBundle\Entity\Department $departments)
+    public function addDepartment(Department $departments)
     {
         $this->departments[] = $departments;
 
@@ -436,33 +451,33 @@ class User implements UserInterface, \Serializable
     /**
      * Remove departments
      *
-     * @param \Tlt\AdmnBundle\Entity\Department $departments
+     * @param Department $departments
      */
-    public function removeDepartment(\Tlt\AdmnBundle\Entity\Department $departments)
+    public function removeDepartment(Department $departments)
     {
         $this->departments->removeElement($departments);
     }
 
     /**
-     * Add roles
+     * Add roluri
      *
-     * @param \Tlt\ProfileBundle\Entity\Role $roles
+     * @param Role $roluri
      * @return User
      */
-    public function addRole(\Tlt\ProfileBundle\Entity\Role $roles)
+    public function addRoluri(Role $roluri)
     {
-        $this->roles[] = $roles;
+        $this->roluri[] = $roluri;
 
         return $this;
     }
 
     /**
-     * Remove roles
+     * Remove roluri
      *
-     * @param \Tlt\ProfileBundle\Entity\Role $roles
+     * @param Role $roluri
      */
-    public function removeRole(\Tlt\ProfileBundle\Entity\Role $roles)
+    public function removeRoluri(Role $roluri)
     {
-        $this->roles->removeElement($roles);
+        $this->roluri->removeElement($roluri);
     }
 }

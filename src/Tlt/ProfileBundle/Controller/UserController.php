@@ -123,4 +123,61 @@ class UserController extends Controller
             'form' => $form->createView(),
         ));
     }
+
+    /**
+     * @Route("/user/add", name="profile_user_add")
+     * @Template("TltProfileBundle:User:add.html.twig")
+     */
+    public function addAction(Request $request)
+    {
+        $user = new User();
+        $user->setStatus(true);
+        $user->setPassword('123456');
+        $form = $this->createForm( new UserType(), $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            // perform some action, such as saving the task to the database
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('profile_user_success', array('action'=>'add')));
+        }
+
+        return $this->render('TltProfileBundle:User:add.html.twig', array(
+            'form' => $form->createView(),
+        ));
+    }
+
+    /**
+     * @Route("/user/delete/{id}", name="profile_user_delete")
+     * @Template()
+     */
+    public function deleteAction(Request $request, $id)
+    {
+        $user = $this->getDoctrine()
+            ->getRepository('TltProfileBundle:User')
+            ->find($id);
+
+        if ($this->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            // remove object
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($user);
+            $em->flush();
+
+            return $this->redirect(
+                $this->generateUrl(
+                    'profile_user_success',
+                    array(
+                        'action'	=>	'delete'
+                    )
+                )
+            );
+        }
+        else
+            return $this->redirect($this->generateUrl('denied'));
+    }
 }

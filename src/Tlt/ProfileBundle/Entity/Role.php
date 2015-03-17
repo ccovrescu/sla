@@ -29,16 +29,20 @@ class Role implements RoleInterface
      */
     private $role;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="roles")
-     */
-    private $users;
-	
-
-    public function __construct()
-    {
-        $this->users = new ArrayCollection();
-    }
+//    /**
+//     * @ORM\ManyToMany(targetEntity="User")
+//     * @ORM\JoinTable(name="user_role",
+//     *      joinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id")},
+//     *      inverseJoinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")}
+//     *      )
+//     **/
+//    private $users;
+//
+//
+//    public function __construct()
+//    {
+//        $this->users = new ArrayCollection();
+//    }
 
     /**
      * @see RoleInterface
@@ -94,36 +98,36 @@ class Role implements RoleInterface
         return $this;
     }
 
-    /**
-     * Add users
-     *
-     * @param \Tlt\ProfileBundle\Entity\User $users
-     * @return Role
-     */
-    public function addUser(\Tlt\ProfileBundle\Entity\User $users)
-    {
-        $this->users[] = $users;
-
-        return $this;
-    }
-
-    /**
-     * Remove users
-     *
-     * @param \Tlt\ProfileBundle\Entity\User $users
-     */
-    public function removeUser(\Tlt\ProfileBundle\Entity\User $users)
-    {
-        $this->users->removeElement($users);
-    }
-
-    /**
-     * Get users
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getUsers()
-    {
-        return $this->users;
-    }
+//    /**
+//     * Add users
+//     *
+//     * @param \Tlt\ProfileBundle\Entity\User $users
+//     * @return Role
+//     */
+//    public function addUser(\Tlt\ProfileBundle\Entity\User $users)
+//    {
+//        $this->users[] = $users;
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * Remove users
+//     *
+//     * @param \Tlt\ProfileBundle\Entity\User $users
+//     */
+//    public function removeUser(\Tlt\ProfileBundle\Entity\User $users)
+//    {
+//        $this->users->removeElement($users);
+//    }
+//
+//    /**
+//     * Get users
+//     *
+//     * @return \Doctrine\Common\Collections\Collection
+//     */
+//    public function getUsers()
+//    {
+//        return $this->users;
+//    }
 }

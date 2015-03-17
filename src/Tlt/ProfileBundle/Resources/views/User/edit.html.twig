@@ -37,6 +37,10 @@
                 {{ form_widget(form.firstname, {'attr': {'class': 'form-control', 'placeholder': 'Introduceti prenumele utilizatorului'} }) }}
             </div>
         <div class="form-group">
+            {{ form_label(form.compartment) }}
+            {{ form_widget(form.compartment, {'attr': {'class': 'form-control', 'placeholder': 'Introduceti compartimentul'} }) }}
+        </div>
+        <div class="form-group">
             {{ form_label(form.email) }}
             {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Introduceti adresa de email'}}) }}
         </div>
@@ -81,6 +85,22 @@
                                 {{ form_widget(branch, {'attr' : {'disabled':'disabled'} }) }}
                             {% endif %}
                         </div>
+                {% endfor %}
+            </div>
+
+            {# Roluri #}
+            <div class="form-group">
+                {{ form_label(form.roluri) }}
+                {% for role in form.roluri %}
+                    <div class="checkbox">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {{ form_label(role) }}
+                            {{ form_widget(role) }}
+                        {% else %}
+                            {{ form_label(role) }}
+                            {{ form_widget(role, {'attr' : {'disabled':'disabled'} }) }}
+                        {% endif %}
+                    </div>
                 {% endfor %}
             </div>
     </div>

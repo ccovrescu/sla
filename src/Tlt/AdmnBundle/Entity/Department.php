@@ -29,7 +29,6 @@ class Department extends AbstractEntity
      */
     private $name;
 
-	
     /**
      * @ORM\OneToMany(targetEntity="Service", mappedBy="department")
      */

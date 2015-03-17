@@ -27,7 +27,7 @@ class UserType extends AbstractType {
             ->add('username', 'text', array(
                 'label' => 'Utilizator',
                 'required' => true,
-                'disabled' => true
+//                'disabled' => true
             ))
             ->add('status', 'choice',array(
                 'choices'  => array(
@@ -45,6 +45,10 @@ class UserType extends AbstractType {
                 'label' => 'Prenume',
                 'required' => true
             ))
+            ->add('compartment', 'text', array(
+                'label' => 'Compartiment',
+                'required' => true
+            ))
             ->add('departments','entity',array(
                 'class'     => 'Tlt\AdmnBundle\Entity\Department',
                 'property'  => 'name',
@@ -58,7 +62,15 @@ class UserType extends AbstractType {
                 'label'		=> 'Zona',
                 'expanded'  => true,
                 'multiple' => true,
-                'read_only' => true
+//                'read_only' => true
+            ))
+            ->add('roluri','entity',array(
+                'class'     => 'Tlt\ProfileBundle\Entity\Role',
+                'property'  => 'name',
+                'label'		=> 'Roluri',
+                'expanded'  => true,
+                'multiple' => true,
+//                'read_only' => true
             ))
             ->add('email', 'text', array(
                 'label' => 'Adresa de e-mail',

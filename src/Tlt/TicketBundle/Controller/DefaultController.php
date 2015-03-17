@@ -50,12 +50,12 @@ class DefaultController extends Controller
             throw new AccessDeniedException();
         }
 
-        $Ticket = new Ticket();
-        $Ticket->setTransmissionType('telefon');
+        $ticket = new Ticket();
+        $ticket->setTransmissionType('telefon');
 
         $form = $this->createForm(
             new TicketType($this->container->get('security.context')),
-            $Ticket,
+            $ticket,
             array(
                 'em' => $this->getDoctrine()->getManager(),
                 'validation_groups' => array('insert'),
@@ -67,23 +67,41 @@ class DefaultController extends Controller
         if ($form->isValid()) {
             $user	=	$this->getUser();
 
-            $Ticket->setInsertedBy($user->getUsername());
-            $Ticket->setModifiedBy($user->getUsername());
-            $Ticket->setFromHost($this->container->get('request')->getClientIp());
+            $ticket->setInsertedBy($user->getUsername());
+            $ticket->setModifiedBy($user->getUsername());
+            $ticket->setFromHost($this->container->get('request')->getClientIp());
 
-            $Ticket->updateTicketAllocation();
+            $ticket->updateTicketAllocation();
 
             // perform some action, such as saving the task to the database
             $em = $this->getDoctrine()->getManager();
-            $em->persist($Ticket);
-            $em->flush();
+//            $em->persist($ticket);
+//            $em->flush();
+
+
+            $mailer = $this->get('mailer');
+            $message = $mailer->createMessage()
+                ->setSubject('Tichet nou')
+                ->setFrom('no-reply@teletrans.ro', 'Aplicatie SLA')
+                ->setTo($ticket->getTicketAllocations()->last()->getBranch()->getEmails())
+                ->setBody(
+                    $this->renderView(
+                        // app/Resources/views/Emails/ticket_new.html.twig
+                        'Emails/ticket_new.html.twig',
+                        array('ticket' => $ticket)
+                    ),
+                    'text/html'
+                );
+            $mailer->send($message);
+
+
 
             return $this->redirect(
                 $this->generateUrl(
                     'success_ticket',
                     array(
                         'action'	=>	'add',
-                        'id'		=>	$Ticket->getId()
+                        'id'		=>	$ticket->getId()
                     )
                 )
             );

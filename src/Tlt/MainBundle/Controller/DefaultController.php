@@ -21,9 +21,6 @@ class DefaultController extends Controller
 	public function indexAction(Request $request)
     {
 
-
-
-
 		// $sql = SQL::getAffectedSystemPenalities();
 		// $sql = SQL::getSLABySystemsAndServices();
 		// $sql = SQL::getSystemsDisponibility();
@@ -706,4 +703,38 @@ class DefaultController extends Controller
 	public function deniedAction(Request $request)
     {
 	}
+
+
+    /**
+     * @Route("/email", name="email")
+     * @Template()
+     */
+    public function emailAction(Request $request)
+    {
+        $mailer = $this->get('mailer');
+        $message = $mailer->createMessage()
+            ->setSubject('You have Completed Registration!')
+            ->setFrom('send@example.com')
+            ->setTo('cbradescu@teletrans.ro')
+            ->setBody(
+                $this->renderView(
+                // app/Resources/views/Emails/registration.html.twig
+                    'Emails/ticket_new.html.twig',
+                    array('name' => 'Catalin')
+                ),
+                'text/html'
+            )
+            /*
+             * If you also want to include a plaintext version of the message
+            ->addPart(
+                $this->renderView(
+                    'Emails/registration.txt.twig',
+                    array('name' => $name)
+                ),
+                'text/plain'
+            )
+            */
+        ;
+        $mailer->send($message);
+    }
 }
