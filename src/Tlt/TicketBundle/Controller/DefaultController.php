@@ -52,6 +52,7 @@ class DefaultController extends Controller
 
         $ticket = new Ticket();
         $ticket->setTransmissionType('telefon');
+        $ticket->setTakenBy($this->getUser()->getLastname() . ' ' . $this->getUser()->getFirstname());
 
         $form = $this->createForm(
             new TicketType($this->container->get('security.context')),
