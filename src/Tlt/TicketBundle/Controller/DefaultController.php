@@ -142,6 +142,8 @@ class DefaultController extends Controller
 			$em = $this->getDoctrine()->getManager();
 			$em->persist($ticketAllocation);
 			$em->flush();
+
+            // TODO: de implementat trimiterea unui email.
 			
 			return $this->redirect(
 				$this->generateUrl(
