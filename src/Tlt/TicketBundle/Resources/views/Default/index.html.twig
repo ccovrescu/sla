@@ -1,87 +1,114 @@
 {% extends '::base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/sla-table-row.css' ) }}" rel="stylesheet">
+{% endblock %}
+
 {% block page %}
-        <div class="row">
-          <div class="col-lg-12">
+    <div class="row">
+        <div class="col-lg-12">
             <h1>Tichete <small>Index</small></h1>
             <ol class="breadcrumb">
-              <li><a href="{{ path('tickets') }}"><i class="icon-dashboard"></i> Tichete</a></li>
-              <li class="active"><i class="icon-file-alt"></i> Index</li>
+                <li><a href="{{ path('tickets') }}"><i class="icon-dashboard"></i> Tichete</a></li>
+                <li class="active"><i class="icon-file-alt"></i> Index</li>
             </ol>
-          </div>
-        </div><!-- /.row -->
-
-		
-		<div class="row">
-          <div class="col-lg-8 text-left">
-                <h2>Lista tichete</h2>
-          </div>
-          <div class="col-lg-4 text-right">
-              <div class="panel-body">
-                <button type="submit" class="btn btn-primary" onclick="location.href='{{ path('add_ticket') }}'">Adauga tichet</button>
-              </div>
-          </div>
-        </div><!-- /.row -->
-
-
-           <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped tablesorter">
-				<thead>
-					<tr>
-						<th>Nr <i class="fa fa-sort"></i></th>
-						<th>Agentia/Centrul <i class="fa fa-sort"></i></th>
-                        <th>Tip serviciu <i class="fa fa-sort"></i></th>
-                        <th>Anuntat de</th>
-                        <th>Anuntat la</th>
-						<th colspan="2" class="text-left">Descriere</th>
-					</tr>
-               </thead>
-               <tbody>
-					{% if tickets %}
-						{% for ticket in tickets %}
-							<tr {% if ticket.ticketFix %} class="success" {% else %} class="warning" {% endif %}>
-								<td>{{ ticket.id }}</td>
-								<td>
-									{{ ticket.ticketAllocations.first.branch.name }}
-								</td>
-                                <td>
-                                    {% if ticket.ticketEquipments is defined and ticket.ticketEquipments|length>0 %}
-                                        {% if ticket.ticketEquipments.first.equipment.service.department.id == "1" %}
-                                            IP
-                                        {% elseif ticket.ticketEquipments.first.equipment.service.department.id == "2" %}
-                                            TC
-                                        {% elseif ticket.ticketEquipments.first.equipment.service.department.id == "3" %}
-                                            TI
-                                        {% endif %}
-                                    {% else %}
-                                        <samp><abbr title="attribute">n/a</abbr></samp>
-                                    {% endif %}
-                                </td>
-                                <td>{{ ticket.announcedBy }}</td>
-                                <td>{{ ticket.announcedAt|date('d-m-Y H:i') }}</td>
-								<td class="text-left">
-                                    <a href="{{ path('ticket_details2', {'id' : ticket.id}) }}">
-                                        {{ticket.description}}
-                                    </a>
-                                </td>
-							</tr>
-						{% endfor %}
-					{% endif %}
-               </tbody>
-			   <tfoot>
-					<tr>
-						<th colspan="5" class="text-center">Total {{ tickets|length }} tichete.</th>
-					</tr>
-			   </tfoot>
-            </table>
         </div>
+    </div><!-- /.row -->
+
+
+    <div class="row">
+        <div class="col-lg-8 text-left">
+            <h2>Lista tichete</h2>
+        </div>
+        <div class="col-lg-4 text-right">
+            <div class="panel-body">
+                <button type="submit" class="btn btn-primary" onclick="location.href='{{ path('add_ticket') }}'" {% if not is_granted('ROLE_TICKET_INSERT') %} disabled {% endif %}>Adauga tichet</button>
+            </div>
+        </div>
+    </div><!-- /.row -->
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover tablesorter">
+            <thead>
+            <tr>
+                <th>Nr <i class="fa fa-sort"></i></th>
+                <th>Agentia/Centrul <i class="fa fa-sort"></i></th>
+                <th>Tip serviciu <i class="fa fa-sort"></i></th>
+                <th>Anuntat de</th>
+                <th>Anuntat la</th>
+                <th class="text-left">Descriere</th>
+                <th class="text-left">Optiuni</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if tickets %}
+                {% for ticket in tickets %}
+                    <tr
+                            {% if ticket.isReal is defined and ticket.isReal is null %}
+                                class="warning"
+                            {% elseif ticket.isReal is defined and ticket.isReal == 0 %}
+                                class="gray"
+                            {% elseif ticket.isClosed is defined and ticket.isClosed == 1 %}
+                                class="success"
+                            {% endif %}
+                            >
+
+                        <td>{{ ticket.id }}</td>
+                        <td>
+                            {{ ticket.ticketAllocations.first.branch.name }}
+                        </td>
+                        <td>
+                            {% if ticket.equipment is defined and ticket.equipment is not null %}
+                                {% if ticket.equipment.service.department.id == "1" %}
+                                    IP
+                                {% elseif ticket.equipment.service.department.id == "2" %}
+                                    TC
+                                {% elseif ticket.equipment.service.department.id == "3" %}
+                                    TI
+                                {% endif %}
+                            {% else %}
+                                <samp><abbr title="attribute">n/a</abbr></samp>
+                            {% endif %}
+                        </td>
+                        <td>{{ ticket.announcedBy }}</td>
+                        <td>{{ ticket.announcedAt|date('d-m-Y H:i') }}</td>
+                        <td class="text-left">
+                            <a href="{{ path('ticket_details', {'id' : ticket.id}) }}">
+                                {{ticket.description}}
+                            </a>
+                        </td>
+                        <td>
+                            <div class="btn-group" style="min-width: 90px">
+                                <button type="button" class="btn btn-default">alege</button>
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{{ path('ticket_details', {'id' : ticket.id}) }}">Detalii</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="{{ path('reallocate_ticket', {'id' : ticket.id}) }}">Realocare</a></li>
+                                </ul>
+                            </div><!-- /btn-group -->
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <th colspan="7" class="text-center">Total {{ tickets|length }} tichete</th>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
 
 {% endblock  %}
 
 {% block javascripts %}
-	{{ parent() }}
-		
-	<!-- Page Specific Plugins -->
-	<script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
-	<script src="{{ asset('js/tablesorter/tables.js') }}"></script>
+    {{ parent() }}
+
+    <!-- Page Specific Plugins -->
+    <script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
+    <script src="{{ asset('js/tablesorter/tables.js') }}"></script>
 {% endblock %}

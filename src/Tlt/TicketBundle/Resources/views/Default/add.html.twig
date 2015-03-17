@@ -1,62 +1,92 @@
 {% extends '::base.html.twig' %}
 
 {% block page %}
-        <div class="row">
-          <div class="col-lg-12">
+    <div class="row">
+        <div class="col-lg-12">
             <h1>Tichete <small>Adaugare</small></h1>
             <ol class="breadcrumb">
-              <li><a href="{{ path('tickets') }}"><i class="icon-dashboard"></i> Tichete</a></li>
-              <li class="active"><i class="icon-file-alt"></i> Introducere</li>
+                <li><a href="{{ path('tickets') }}"><i class="icon-dashboard"></i> Tichete</a></li>
+                <li class="active"><i class="icon-file-alt"></i> Introducere</li>
             </ol>
-          </div>
-        </div><!-- /.row -->
+        </div>
+    </div><!-- /.row -->
 
-		{{ form_start(form, {'attr': {'class':'breadcrumb'}}) }}
-            {{ form_errors(form) }}
+    {{ form_start(form, {'attr': {'class':'breadcrumb'}}) }}
+    {{ form_errors(form) }}
 
     <div class="row">
         <div class="col-lg-6">
-			<div class="form-group">
-				{{ form_label(form.occuredAt) }}
-				{{ form_widget(form.occuredAt) }}
-			</div>
             <div class="form-group">
-                {{ form_label(form.takenBy) }}
-                {{ form_widget(form.takenBy, {'attr': {'class': 'form-control', 'placeholder':'Numele persoanei care a preluat sesizarea'}}) }}
-            </div>
-            <div class="form-group">
-                {{ form_label(form.sentType) }}
-                {{ form_widget(form.sentType, {'attr': {'class': 'form-control', 'placeholder':'Completati modul de transmitere al sesizarii'}}) }}
+                {{ form_label(form.announcedAt) }}
+                {{ form_widget(form.announcedAt) }}
             </div>
         </div>
         <div class="col-lg-6">
-			<div class="form-group">
-				{{ form_label(form.announcedAt) }}
-				{{ form_widget(form.announcedAt) }}
-			</div>
             <div class="form-group {% if form.announcedBy.vars.errors|length>0 %} has-error {% endif %}">
-                {{ form_label(form.announcedBy) }}
-                {{ form_widget(form.announcedBy, {'attr': {'class': 'form-control', 'placeholder':'Numele persoanei care a facut sesizarea'}}) }}
-                {{ form_errors(form.announcedBy) }}
+                {{ form_label(form.announcedBy, form.announcedBy.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                {{ form_widget(form.announcedBy, {'attr': {'class': 'form-control', 'placeholder':'Numele si compartimentul persoanei care a facut sesizarea'}}) }}
+                <p class="help-block">ex.: Popescu Gheorghe - Serviciul Exploatare</p>
+                {{ form_errors(form.announcedBy, {'attr': {'class':'has-error'} }) }}
             </div>
+        </div>
+    </div><!-- row -->
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group {% if form.contactInfo.vars.errors|length>0 %} has-error {% endif %}">
+                {{ form_label(form.contactInfo, form.contactInfo.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                {{ form_widget(form.contactInfo, {'attr': {'class': 'form-control', 'placeholder':'Numar de telefon sau email'}}) }}
+                {{ form_errors(form.contactInfo) }}
+            </div>
+        </div>
+        <div class="col-lg-6">
             <div class="form-group">
                 {{ form_label(form.ticketAllocations) }}
                 {{ form_widget(form.ticketAllocations, {'attr': {'class': 'form-control'}}) }}
             </div>
         </div>
-    </div>
+    </div><!-- row -->
+
     <div class="row">
-        <div class="col-lg-12">
-            <div class="form-group">
-                {{ form_label(form.description) }}
-                {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder':'Introduceti o scurta descriere a deranjamentului reclamat'}}) }}
+        <div class="col-lg-6">
+            <div class="form-group {% if form.takenBy.vars.errors|length>0 %} has-error {% endif %}">
+                {{ form_label(form.takenBy, form.takenBy.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                {{ form_widget(form.takenBy, {'attr': {'class': 'form-control', 'placeholder':'Numele operatorului care a preluat sesizarea'}}) }}
+                {{ form_errors(form.takenBy) }}
             </div>
         </div>
-    </div>
-			{{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}
-			{{ form_widget(form.reseteaza, {'attr': {'class': 'btn btn-default'}}) }}
-			
-			{{ form_rest(form) }}
-		{{ form_end(form) }}
+        <div class="col-lg-6">
+            <div class="form-group">
+                {{ form_label(form.transmissionType) }}
+                {{ form_widget(form.transmissionType, {'attr': {'class': 'form-control', 'placeholder':'Completati modul de transmitere al sesizarii'}}) }}
+            </div>
+        </div>
+    </div><!-- row -->
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group {% if form.announcedTo.vars.errors|length>0 %} has-error {% endif %}">
+                {{ form_label(form.announcedTo, form.announcedTo.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                {{ form_widget(form.announcedTo, {'attr': {'class': 'form-control', 'placeholder':'Numele persoanei, din TELETRANS, care a fost anuntata'}}) }}
+                {{ form_errors(form.announcedTo) }}
+            </div>
+        </div>
+    </div> <!-- row -->
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group {% if form.description.vars.errors|length>0 %} has-error {% endif %}">
+                {{ form_label(form.description, form.description.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder':'Introduceti o scurta descriere a deranjamentului reclamat'}}) }}
+                {{ form_errors(form.description) }}
+            </div>
+        </div>
+    </div><!-- row -->
+
+    {{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}
+    {{ form_widget(form.reseteaza, {'attr': {'class': 'btn btn-default'}}) }}
+
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
 
 {% endblock %}

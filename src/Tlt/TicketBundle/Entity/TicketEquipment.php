@@ -1,49 +1,22 @@
 <?php
 namespace Tlt\TicketBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping as ORM;
-
 use Tlt\AdmnBundle\Entity\Branch;
 use Tlt\AdmnBundle\Entity\Department;
 use Tlt\AdmnBundle\Entity\Service;
-use Tlt\AdmnBundle\Entity\System;
 use Tlt\AdmnBundle\Entity\Equipment;
 use Tlt\AdmnBundle\Entity\ZoneLocation;
 use Tlt\AdmnBundle\Entity\Owner;
 
 /**
  * TicketEquipment
- *
- * @ORM\Table(name="ticket_equipments")
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
  */
 class TicketEquipment
 {
-	/**
-	* @ORM\Column(type="integer")
-	* @ORM\Id
-	* @ORM\GeneratedValue(strategy="AUTO")
-	*/
-	protected $id;
-	
-	/**
-     * @ORM\ManyToOne(targetEntity="TicketCreate", inversedBy="ticketEquipments")
-	 * @ORM\JoinColumn(name="ticket_create", referencedColumnName="id")
-	 */
-	protected $ticketCreate;
-
-	/**
-	 * @ORM\ManyToOne(targetEntity="\Tlt\AdmnBundle\Entity\Equipment")
-	 * @ORM\JoinColumn(name="equipment", referencedColumnName="id")
-	 */
-	protected $equipment;
-	
-	/**
-	 * @ORM\OneToMany(targetEntity="TicketSystem", mappedBy="ticketEquipment", cascade={"persist", "remove"})
-	 */
-	protected $ticketSystems;
+    /**
+     * @var Equipment
+     */
+    protected $equipment;
 
     /**
      * @var Department
@@ -63,7 +36,7 @@ class TicketEquipment
     /**
      * @var ZoneLocation
      */
-	public $zoneLocation;
+    public $zoneLocation;
 
     /**
      * @var Owner
@@ -71,71 +44,19 @@ class TicketEquipment
     public $owner;
 
 
-	/**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->ticketSystems = new ArrayCollection();
-    }
-	
-    /**
-     * Set id
-     *
-     * @param integer $id
-	 * @return TicketEquipment
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-		
-		return $this;
-    }
 
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-	
-    /**
-     * Set ticketCreate
-     *
-     * @param TicketCreate $ticketCreate
-	 * @return TicketEquipment
-     */
-    public function setTicketCreate($ticketCreate)
-    {
-        $this->ticketCreate = $ticketCreate;
-		
-		return $this;
-    }
-
-    /**
-     * Get ticketCreate
-     *
-     * @return TicketCreate 
-     */
-    public function getTicketCreate()
-    {
-        return $this->ticketCreate;
-    }
 
     /**
      * Set equipment
      *
      * @param Equipment $equipment
-	 * @return TicketEquipment
+     * @return TicketEquipment
      */
-    public function setEquipment(Equipment $equipment)
+    public function setEquipment($equipment)
     {
         $this->equipment = $equipment;
-		
-		return $this;
+
+        return $this;
     }
 
     /**
@@ -147,30 +68,6 @@ class TicketEquipment
     {
         return $this->equipment;
     }
-	
-	
-	public function getTicketSystems()
-	{
-		return $this->ticketSystems;
-	}
-	
-	public function addTicketSystems(System $system)
-	{
-		$ticketSystem = new TicketSystem();
-		$ticketSystem->setTicketEquipment( $this );
-		$ticketSystem->setSystem( $system );
-		
-		$this->ticketSystems[] =  $ticketSystem ;
-		
-		return $this;
-			
-	}
-	
-	public function setTicketSystems()
-	{
-		$this->ticketSystems = new ArrayCollection();
-		return $this;
-	}
 
     /**
      * Set department

@@ -45,6 +45,11 @@ class User implements UserInterface, \Serializable
     private $email;
 
     /**
+     * @ORM\Column(type="string", length=25)
+     */
+    private $compartment;
+
+    /**
      * @ORM\Column(type="boolean")
      */
     private $emailNotification;
@@ -354,5 +359,110 @@ class User implements UserInterface, \Serializable
         list (
             $this->id,
         ) = unserialize($serialized);
+    }
+
+    /**
+     * Set compartment
+     *
+     * @param string $compartment
+     * @return User
+     */
+    public function setCompartment($compartment)
+    {
+        $this->compartment = $compartment;
+
+        return $this;
+    }
+
+    /**
+     * Get compartment
+     *
+     * @return string 
+     */
+    public function getCompartment()
+    {
+        return $this->compartment;
+    }
+
+    /**
+     * Set salt
+     *
+     * @param string $salt
+     * @return User
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+
+        return $this;
+    }
+
+    /**
+     * Add branches
+     *
+     * @param \Tlt\AdmnBundle\Entity\Branch $branches
+     * @return User
+     */
+    public function addBranch(\Tlt\AdmnBundle\Entity\Branch $branches)
+    {
+        $this->branches[] = $branches;
+
+        return $this;
+    }
+
+    /**
+     * Remove branches
+     *
+     * @param \Tlt\AdmnBundle\Entity\Branch $branches
+     */
+    public function removeBranch(\Tlt\AdmnBundle\Entity\Branch $branches)
+    {
+        $this->branches->removeElement($branches);
+    }
+
+    /**
+     * Add departments
+     *
+     * @param \Tlt\AdmnBundle\Entity\Department $departments
+     * @return User
+     */
+    public function addDepartment(\Tlt\AdmnBundle\Entity\Department $departments)
+    {
+        $this->departments[] = $departments;
+
+        return $this;
+    }
+
+    /**
+     * Remove departments
+     *
+     * @param \Tlt\AdmnBundle\Entity\Department $departments
+     */
+    public function removeDepartment(\Tlt\AdmnBundle\Entity\Department $departments)
+    {
+        $this->departments->removeElement($departments);
+    }
+
+    /**
+     * Add roles
+     *
+     * @param \Tlt\ProfileBundle\Entity\Role $roles
+     * @return User
+     */
+    public function addRole(\Tlt\ProfileBundle\Entity\Role $roles)
+    {
+        $this->roles[] = $roles;
+
+        return $this;
+    }
+
+    /**
+     * Remove roles
+     *
+     * @param \Tlt\ProfileBundle\Entity\Role $roles
+     */
+    public function removeRole(\Tlt\ProfileBundle\Entity\Role $roles)
+    {
+        $this->roles->removeElement($roles);
     }
 }

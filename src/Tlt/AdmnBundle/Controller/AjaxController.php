@@ -6,7 +6,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AjaxController extends Controller
@@ -511,4 +510,45 @@ class AjaxController extends Controller
 		
 		// return new JsonResponse($owners);
 	// }
+
+    /**
+     * @Route("/ajax/equipment-name", name="get_equipment_name")
+     */
+    public function getEquipmentNameAction(Request $request)
+    {
+        $equipment_id = $request->request->get('equipment_id');
+
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->getRepository('TltAdmnBundle:Equipment')
+            ->createQueryBuilder('eq')
+            ->select('eq.name')
+            ->where('eq.id = :id')
+            ->setParameter('id', $equipment_id);
+
+
+        $equipment	= $qb->getQuery()->getResult();
+
+        return new JsonResponse($equipment);
+    }
+
+    /**
+     * @Route("/ajax/allowed-systems", name="get_allowed_systems")
+     */
+    public function getAllowedSystemsAction(Request $request)
+    {
+        $equipment_id = $request->request->get('equipment_id');
+
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->getRepository('TltAdmnBundle:Mapping')
+            ->createQueryBuilder('mp')
+            ->select('mp.id, s.name')
+            ->innerJoin('mp.system', 's')
+            ->where('mp.equipment = :equipment')
+            ->setParameter('equipment', $equipment_id)
+            ->orderBy('s.name', 'ASC');
+
+        $mappings	= $qb->getQuery()->getResult();
+
+        return new JsonResponse($mappings);
+    }
 }

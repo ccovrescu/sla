@@ -7,8 +7,10 @@ security:
             iterations:       1
 
     role_hierarchy:
+        ROLE_TICKET_SOLVE: [ROLE_TICKET_INSERT]
+        ROLE_TICKET_CLOSE: [ROLE_TICKET_SOLVE]
         ROLE_ALLOWED_TO_EDIT_EQUIPMENTS: [ROLE_USER]
-        ROLE_ADMIN: [ROLE_ALLOWED_TO_EDIT_EQUIPMENTS]
+        ROLE_ADMIN: [ROLE_ALLOWED_TO_EDIT_EQUIPMENTS, ROLE_TICKET_INSERT]
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
@@ -74,6 +76,8 @@ security:
         - { path: ^/admin/index, roles: ROLE_USER }
         - { path: ^/admin/ajax, roles: ROLE_USER }
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/tickets/add, roles: ROLE_TICKET_INSERT }
+        - { path: ^/tickets/add3, roles: ROLE_TICKET_INSERT }
         - { path: ^/tickets, roles: ROLE_USER }
         - { path: ^/anexa, roles: ROLE_ADMIN }
         - { path: ^/sla, roles: ROLE_ADMIN }

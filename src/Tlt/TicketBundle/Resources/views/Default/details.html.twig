@@ -1,221 +1,374 @@
 {% extends '::base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/icr.css' ) }}" rel="stylesheet">
+{% endblock %}
+
 {% block page %}
-        <div class="row">
-          <div class="col-lg-12">
+    <div class="row no-print">
+        <div class="col-lg-12">
             <h1>Detalii <small>Tichet {{ticket.id}}</small></h1>
             <ol class="breadcrumb">
-              <li><a href="{{ path('tickets') }}"><i class="icon-dashboard"></i> Tichete</a></li>
-              <li class="active"><i class="icon-file-alt"></i> Index</li>
+                <li><a href="{{ path('tickets') }}"><i class="icon-dashboard"></i> Tichete</a></li>
+                <li class="active"><i class="icon-file-alt"></i> Detalii</li>
             </ol>
-          </div>
-        </div><!-- /.row -->
+        </div>
+    </div><!-- /.row -->
 
 
-           <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped tablesorter">
-	<tr>
-		<th class="text-left">Numar:</th>
-		<td colspan="3">{{ticket.id}}</td>
-	</tr>
-                <!--
-	<tr>
-		<th class="text-left">Introdus la:</th>
-		<td colspan="3">{{ ticket.insertedAt | date('Y-m-d H:i:s')}}</td>
-	</tr>
-	-->
-	<tr>
-		<th class="text-left">Aparut la:</th>
-		<td colspan="3">{{ ticket.occuredAt | date('Y-m-d H:i:s')}}</td>
-	</tr>	
-	<tr>
-		<th class="text-left">Anuntat la:</th>
-		<td colspan="3">{{ ticket.announcedAt | date('Y-m-d H:i:s')}}</td>
-	</tr>
+    <div class="row hidden no-print" id="form-errors">
+        <div class="col-lg-12">
+            <div class="alert alert-danger">
+                Nu a-ti selectat nici un echipament.
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="icr-logo">
+                <img src="http://www.teletrans.ro/img/logo_old.png" width="200px"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="text-center icr-title">FISA DE INTERVENTIE</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <!--<div class="table-responsive">-->
+            <table class="table icr">
                 <tr>
-                    <th class="text-left">Anuntat de:</th>
-                    <td colspan="3">{{ ticket.announcedBy }}</td>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>5</td>
+                    <td>6</td>
+                    <td>7</td>
+                    <td>8</td>
+                    <td>9</td>
+                    <td>10</td>
                 </tr>
-	<tr>
-		<th class="text-left">Descriere:</th>
-		<td colspan="3">{{ ticket.description}}</td>
-	</tr>
-	
-	<!-- Delimitare -->
-	<tr>
-		<td colspan="4">&nbsp;</td>
-	</tr>
-	
-	
-	<tr>
-		<th rowspan="{{1+ticket.ticketAllocations|length+((ticket.ticketFix is defined and ticket.ticketFix|length>0) or (ticket.ticketEquipments is defined and ticket.ticketEquipments|length>0) ? 0 : 1) }}" class="text-left"  style="vertical-align: middle;">
-            Arondat
-        </th>
+                <tr>
+                    <td colspan="1">
+                        {% if ticket.equipment is defined and ticket.equipment is not null %}
+                            {% if ticket.equipment.service.department.id == "1" %}
+                                <samp>DIP</samp>
+                            {% elseif ticket.equipment.service.department.id == "2" %}
+                                <samp>DTC</samp>
+                            {% elseif ticket.equipment.service.department.id == "3" %}
+                                <samp>DTI</samp>
+                            {% endif %}
+                        {% else %}
+                            <samp><abbr title="attribute">n/a</abbr></samp>
+                        {% endif %}
 
-		<th class="text-left">Entitatea</th>
-		<th class="text-left">Persoana</th>
-		<th class="text-left">Momentul</th>
-	</tr>		
-	{% for allocation in ticket.ticketAllocations %}
-		<tr>
-			<td>
-                    {%  if not loop.first %}
-                        <strike>{{allocation.branch.name}}</strike>
-                    {%  else %}
-                        {{allocation.branch.name}}
-                    {%  endif %}
-            </td>
-			<td>
-                {%  if not loop.first %}
-                    <strike>{{allocation.insertedBy}}</strike>
-                {%  else %}
-                    {{allocation.insertedBy}}
-                {%  endif %}
-            </td>
-			<td>
-                {%  if not loop.first %}
-                    <strike>{{allocation.insertedAt|date('Y-m-d H:i')}}</strike>
-                {%  else %}
-                    {{allocation.insertedAt|date('Y-m-d H:i')}}
-                {%  endif %}
-            </td>
-		</tr>
-	{% endfor %}
-
-    {% if ticket.ticketFix is not defined or ticket.ticketFix|length==0 %}
-        {% if ticket.ticketEquipments is not defined or ticket.ticketEquipments|length==0 %}
-        <tr>
-            <td colspan="3" class="text-center">
-                <button type="button" class="btn btn-info btn-md" onclick="location.href='{{ path('reallocate_ticket', {'id' : ticket.id}) }}'">Realocare</button>
-            </td>
-        </tr>
-        {% endif %}
-    {% endif %}
-
-	
-	<tr>
-		<td colspan="4">&nbsp;</td>
-	</tr>
-
-    <!-- Echipamente/Utilizatori afectati -->
-	<tr>
-        {% if ticket.ticketFix is not defined or ticket.ticketFix|length==0 %}
-            <th colspan="3">Echipamente/Utilizatori afectati</th>
-		    <th>Optiuni</th>
-        {% else %}
-            <th colspan="4">Echipamente/Utilizatori afectati</th>
-        {% endif %}
-	</tr>
-
-	{% for te in ticket.ticketEquipments %}
-		<tr>
-			<th rowspan="{{te.ticketSystems|length+1+(ticket.ticketFix is defined and ticket.ticketFix|length>0 ? 0:1)}}" style="vertical-align: middle;">
-                <a href="{{ path('admin_equipments_details', {'id' : te.equipment.id}) }}">{{ te.equipment }}</a>
-            </th>
-
-            {% if ticket.ticketFix is not defined or ticket.ticketFix|length==0 %}
-                <th>Sisteme afectate</th>
-                <th>Optiuni</th>
-                <th rowspan="{{te.ticketSystems|length+2}}" class="text-center"  style="vertical-align: middle;">
-                    <button type="button" class="btn btn-danger btn-md {% if ticket.ticketFix is defined and ticket.ticketFix or te.ticketSystems|length>0 %} disabled {% endif %}" onclick="location.href='{{ path('rem_equip_from_ticket', {'id' : te.id}) }}'">Elimina echipament</button>
-                </th>
-            {% else %}
-                <th colspan="3">Sisteme afectate</th>
-            {% endif %}
-		</tr>
-
-		{% for sa in te.ticketSystems %}
-			<tr>
-
-                {% if ticket.ticketFix is not defined or ticket.ticketFix|length==0 %}
-                    <td>{{sa.system.name}}</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-warning btn-xs {% if ticket.ticketFix is defined and ticket.ticketFix%} disabled {% endif %}" onclick="location.href='{{ path('rem_sys_from_equip', {'id' : sa.id}) }}'">Elimina sistem</button>
                     </td>
+                    <td colspan="5">
+                        <samp>
+                            {% if ticket.ticketAllocations.first.branch.name|slice(0,7) == 'Agentia' %}
+                                <strong>Agentia</strong> <abbr title="attribute">{{ ticket.ticketAllocations.first.branch.name|slice(8) }}</abbr>
+                            {% else %}
+                                <strong>Centrul</strong> <abbr title="attribute">{{ ticket.ticketAllocations.first.branch.name|slice(8) }}</abbr>
+                            {% endif %}
+                        </samp>
+
+
+                        {% if ticket.isReal is defined and ticket.isReal is null %}
+                            {% if ticket.ticketEquipments is not defined or ticket.ticketEquipments|length==0 %}
+                                <button id="ticket_reallocate" type="button" class="btn btn-info btn-xs no-print" onclick="location.href='{{ path('reallocate_ticket', {'id' : ticket.id}) }}'">Realocare</button>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td colspan="2">
+                        <samp>
+                            <abbr title="attribute">
+                                {% if ticket.emergency.id == 1 %}
+                                    Urgent <i class="fa fa-check-square-o"></i>
+                                {% else %}
+                                    Urgent <i class="fa fa-square-o"></i>
+                                {% endif %}
+                            </abbr>
+                        </samp>
+                    </td>
+                    <td colspan="2">
+                        <samp>
+                            <abbr title="attribute">
+                                {% if ticket.emergency.id == 2 %}
+                                    Non Urgent <i class="fa fa-check-square-o"></i>
+                                {% else %}
+                                    Non Urgnet <i class="fa fa-square-o"></i>
+                                {% endif %}
+                            </abbr>
+                        </samp>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><strong>Nr. Interventie:</strong> <samp><abbr title="attribute">{{ ticket.id }}</abbr></samp></td>
+                    <td colspan="4">
+                        <strong>Data:</strong> <samp><abbr title="data aparitiei">{{ ticket.announcedAt|date('d-m-Y') }}</abbr></samp>
+                        <strong>Ora:</strong> <samp><abbr title="attribute">{{ ticket.announcedAt|date('H:m') }}</abbr></samp>
+                    </td>
+                    <td colspan="4"><strong>Preluat sesizarea:</strong> <samp><abbr title="attribute">{{ ticket.takenBy|default('n/a') }}</abbr></samp></td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        <strong>Lansat de:</strong>
+                        <samp>
+                            <abbr title="attribute">
+                                {% if ticket.equipment is defined and ticket.equipment is not null %}
+                                    {{ ticket.equipment.owner.name }}
+                                {% else %}
+                                    <samp><abbr title="attribute">n/a</abbr></samp>
+                                {% endif %}
+                            </abbr>
+                        </samp>
+                    </td>
+                    <td colspan="5"><strong>Nume sesizant:</strong> <samp><abbr title="attribute">{{ ticket.announcedBy|default('n/a') }}</abbr></samp></td>
+                </tr>
+                <tr>
+                    <td colspan="5"><strong>Mod de transmitere sesizare:</strong> <samp><abbr title="attribute">{{ ticket.transmissionType|default('n/a') }}</abbr></samp></td>
+                    <td colspan="5"><strong>Persoana anuntata:</strong> <samp><abbr title="attribute">{{ ticket.announcedTo|default('n/a') }}</abbr></samp></td>
+                </tr>
+                <tr>
+                    <td colspan="10"><strong>Descriere pe scurt deranjament:</strong> <samp><abbr title="attribute">{{ ticket.description }}</abbr></samp></td>
+                </tr>
+
+                <!-- Este sau nu real -->
+                {% if form is defined and form.isReal is defined %}
+                    {% include 'TltTicketBundle:Default:ticket_solve.html.twig' %}
                 {% else %}
-                    <td colspan="3">{{sa.system.name}}</td>
+                    {% if ticket.isReal is not null %}
+                        <tr>
+                            <td colspan="3">
+                                <strong>Este real?</strong>
+                                <samp>
+                                    <abbr title="attribute">
+                                        {% if ticket.isReal == 1 %}
+                                            <i class="fa fa-circle"></i> Da&nbsp;
+                                            <i class="fa fa-circle-o"></i> Nu
+                                        {% else %}
+                                            <i class="fa fa-circle-o"></i> Da&nbsp;
+                                            <i class="fa fa-circle"></i> Nu
+                                        {% endif %}
+                                    </abbr>
+                                </samp>
+                            </td>
+                            <td colspan="7"><strong>De ce nu este real?</strong> <pre><samp><abbr title="attribute">{{ ticket.notRealReason|default(' ') }}</abbr></samp></pre></td>
+                        </tr>
+                    {% endif %}
+
+                    {% if ticket.isReal == 1 %}
+                        <tr>
+                            <td colspan="4"><strong>Tip interventie:</strong>  <samp><abbr title="attribute">{{ ticket.ticketType.name }}</abbr></samp></td>
+                            <td colspan="3" nowrap><strong>Persoana care rezolva:</strong>  <samp><abbr title="attribute">{{ ticket.fixedBy }}</abbr></samp></td>
+                            <td colspan="3" nowrap><strong>Compartiment:</strong>  <samp><abbr title="attribute">{{ ticket.compartment }}</abbr></samp></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"><strong>Data si ora rezolvarii:</strong>  <samp><abbr title="attribute">{{ ticket.fixedAt|date('Y-m-d H:m') }}</abbr></samp></td>
+                            <td colspan="6">
+                                <strong>Vechimea echipamentului:</strong>
+                                <samp>
+                                    <abbr title="attribute">
+                                        {% if ticket.oldness.id == 2 %}
+                                            <i class="fa fa-circle"></i> 1-3&nbsp;
+                                            <i class="fa fa-circle-o"></i> peste 3 ani
+                                        {% else %}
+                                            <i class="fa fa-circle-o"></i> 1-3&nbsp;
+                                            <i class="fa fa-circle"></i> peste 3 ani
+                                        {% endif %}
+                                    </abbr>
+                                </samp>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="10">
+                                <strong>S-a asigurat solutie de rezerva?</strong>
+                                <samp>
+                                    <abbr title="attribute">
+                                        {% if ticket.backupSolution.id == 1 %}
+                                            <i class="fa fa-circle"></i> Da&nbsp;
+                                            <i class="fa fa-circle-o"></i> Nu&nbsp;
+                                            <i class="fa fa-circle-o"></i> Nu este cazul
+                                        {% elseif ticket.backupSolution.id == 0 %}
+                                            <i class="fa fa-circle-o"></i> Da&nbsp;
+                                            <i class="fa fa-circle"></i> Nu&nbsp;
+                                            <i class="fa fa-circle-o"></i> Nu este cazul
+                                        {% elseif ticket.backupSolution.id == 2 %}
+                                            <i class="fa fa-circle-o"></i> Da&nbsp;
+                                            <i class="fa fa-circle-o"></i> Nu&nbsp;
+                                            <i class="fa fa-circle"></i> Nu este cazul
+                                        {% endif %}
+                                    </abbr>
+                                </samp>
+                            </td>
+                        </tr>
+                    {% endif %}
+
+                    {% if ticket.isReal == 1 %}
+                        <tr>
+                            <td rowspan="{{ 1+ticket.mappings|length }}" colspan="4" style="vertical-align: middle;"><strong>Echipament:</strong> <samp><abbr title="attribute">{{ ticket.equipment.name }}</abbr></samp></td>
+                            <td colspan="6"><strong>Sisteme afectate:</strong></td>
+                        </tr>
+
+                        {% for mapping in ticket.mappings %}
+                            <tr>
+                                <td colspan="6">
+                                    <samp>
+                                        <abbr title="attribute">
+                                            <i class="fa fa-check-square-o"></i> {{ mapping.system.name }}
+                                        </abbr>
+                                    </samp>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                        <tr>
+                            <td colspan="10"><strong>Mod de rezolvare:</strong> <pre><abbr title="attribute">{{ ticket.fixedMode }}</abbr></pre></td>
+                        </tr>
+                        <tr>
+                            <td colspan="10"><strong>Resurse utilizate:</strong> <pre><abbr title="attribute">{{ ticket.resources|default(' ') }}</abbr></pre></td>
+                        </tr>
+                    {% endif %}
                 {% endif %}
-			</tr>
-		{% endfor %}
 
-        {% if ticket.ticketFix is not defined or ticket.ticketFix|length==0 %}
-        <tr>
-            <td colspan="2" class="text-center">
-                    <button type="button" class="btn btn-info btn-xs {% if ticket.ticketFix is defined and ticket.ticketFix is not null %} disabled {% endif %}" onclick="location.href='{{ path('add_sys_to_equip', {'id' : te.id}) }}'">Adauga sistem</button>
-            </td>
-        </tr>
-        {% endif %}
-	{% endfor %}
+                {% if form.isClosed is not defined %}
+                    <tr>
+                        <td colspan="10"><strong>Tichetul este inchis?</strong>
+                            <samp>
+                                <abbr title="attribute">
+                                    {% if ticket.isClosed == 1 %}
+                                        <i class="fa fa-circle"></i> Da&nbsp;
+                                        <i class="fa fa-circle-o"></i> Nu&nbsp;
+                                    {% else %}
+                                        <i class="fa fa-circle-o"></i> Da&nbsp;
+                                        <i class="fa fa-circle"></i> Nu
+                                    {% endif %}
+                                </abbr>
+                            </samp>
+                        </td>
+                    </tr>
+                {% endif %}
+            </table>
+        <!--</div>-->
+        </div>
+    </div><!-- /.row -->
 
-    {% if ticket.ticketFix is not defined or ticket.ticketFix|length==0 %}
-        <tr>
-            <td colspan="4" class="text-center">
-                    <button type="button" class="btn btn-primary btn-md {% if ticket.ticketFix is defined and ticket.ticketFix is not null %} disabled {% endif %}" onclick="location.href='{{ path('add_equip_to_ticket', {'id' : ticket.id}) }}'">Adauga echipament</button>
-            </td>
-        </tr>
-    {% endif %}
-    <!-- Echipamente/Utilizatori afectati -->
-
-	
-	<tr>
-		<td colspan="4">&nbsp;</td>
-	</tr>
-
-    <!-- Rezolvare -->
-	{% if ticket.ticketFix %}
-		<tr>
-			<th class="text-left">Mode de rezolvare:</th>
-			<td colspan="3">{{ticket.ticketFix.obs}}</td>
-		</tr>
-        <tr>
-            <th class="text-left">Resurse utilizate:</th>
-            <td colspan="3">{{ticket.ticketFix.resources}}</td>
-        </tr>
-        <tr>
-            <th class="text-left">Rezolvat de:</th>
-            <td colspan="3">{{ ticket.ticketFix.modifiedBy }}</td>
-        </tr>
-		<tr>
-			<th class="text-left">Este real:</th>
-			<td colspan="3">
-			{% if ticket.ticketFix.isReal %}
-				<i class="fa fa-check"></i>
-			{% endif %}
-			</td>
-		</tr>
-        {% if not ticket.ticketFix.hasSystems %}
-		<tr>
-			<th class="text-left">De ce nu a afectat:</th>
-			<td colspan="3">{{ticket.ticketFix.notAffectedReason}}</td>
-		</tr>
-        {% endif %}
-		<tr>
-			<th class="text-left">Momentul rezolvarii:</th>
-			<td colspan="3">{{ticket.ticketFix.resolvedAt|date('Y-m-d H:i:s')}}</td>
-		</tr>
-	{% else %}
-		<tr>
-			<td colspan="4" class="text-center">
-				<button type="button" class="btn btn-success btn-lg" onclick="location.href='{{ path('fix_ticket', {'id' : ticket.id}) }}'">Rezolva tichet</button>
-			</td>
-		</tr>	
-	{% endif %}
-    <!-- Rezolvare -->
-	
-	<tr>
-		<td colspan="4">&nbsp;</td>
-	</tr>
-	<tr>
-		<td colspan="4" class="text-center">
-			<button type="button" class="btn btn-default" onclick="location.href='{{ path('tickets') }}'">Reveniti</button>
-		</td>
-	</tr>
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table icr-signatures">
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>Executant(i)</td>
+                    <td>Avizat Manager Compartiment</td>
+                    <td>Avizat Beneficiar</td>
+                </tr>
+                <tr>
+                    <td>Nume:</td>
+                    <td>.......................</td>
+                    <td>................................................</td>
+                    <td>.................................</td>
+                </tr>
+                <tr>
+                    <td>Semnatura:</td>
+                    <td>.......................</td>
+                    <td>................................................</td>
+                    <td>................................</td>
+                </tr>
             </table>
         </div>
-
+    </div>
 {% endblock  %}
 
 {% block javascripts %}
-	{{ parent() }}		
-{% endblock %}
+	{{ parent() }}
 
+    <script type="text/javascript">
+        $("#ticket_isReal").change(function() {
+            if ($('#ticket_isReal').val().length==1) {
+
+                if ($('#ticket_isReal').val()==0) {
+                    $('#div_ticket_notRealReason').removeClass('hidden');
+                    $('#div_ticket_isClosed').removeClass('hidden');
+
+                    if (!$('#solve-form').hasClass('hidden')) {
+                        $('#solve-form').addClass('hidden');
+                    }
+
+                    if (!$('#ticket_reallocate').hasClass('hidden')) {
+                        $('#ticket_reallocate').addClass('hidden');
+                    }
+                } else {
+                    if (!$('#div_ticket_notRealReason').hasClass('hidden')) {
+                        $('#div_ticket_notRealReason').addClass('hidden');
+                    }
+
+                    if (!$('#ticket_reallocate').hasClass('hidden')) {
+                        $('#ticket_reallocate').addClass('hidden');
+                    }
+                    $('#solve-form').removeClass('hidden');
+                }
+
+            } else {
+                if (!$('#div_ticket_notRealReason').hasClass('hidden')) {
+                    $('#div_ticket_notRealReason').addClass('hidden');
+                }
+
+                if (!$('#solve-form').hasClass('hidden')) {
+                    $('#solve-form').addClass('hidden');
+                }
+
+                if ($('#ticket_reallocate').hasClass('hidden')) {
+                    $('#ticket_reallocate').removeClass('hidden');
+                }
+            }
+        });
+
+        $("#ticket_reseteaza").click(function() {
+            $("#ticket_equipment").val('').change();
+            $("#ticket_equipmentName").html('selectati un echipament');
+            $('#ticket_isReal').val('').change();
+            $('#ticket_isReal option[value=""]').attr('selected', true);
+        });
+
+/*
+        $("#ticket_salveaza").click(function(e) {
+            if( $("#ticket_equipment").val()=='')
+            {
+                $('#form-errors').removeClass('hidden');
+                window.scrollTo(0,0);
+                e.preventDefault();
+            }
+        });
+*/
+        $("#ticket_equipment").change(function(){
+            var data = {
+                equipment_id: $(this).val()
+            };
+
+            $.ajax({
+                type: 'post',
+                url: '{{ path("get_allowed_systems") }}',
+                data: data,
+                success: function(data) {
+                    $('#div_ticket_affectedSystems').html('');
+                    $('#div_ticket_affectedSystems').append('<div class="form-group"><label class="required">Sisteme afectate</label>');
+
+
+                    for (var i=0, total = data.length; i < total; i++) {
+                        $('#div_ticket_affectedSystems').append('<div class="checkbox"><label for="ticket_mappings_' + data[i].id + '">' + data[i].name + '</label><input type="checkbox" id="ticket_mappings_' + data[i].id + '" name="ticket[mappings][]" readonly="readonly" value="' + data[i].id + '" /></div>');
+                    }
+                }
+            });
+        })
+    </script>
+{% endblock %}

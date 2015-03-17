@@ -9,7 +9,7 @@ use Tlt\AdmnBundle\Entity\Branch;
 /**
 * TicketAllocation
 *
-* @ORM\Table(name="ticket_allocations")
+* @ORM\Table(name="tickets_allocations")
 * @ORM\Entity
 */
 class TicketAllocation extends AbstractEntity
@@ -22,10 +22,10 @@ class TicketAllocation extends AbstractEntity
 	protected $id;
 	
 	/**
-    * @ORM\ManyToOne(targetEntity="TicketCreate", inversedBy="ticketAllocations")
-	* @ORM\JoinColumn(name="ticket_create", referencedColumnName="id")
+    * @ORM\ManyToOne(targetEntity="Ticket", inversedBy="ticketAllocations")
+	* @ORM\JoinColumn(name="ticket", referencedColumnName="id")
 	*/	
-	protected $ticketCreate;
+	protected $ticket;
 	
 	/**
     * @ORM\ManyToOne(targetEntity="Tlt\AdmnBundle\Entity\Branch", inversedBy="ticketAllocation")
@@ -57,26 +57,26 @@ class TicketAllocation extends AbstractEntity
     }
 
     /**
-     * Set ticketCreate
+     * Set ticket
      *
-     * @param TicketCreate $ticketCreate
+     * @param Ticket $ticket
      * @return TicketAllocation
      */
-    public function setTicketCreate(TicketCreate $ticketCreate = null)
+    public function seTicket(Ticket $ticket = null)
     {
-        $this->ticketCreate = $ticketCreate;
+        $this->ticket = $ticket;
 
         return $this;
     }
 	
     /**
-     * Get ticketCreate
+     * Get ticket
      *
-     * @return TicketCreate
+     * @return Ticket
      */
-    public function getTicketCreate()
+    public function geTicket()
     {
-        return $this->ticketCreate;
+        return $this->ticket;
     }
 	
     /**

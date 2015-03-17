@@ -20,6 +20,10 @@ class DefaultController extends Controller
      */
 	public function indexAction(Request $request)
     {
+
+
+
+
 		// $sql = SQL::getAffectedSystemPenalities();
 		// $sql = SQL::getSLABySystemsAndServices();
 		// $sql = SQL::getSystemsDisponibility();
@@ -97,11 +101,15 @@ class DefaultController extends Controller
 		$year	=	2014;
 		$startMoment	=	'2014-07-01 00:00:00';
 		$endMoment		=	'2014-12-31 23:59:59';
-		
-		
-		$affectedSystems	=	$this->getDoctrine()
-										->getRepository('TltTicketBundle:TicketFix')
-										->getAffectedSystems($owner);
+
+
+        /**
+         * TODO: aici trebuie intervnit dupa ce am modificat tabela tickets.
+         */
+        $affectedSystems = array();
+//		$affectedSystems	=	$this->getDoctrine()
+//										->getRepository('TltTicketBundle:TicketFix')
+//										->getAffectedSystems($owner);
 		
 		foreach($affectedSystems as $affectedSystem)
 		{
