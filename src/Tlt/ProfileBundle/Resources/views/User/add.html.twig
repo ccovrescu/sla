@@ -1,0 +1,110 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>Profil utilizator <small>Adaugare</small></h1>
+            <ol class="breadcrumb">
+                <li><a href="{{ path('homepage') }}"><i class="icon-dashboard"></i> Prima pagina</a></li>
+                <li class="active"><i class="icon-file-alt"></i> Adaugare</li>
+            </ol>
+        </div>
+    </div><!-- /.row -->
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                {{ form_label(form.username) }}
+                {{ form_widget(form.username, {'attr': {'class': 'form-control', 'placeholder': 'Introduceti numele de utilizator'} }) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.status) }}
+                {{ form_widget(form.status, {'attr': {'class': 'form-control' } }) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.lastname) }}
+                {{ form_widget(form.lastname, {'attr': {'class': 'form-control',  'placeholder': 'Introduceti numele utilizatorului'} }) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.firstname) }}
+                {{ form_widget(form.firstname, {'attr': {'class': 'form-control', 'placeholder': 'Introduceti prenumele utilizatorului'} }) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.compartment) }}
+                {{ form_widget(form.compartment, {'attr': {'class': 'form-control', 'placeholder': 'Introduceti compartimentul'} }) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Introduceti adresa de email'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_label(form.emailNotification) }}
+                {% for notif in form.emailNotification %}
+                    <div class="radio">
+                        {{ form_label(notif) }}
+                        {{ form_widget(notif) }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            {# Tip serviciu #}
+            <div class="form-group">
+                {{ form_label(form.departments) }}
+                {% for dep in form.departments %}
+                    <div class="checkbox">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {{ form_label(dep) }}
+                            {{ form_widget(dep) }}
+                        {% else %}
+                            {{ form_label(dep) }}
+                            {{ form_widget(dep, {'attr' : {'disabled':'disabled'} }) }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            {# Zona #}
+            <div class="form-group">
+                {{ form_label(form.branches) }}
+                {% for branch in form.branches %}
+                    <div class="checkbox">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {{ form_label(branch) }}
+                            {{ form_widget(branch) }}
+                        {% else %}
+                            {{ form_label(branch) }}
+                            {{ form_widget(branch, {'attr' : {'disabled':'disabled'} }) }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            {# Roluri #}
+            <div class="form-group">
+                {{ form_label(form.roluri) }}
+                {% for role in form.roluri %}
+                    <div class="checkbox">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {{ form_label(role) }}
+                            {{ form_widget(role) }}
+                        {% else %}
+                            {{ form_label(role) }}
+                            {{ form_widget(role, {'attr' : {'disabled':'disabled'} }) }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>        </div>
+    </div>
+
+    {{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}
+    {{ form_widget(form.reseteaza, {'attr': {'class': 'btn btn-default'}}) }}
+
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+
+{% endblock %}
