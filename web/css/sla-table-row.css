@@ -1,0 +1,21 @@
+.table > thead > tr > td.gray,
+.table > tbody > tr > td.gray,
+.table > tfoot > tr > td.gray,
+.table > thead > tr > th.gray,
+.table > tbody > tr > th.gray,
+.table > tfoot > tr > th.gray,
+.table > thead > tr.gray > td,
+.table > tbody > tr.gray > td,
+.table > tfoot > tr.gray > td,
+.table > thead > tr.gray > th,
+.table > tbody > tr.gray > th,
+.table > tfoot > tr.gray > th {
+    background-color: #E6E6E6;
+}
+
+.table-hover > tbody > tr > td.gray:hover,
+.table-hover > tbody > tr > th.gray:hover,
+.table-hover > tbody > tr.gray:hover > td,
+.table-hover > tbody > tr.gray:hover > th {
+    background-color: #D8D8D8;
+}

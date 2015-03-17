@@ -1,0 +1,71 @@
+/**
+ * Created by Catalin on 3/11/2015.
+ */
+
+@media screen, print {
+    .icr {
+        border: double;
+        margin: 0;
+    }
+
+    .icr td {
+        border: double;
+        max-width: 10px;
+    }
+
+    abbr[title]:after {
+        content: none;
+    }
+
+    a[href]:after {
+        content: none;
+    }
+}
+
+@media screen {
+    .icr-logo, .icr-title, .icr-signatures {
+        display: none;
+    }
+}
+
+@media print {
+    .no-print {
+        display: none;
+    }
+    .icr-title {
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+    .icr-logo {
+        padding: 0px 15px 10px;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #808080;
+    }
+    .icr-signatures {
+        margin-top: 30px;
+        border-collapse: collapse;
+    }
+    .icr-signatures tbody tr td {
+        border: none;
+    }
+
+    #wrapper, #page-wrapper {
+        margin: 0;
+        padding: 0;
+    }
+
+
+    body
+    {
+        /* this affects the margin on the content before sending to printer */
+        margin: 0px;
+    }
+}
+
+@page
+{
+    size: auto;   /* auto is the initial value */
+
+    /* this affects the margin in the printer settings */
+    margin: 2.5mm 2.5mm 2.5mm 2.5mm;
+}

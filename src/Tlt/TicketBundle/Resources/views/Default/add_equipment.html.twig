@@ -1,0 +1,234 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Selectare echipament</h4>
+        </div>
+
+        <div class="modal-body">
+
+            <div id='ajax_loader' style="position: fixed; left: 50%; top: 50%; display: none;">
+                <img src="{{ asset('css/loader.gif') }}" />
+            </div>
+
+            {{ form_start(form, {'attr': {'class':'breadcrumb'}}) }}
+            {{ form_errors(form) }}
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        {{ form_label(form.department) }}
+                        {{ form_widget(form.department, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.service) }}
+                        {{ form_widget(form.service, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.branch) }}
+                        {{ form_widget(form.branch, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        {{ form_label(form.zoneLocation) }}
+                        {{ form_widget(form.zoneLocation, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.owner) }}
+                        {{ form_widget(form.owner, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.equipment) }}
+                        {{ form_widget(form.equipment, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+            </div><!-- /.row -->
+
+            {% do form.salveaza.setRendered %}
+            {% do form.reseteaza.setRendered %}
+
+            {{ form_rest(form) }}
+            {{ form_end(form) }}
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Renunta</button>
+            <button type="button" class="btn btn-primary" id="save">Salveaza selectia</button>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ajaxSend(function(event, request, settings) {
+        $('#ajax_loader').show();
+    });
+    $(document).ajaxComplete(function(event, request, settings) {
+        $('#ajax_loader').hide();
+    });
+
+
+    $("#ticketEquipment_owner").change(function(){
+        var data = {
+            department_id: $('#ticketEquipment_department').val(),
+            service_id: $('#ticketEquipment_service').val(),
+            branch_id: $('#ticketEquipment_branch').val(),
+            location_id: $('#ticketEquipment_zoneLocation').val(),
+            owner_id: $(this).val()
+        };
+
+        $.ajax({
+            type: 'post',
+            url: '{{ path("filter_select_equipments") }}',
+            data: data,
+            success: function(data) {
+                $('#ticketEquipment_equipment').html('');
+
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#ticketEquipment_equipment').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
+            }
+        });
+    });
+
+    $("#ticketEquipment_zoneLocation").change(function(){
+        var data = {
+            department_id: $('#ticketEquipment_department').val(),
+            service_id: $('#ticketEquipment_service').val(),
+            branch_id: $('#ticketEquipment_branch').val(),
+            location_id: $(this).val()
+        };
+
+        $.ajax({
+            type: 'post',
+            url: '{{ path("filter_select_owners") }}',
+            data: data,
+            success: function(data) {
+                $('#ticketEquipment_owner').html('');
+
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#ticketEquipment_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
+
+                $('#ticketEquipment_owner').change();
+            }
+        });
+    });
+
+    $("#ticketEquipment_branch").change(function(){
+        var data = {
+            department_id: $('#ticketEquipment_department').val(),
+            service_id: $('#ticketEquipment_service').val(),
+            branch_id: $(this).val(),
+            location_id: $('#ticketEquipment_zoneLocation').val()
+        };
+
+        $.ajax({
+            type: 'post',
+            url: '{{ path("filter_select_locations") }}',
+            data: data,
+            success: function(data) {
+                $('#ticketEquipment_zoneLocation').html('');
+
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#ticketEquipment_zoneLocation').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
+
+                $('#ticketEquipment_zoneLocation').change();
+            }
+        });
+    });
+
+    $("#ticketEquipment_service").change(function(){
+        var data = {
+            department_id: $('#ticketEquipment_department').val(),
+            service_id: $(this).val(),
+            branch_id: $('#ticketEquipment_branch').val(),
+            location_id: $('#ticketEquipment_zoneLocation').val()
+        };
+
+        $.ajax({
+            type: 'post',
+            url: '{{ path("filter_select_branches") }}',
+            data: data,
+            success: function(data) {
+                $('#ticketEquipment_branch').html('');
+
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#ticketEquipment_branch').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
+
+                $('#ticketEquipment_branch').change();
+            }
+        });
+    });
+
+    $("#ticketEquipment_department").change(function(){
+        var data = {
+            department_id: $(this).val(),
+            service_id: $('#ticketEquipment_service').val(),
+            branch_id: $('#ticketEquipment_branch').val(),
+            location_id: $('#ticketEquipment_zoneLocation').val()
+        };
+
+        $.ajax({
+            type: 'post',
+            url: '{{ path("filter_select_services") }}',
+            data: data,
+            success: function(data) {
+                $('#ticketEquipment_service').html('');
+
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#ticketEquipment_service').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
+
+                $('#ticketEquipment_service').change();
+            }
+        });
+    });
+
+
+    // Hide modal if "Salveaza selectia" is pressed
+    $("#save").click(function() {
+        var data = {
+            equipment_id: $("#ticketEquipment_equipment option:selected").attr('value')
+        };
+
+        $.ajax({
+            type: 'post',
+            url: '{{ path("get_equipment_name") }}',
+            data: data,
+            success: function(data) {
+                $("#ticket_equipment").val( $("#ticketEquipment_equipment option:selected").attr('value')).change();
+                $("#ticket_equipmentName").html(data[0].name);
+                $('#myModal').modal('hide');
+            }
+        });
+
+    });
+
+    $("#ticket_equipment").change(function(){
+        var data = {
+            equipment_id: $(this).val()
+        };
+
+        $.ajax({
+            type: 'post',
+            url: '{{ path("get_allowed_systems") }}',
+            data: data,
+            success: function(data) {
+                $('#div_ticket_affectedSystems').html('');
+                $('#div_ticket_affectedSystems').append('<div class="form-group"><label class="required">Sisteme afectate</label>');
+
+
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#div_ticket_affectedSystems').append('<div class="checkbox"><label for="ticket_mappings_' + data[i].id + '">' + data[i].name + '</label><input type="checkbox" id="ticket_mappings_' + data[i].id + '" name="ticket[mappings][]" readonly="readonly" value="' + data[i].id + '" /></div>');
+                }
+            }
+        });
+    })
+</script>

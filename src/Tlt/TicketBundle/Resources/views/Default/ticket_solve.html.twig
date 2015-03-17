@@ -1,0 +1,200 @@
+<tr>
+    <td colspan="10">
+        {{ form_start(form, {'attr': {'class':'breadcrumb'}}) }}
+        {{ form_errors(form) }}
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="form-group">
+                    {{ form_label(form.isReal) }}
+                    {{ form_widget(form.isReal, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+            <div class="col-lg-8 {% if form.isReal is defined and form.vars.value.isReal != "0" %} hidden {% endif %}" id="div_ticket_notRealReason">
+                <div class="form-group {% if form.notRealReason.vars.errors|length>0 %} has-error {% endif %}">
+                    {{ form_label(form.notRealReason, form.notRealReason.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                    {{ form_widget(form.notRealReason, {'attr': {'class': 'form-control', 'placeholder':'Motivati de ce deranjamentul nu a fost real'}}) }}
+                    {{ form_errors(form.notRealReason) }}
+                </div>
+            </div>
+        </div><!-- row -->
+
+        <div class="{% if form.isReal is defined and form.vars.value.isReal != "1" %} hidden {% endif %}" id="solve-form">
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group {% if form.ticketType.vars.errors|length>0 %} has-error {% endif %}">
+                        {{ form_label(form.ticketType, form.ticketType.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                        {{ form_widget(form.ticketType, {'attr': {'class': 'form-control', 'placeholder':'Introduceti o scurta descriere a deranjamentului reclamat'}}) }}
+                        {{ form_errors(form.ticketType) }}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        {{ form_label(form.fixedAt) }}
+                        {{ form_widget(form.fixedAt) }}
+                    </div>
+                </div>
+            </div><!-- row -->
+
+
+
+
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group {% if form.fixedBy.vars.errors|length>0 %} has-error {% endif %}">
+                        {{ form_label(form.fixedBy, form.fixedBy.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                        {{ form_widget(form.fixedBy, {'attr': {'class': 'form-control', 'placeholder':'Numele persoanei care rezolva'}}) }}
+                        {{ form_errors(form.fixedBy) }}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group {% if form.compartment.vars.errors|length>0 %} has-error {% endif %}">
+                        {{ form_label(form.compartment, form.compartment.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                        {{ form_widget(form.compartment, {'attr': {'class': 'form-control', 'placeholder':'Compartimentul TELETRANS care rezolva tichetul'}}) }}
+                        {{ form_errors(form.compartment) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        {{ form_label(form.backupSolution) }}
+                        {#{ form_widget(form.backupSolution) }#}
+
+                        {% for option in form.backupSolution %}
+                            <div class="radio">
+                                {#{ form_label(option) }#}
+                                <label>{{ form_widget(option) }} {{ option.vars.label }} </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        {{ form_label(form.oldness) }}
+                        {#{ form_widget(form.oldness) }#}
+
+                        {% for option in form.oldness %}
+                            <div class="radio">
+                                <label>{{ form_widget(option) }} {{ option.vars.label }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        {{ form_label(form.emergency) }}
+                        {#{ form_widget(form.oldness) }#}
+
+                        {% for option in form.emergency %}
+                            <div class="radio">
+                                <label>{{ form_widget(option) }} {{ option.vars.label }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div><!-- row -->
+
+
+            <div class="row">
+                <div class="col-lg-12">
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="form-group {% if form.equipment.vars.errors|length>0 %} has-error {% endif %}">
+                        <!--
+                        <label class="control-label" for="ticket_disabledEquipment">Echipament</label>
+                        <input class="form-control" id="ticket_disabledEquipment" type="text" placeholder="Nici un echipament selectat" disabled>
+                        -->
+
+                        {{ form_label(form.equipment, form.equipment.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                        <div class="form-group">
+                            <div class="btn-group">
+                                    <button type="button" class="btn btn-default" id="ticket_equipmentName">
+                                        {% if ticket.equipment is null %}
+                                            selectati un echipament
+                                        {% else %}
+                                            {{ ticket.equipment.name }}
+                                        {% endif %}
+                                    </button>
+                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="modal" data-target="#myModal" data-remote="{{ path('tickets_add_equipment', {'id' : 3}) }}" data-backdrop="static">&nbsp;<span class="caret"></span></button>
+                            </div><!-- /btn-group -->
+                        </div>
+                        {{ form_widget(form.equipment, {'attr': {'class': 'btn btn-default hidden'} }) }}
+                        {{ form_errors(form.equipment) }}
+
+                        <br/>
+
+                        <!-- Button trigger modal -->
+<!--                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal" data-remote="{{ path('tickets_add_equipment', {'id' : 3}) }}" data-backdrop="static">
+                            Selecteza echipament
+                        </button> -->
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+                    </div>
+                </div>
+                <div class="col-lg-8" id="div_ticket_affectedSystems">
+                    <div class="form-group">
+                        {{ form_label(form.mappings) }}
+
+                        {% if form.mappings|length>0 %}
+                            {% for mapping in form.mappings %}
+                                <div class="checkbox">
+                                    {{ form_label(mapping) }}
+                                    {{ form_widget(mapping) }}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            {{ form_widget(form.mappings) }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div><!-- row -->
+
+
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group {% if form.fixedMode.vars.errors|length>0 %} has-error {% endif %}">
+                        {{ form_label(form.fixedMode, form.fixedMode.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                        {{ form_widget(form.fixedMode, {'attr': {'class': 'form-control'} }) }}
+                        {{ form_errors(form.fixedMode) }}
+                    </div>
+                </div>
+            </div><!-- row -->
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        {{ form_label(form.resources) }}
+                        {{ form_widget(form.resources, {'attr': {'class': 'form-control'} }) }}
+                    </div>
+                </div>
+            </div><!-- row -->
+
+        </div>
+
+        {%  if form.isClosed is defined %}
+            <div class="row {% if form.isReal is defined and form.vars.value.isReal is null %} hidden {% endif %}" id="div_ticket_isClosed">
+                <div class="col-lg-12">
+                    <div class="form-group">
+                        {% include 'TltTicketBundle:Default:ticket_close_form.html.twig' %}
+                    </div>
+                </div>
+            </div><!-- row -->
+        {% endif %}
+
+        {{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}
+        {{ form_widget(form.reseteaza, {'attr': {'class': 'btn btn-default'}}) }}
+
+        {{ form_rest(form) }}
+        {{ form_end(form) }}
+    </td>
+</tr>

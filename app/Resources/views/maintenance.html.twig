@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Teletrans - Aplicatie SLA</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+    <link href="{{ asset('css/catalin.css' ) }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('font-awesome/css/font-awesome.min.css') }}">
+</head>
+
+<body class="desktop-version login-page">
+<div id="page">
+    <div id="top-page">
+        <div class="container">
+            <form class="form-signin alert-danger">
+                <div class="title-box">
+                    <h2 class="title">Mentenanta</h2>
+                </div>
+
+                <fieldset>
+                    <div>
+                        <p><strong>Serverul este momentan oprit pentru mentenanta.</strong><br /><p>
+                        <p>Serviciul a fost oprit pentru a asigura integritatea datelor in timpul procedurii de actualizare.</p>
+                        {% if maintenanceUntil is not empty %}
+                            <p><strong>Serviciul va fi indiponibil pana {{ maintenanceUntil }}</strong>
+                        {% else %}
+                            <em>Serviciul va deveni operational cat de curand posibil.</em></p>
+                        {% endif %}
+                    </div>
+                </fieldset>
+            </form>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
