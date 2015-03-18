@@ -28,7 +28,9 @@
         <table class="table table-bordered table-hover table-striped tablesorter">
             <thead>
             <tr>
-                <th>Denumire <i class="fa fa-sort"></i></th>
+                <th>Nume de utilizator <i class="fa fa-sort"></i></th>
+                <th>Nume</th>
+                <th>Prenume</th>
                 <th class="text-center">Optiuni</th>
             </tr>
             </thead>
@@ -37,6 +39,8 @@
                 {% for user in users %}
                     <tr>
                         <td><a href="#">{{ user.username }}</a></td>
+                        <td>{{ user.lastname }}</td>
+                        <td>{{ user.firstname }}</td>
                         <!--
                         <td class="text-right"><a href="{{ path('profile_user_edit', {'id' : user.id}) }}">modifica</a></td>
                         -->
@@ -59,7 +63,7 @@
             </tbody>
             <tfoot>
             <tr>
-                <th colspan="2" class="text-center">Total {{ users|length }} utilizatori.</th>
+                <th colspan="4" class="text-center">Total {{ users|length }} utilizatori.</th>
             </tr>
             </tfoot>
         </table>

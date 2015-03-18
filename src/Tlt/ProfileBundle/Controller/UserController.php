@@ -28,7 +28,13 @@ class UserController extends Controller
     {
         $users = $this->getDoctrine()
             ->getRepository('TltProfileBundle:User')
-            ->findAll();
+            ->findBy(
+                array(),
+                array(
+                    'lastname' => 'ASC',
+                    'firstname' => 'ASC'
+                )
+            );
 
         return array('users' => $users);
     }
