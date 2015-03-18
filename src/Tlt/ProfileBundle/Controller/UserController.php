@@ -36,6 +36,8 @@ class UserController extends Controller
                 )
             );
 
+        // TODO: pagination.
+
         return array('users' => $users);
     }
 
