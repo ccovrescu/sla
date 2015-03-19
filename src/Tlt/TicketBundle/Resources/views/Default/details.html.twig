@@ -116,7 +116,7 @@
                     <td colspan="2"><strong>Nr. Interventie:</strong> <samp><abbr title="attribute">{{ ticket.id }}</abbr></samp></td>
                     <td colspan="4">
                         <strong>Data:</strong> <samp><abbr title="data aparitiei">{{ ticket.announcedAt|date('d-m-Y') }}</abbr></samp>
-                        <strong>Ora:</strong> <samp><abbr title="attribute">{{ ticket.announcedAt|date('H:i') }}</abbr></samp>
+                        <strong>Ora:</strong> <samp><abbr title="attribute">{{ ticket.announcedAt|date('h:i A') }}</abbr></samp>
                     </td>
                     <td colspan="4"><strong>Preluat sesizarea:</strong> <samp><abbr title="attribute">{{ ticket.takenBy|default('n/a') }}</abbr></samp></td>
                 </tr>
@@ -174,7 +174,7 @@
                             <td colspan="3" nowrap><strong>Compartiment:</strong>  <samp><abbr title="attribute">{{ ticket.compartment }}</abbr></samp></td>
                         </tr>
                         <tr>
-                            <td colspan="4"><strong>Data si ora rezolvarii:</strong>  <samp><abbr title="attribute">{{ ticket.fixedAt|date('Y-m-d H:i') }}</abbr></samp></td>
+                            <td colspan="4"><strong>Data si ora rezolvarii:</strong>  <samp><abbr title="attribute">{{ ticket.fixedAt|date('Y-m-d h:i A') }}</abbr></samp></td>
                             <td colspan="6">
                                 <strong>Vechimea echipamentului:</strong>
                                 <samp>
@@ -315,12 +315,18 @@
                     if (!$('#ticket_reallocate').hasClass('hidden')) {
                         $('#ticket_reallocate').addClass('hidden');
                     }
+
                     $('#solve-form').removeClass('hidden');
+                    $('#div_ticket_isClosed').removeClass('hidden');
                 }
 
             } else {
                 if (!$('#div_ticket_notRealReason').hasClass('hidden')) {
                     $('#div_ticket_notRealReason').addClass('hidden');
+                }
+
+                if (!$('#div_ticket_isClosed').hasClass('hidden')) {
+                    $('#div_ticket_isClosed').addClass('hidden');
                 }
 
                 if (!$('#solve-form').hasClass('hidden')) {
@@ -340,16 +346,6 @@
             $('#ticket_isReal option[value=""]').attr('selected', true);
         });
 
-/*
-        $("#ticket_salveaza").click(function(e) {
-            if( $("#ticket_equipment").val()=='')
-            {
-                $('#form-errors').removeClass('hidden');
-                window.scrollTo(0,0);
-                e.preventDefault();
-            }
-        });
-*/
         $("#ticket_equipment").change(function(){
             var data = {
                 equipment_id: $(this).val()

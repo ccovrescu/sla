@@ -49,7 +49,7 @@ class Ticket extends AbstractEntity
      *     groups={"insert"}
      * ),
      * @Assert\Regex(
-     *     pattern = "/^[a-zA-z\-\s]+$/",
+     *     pattern = "/^[a-zA-z0-9\-\s]+$/",
      *     message = "Valoarea {{ value }} contine caractere nepermise.",
      *     groups={"insert"}
      * )
@@ -311,7 +311,10 @@ class Ticket extends AbstractEntity
      */
     protected $isClosed;
 
-
+    /**
+     * @ORM\Column(name="resolved_in", type="integer", nullable=true)
+     */
+    protected $resolvedIn;
 
     /**
      * Constructor
@@ -912,5 +915,106 @@ class Ticket extends AbstractEntity
     public function getIsClosed()
     {
         return $this->isClosed;
+    }
+
+//    /**
+//     * Set resolvedIn
+//     *
+//     * @param integer $resolvedIn
+//     * @return Ticket
+//     */
+//    public function setResolvedIn($resolvedIn)
+//    {
+//        $this->resolvedIn = $resolvedIn;
+//
+//        return $this;
+//    }
+
+    /**
+     * Get resolvedIn
+     *
+     * @return integer 
+     */
+    public function getResolvedIn()
+    {
+        return $this->resolvedIn;
+    }
+
+    /**
+     * Gets triggered only on insert
+     *
+     * @ORM\PreUpdate
+     */
+    public function setResolvedInValue()
+    {
+        $this->resolvedIn = $this->getWorkingTime($this->announcedAt, $this->fixedAt);
+    }
+
+    /**
+     * Return working minutes elapsed from OCCURED moment to RESOLVED moment.
+     */
+    private function getWorkingTime($startDate, $endDate, $startWorkingTime = '07:30:00', $endWorkingTime = '16:30:00')
+    {
+        define ('ONEMINUTE', 60);
+
+        // ESTABLISH THE MINUTES PER DAY FROM START AND END TIMES
+        $startWorkingTime	= strtotime($startWorkingTime);
+        $endWorkingTime		= strtotime($endWorkingTime);
+        $minutes_per_day	= (int)( ($endWorkingTime - $startWorkingTime) / 60 )+1;
+
+        // ESTABLISH THE HOLIDAYS
+        $holidays = array(
+            '2015-01-01',
+            '2015-01-02',
+            '2015-01-02',
+            '2015-04-12',
+            '2015-04-13',
+            '2015-05-01',
+            '2015-05-31',
+            '2015-06-01',
+            '2015-08-15',
+            '2015-11-30',
+            '2015-12-01',
+            '2015-12-25',
+            '2015-12-26',
+        );
+
+        // Convert to TIMESTAMP
+        // $start	= strtotime($startDate);
+        // $end	= strtotime($endDate);
+        $start	=	$startDate->getTimestamp();
+        $end	=	$endDate->getTimestamp();
+
+        // RESET WORK MINUTES
+        $workminutes = 0;
+
+        // ITERATE OVER THE DAYS
+        $start = $start - ONEMINUTE;
+        while ($start < $end)
+        {
+            $start = $start + ONEMINUTE;
+
+            // ELIMINATE WEEKENDS - SAT AND SUN
+            $weekday = date('D', $start);
+            if (substr($weekday,0,1) == 'S') continue;
+
+            // ELIMINATE HOLIDAYS
+            $iso_date = date('Y-m-d', $start);
+            if (in_array($iso_date, $holidays)) continue;
+
+            // ELIMINATE HOURS BEFORE BUSINESS HOURS
+            $daytime = date('H:i:s', $start);
+            if(($daytime < date('H:i:s',$startWorkingTime))) continue;
+
+            // ELIMINATE HOURS PAST BUSINESS HOURS
+            $daytime = date('H:i:s', $start);
+            if(($daytime > date('H:i:s',$endWorkingTime))) continue;
+
+            $workminutes++;
+        } // end while
+
+        $workminutes = $workminutes-(ceil($workminutes/$minutes_per_day)>1 ? ceil($workminutes/$minutes_per_day)-1 : 1);
+
+        return ($workminutes > 0 ? $workminutes : 0);
     }
 }

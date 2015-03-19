@@ -34,6 +34,7 @@ class TicketType extends AbstractType {
                 'announcedAt', 'datetime', array(
                     'date_widget' => "single_text",
                     'time_widget' => "single_text",
+//                    'date_format'=> 'dd-MM-yyyy',
                     'label' => 'Anuntat la:',
                     'data' => new \DateTime(),
                 ));

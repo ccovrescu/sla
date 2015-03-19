@@ -35,11 +35,12 @@
             <thead>
             <tr>
                 <th>Nr <i class="fa fa-sort"></i></th>
-                <th>Agentia/Centrul <i class="fa fa-sort"></i></th>
                 <th>Tip serviciu <i class="fa fa-sort"></i></th>
                 <th>Anuntat de</th>
                 <th>Anuntat la</th>
+                <th>Rezolvat la</th>
                 <th class="text-left">Descriere</th>
+                <th>Intrerupere <i class="fa fa-sort"></i></th>
                 <th class="text-left">Optiuni</th>
             </tr>
             </thead>
@@ -58,9 +59,6 @@
 
                         <td>{{ ticket.id }}</td>
                         <td>
-                            {{ ticket.ticketAllocations.first.branch.name }}
-                        </td>
-                        <td>
                             {% if ticket.equipment is defined and ticket.equipment is not null %}
                                 {% if ticket.equipment.service.department.id == "1" %}
                                     IP
@@ -75,10 +73,24 @@
                         </td>
                         <td>{{ ticket.announcedBy }}</td>
                         <td>{{ ticket.announcedAt|date('d-m-Y H:i') }}</td>
+                        <td>
+                            {% if ticket.fixedAt is defined and ticket.fixedAt is not null%}
+                                {{ ticket.fixedAt|date('d-m-Y H:i') }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
                         <td class="text-left">
                             <a href="{{ path('ticket_details', {'id' : ticket.id}) }}">
                                 {{ticket.description}}
                             </a>
+                        </td>
+                        <td>
+                            {% if ticket.resolvedIn is defined and ticket.resolvedIn is not null %}
+                                {{ ticket.resolvedIn }}
+                            {% else %}
+                                -
+                            {% endif %}
                         </td>
                         <td>
                             <div class="btn-group" style="min-width: 90px">
@@ -97,10 +109,25 @@
             </tbody>
             <tfoot>
             <tr>
-                <th colspan="7" class="text-center">Total {{ tickets|length }} tichete</th>
+                <th colspan="8" class="text-center">Total {{ tickets|length }} tichete</th>
             </tr>
             </tfoot>
         </table>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                Intreruperea se calculeaza in <strong>minute</strong> ca diferenta dintre momentul rezolvarii tichetului (<strong>Rezolvat la</strong>) si momentul anuntarii tichetului (<strong>Anuntat la)</strong>, din care se scad urmatoarele:
+                <ul>
+                    <li>timpul curs in weekend (Sambata si Duminica)</li>
+                    <li>timpul curs in cadrul sarbatorilor legale</li>
+                    <li>timpul curs in afara programului normal de lucru (Program normal de lucru: 07:30 - 16:30)</li>
+                </ul>
+            </div>
+        </div>
     </div>
 
 {% endblock  %}
