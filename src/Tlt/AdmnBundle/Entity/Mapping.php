@@ -40,7 +40,7 @@ class Mapping extends AbstractEntity
     private $system;
 
     /**
-     * @ORM\OneToMany(targetEntity="Tlt\TicketBundle\Entity\TicketMapping", mappedBy="mapping", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="Tlt\TicketBundle\Entity\TicketMapping", mappedBy="mapping", cascade={"persist", "remove"})
      */
     protected $ticketMapping;
 

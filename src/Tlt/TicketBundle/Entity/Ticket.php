@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Tlt\AdmnBundle\Entity\AbstractEntity;
 use Tlt\AdmnBundle\Entity\Branch;
 use Tlt\AdmnBundle\Entity\Equipment;
+use Tlt\AdmnBundle\Entity\GuaranteedValue;
 
 /**
  * Ticket
@@ -294,7 +295,7 @@ class Ticket extends AbstractEntity
     protected $resources;
 
     /**
-     * @ORM\OneToMany(targetEntity="TicketMapping", mappedBy="ticket", cascade={"all"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="TicketMapping", mappedBy="ticket", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     protected $ticketMapping;
 
@@ -871,11 +872,16 @@ class Ticket extends AbstractEntity
 
     /**
      * Return working minutes elapsed from OCCURED moment to RESOLVED moment.
+     * @param \DateTime $startDate
+     * @param \DateTime $endDate
+     * @param GuaranteedValue $guaranteedValue
+     *
+     * @return integer
      */
-    private function getWorkingTime($startDate, $endDate, $startWorkingTime = '07:30:00', $endWorkingTime = '16:30:00')
-    {
+    public function getWorkingTime($startDate, $endDate, $guaranteedValue) {
+        $startWorkingTime = $guaranteedValue->getMinHour()->format('H:i:s');
+        $endWorkingTime = $guaranteedValue->getMaxHour()->format('H:i:s');
 
-        echo $startWorkingTime . ' - ' . $endWorkingTime . '<br/>';
         if (!defined('ONEMINUTE'))
             define ('ONEMINUTE', 60);
 
@@ -902,8 +908,6 @@ class Ticket extends AbstractEntity
         );
 
         // Convert to TIMESTAMP
-        // $start	= strtotime($startDate);
-        // $end	= strtotime($endDate);
         $start = $startDate->getTimestamp();
         $end = $endDate->getTimestamp();
 
@@ -912,16 +916,22 @@ class Ticket extends AbstractEntity
 
         // ITERATE OVER THE DAYS
         $start = $start - ONEMINUTE;
+
         while ($start < $end) {
             $start = $start + ONEMINUTE;
 
-            // ELIMINATE WEEKENDS - SAT AND SUN
-            $weekday = date('D', $start);
-            if (substr($weekday, 0, 1) == 'S') continue;
+            /**
+             * Daca nu este program NON STOP, atunci scadem WEEKEND-urile si SARBATORILE LEGALE
+             */
+            if ( date('H:i:s', $startWorkingTime)!=date('H:i:s', strtotime('00:00:00')) || date('H:i:s', $endWorkingTime)!=date('H:i:s', strtotime('23:59:59')) ) {
+                // ELIMINATE WEEKENDS - SAT AND SUN
+                $weekday = date('D', $start);
+                if (substr($weekday, 0, 1) == 'S') continue;
 
-            // ELIMINATE HOLIDAYS
-            $iso_date = date('Y-m-d', $start);
-            if (in_array($iso_date, $holidays)) continue;
+                // ELIMINATE HOLIDAYS
+                $iso_date = date('Y-m-d', $start);
+                if (in_array($iso_date, $holidays)) continue;
+            }
 
             // ELIMINATE HOURS BEFORE BUSINESS HOURS
             $daytime = date('H:i:s', $start);
@@ -951,8 +961,7 @@ class Ticket extends AbstractEntity
             $this->getWorkingTime(
                 $this->announcedAt,
                 $this->fixedAt,
-                $ticketMapping->getMapping()->getSystem()->getGuaranteedValues()->first()->getMinHour()->format('H:i:s'),
-                $ticketMapping->getMapping()->getSystem()->getGuaranteedValues()->first()->getMaxHour()->format('H:i:s')
+                $ticketMapping->getMapping()->getSystem()->getGuaranteedValues()->first()
             )
         );
         $this->ticketMapping[] = $ticketMapping;

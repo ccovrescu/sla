@@ -226,6 +226,18 @@ class DefaultController extends Controller
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
             $em = $this->getDoctrine()->getManager();
+
+            foreach ($ticket->getTicketMapping() as $ticketMapping)
+            {
+                $ticketMapping->setResolvedIn(
+                    $ticket->getWorkingTime(
+                        $ticket->getAnnouncedAt(),
+                        $ticket->getFixedAt(),
+                        $ticketMapping->getMapping()->getSystem()->getGuaranteedValues()->first()
+                    )
+                );
+            }
+
             $em->flush();
 
             return $this->redirect(
