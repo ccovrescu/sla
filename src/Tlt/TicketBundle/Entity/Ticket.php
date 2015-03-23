@@ -197,7 +197,7 @@ class Ticket extends AbstractEntity
      *     groups={"solve"}
      * ),
      * @Assert\Regex(
-     *     pattern = "/^[a-zA-z\s]+$/",
+     *     pattern = "/^[a-zA-z\-\s]+$/",
      *     message = "Valoarea {{ value }} contine caractere nepermise.",
      *     groups={"solve"}
      * )
