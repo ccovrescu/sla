@@ -133,10 +133,10 @@ class TicketType extends AbstractType {
                 ));
             $builder->add(
                 'fixedAt', 'datetime', array(
-                    'date_widget' => "single_text",
                     'time_widget' => "single_text",
                     'label' => 'Data si ora rezolvarii:',
 //                    'data' => new \DateTime(),
+//                    'view_timezone' => 'Europe/Bucharest',
                 ));
             $builder->add(
                 'oldness', 'entity', array(
