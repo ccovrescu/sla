@@ -313,6 +313,7 @@ class TicketType extends AbstractType {
             'expanded'  => true,
             'multiple' => true,
             'read_only' => true,
+            'attr' => array('class' => 'userFiledCollection'),
             'query_builder' => function (EntityRepository $repository) use ($equipment_id) {
                 $qb = $repository->createQueryBuilder('mp')
                     ->where('mp.equipment = :equipment')
