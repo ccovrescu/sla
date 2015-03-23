@@ -93,9 +93,9 @@
                         <samp>
                             <abbr title="attribute">
                                 {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
-                                    Urgent <i class="fa fa-check-square-o"></i>
-                                {% else %}
                                     Urgent <i class="fa fa-square-o"></i>
+                                {% else %}
+                                    Urgent <i class="fa fa-check-square-o"></i>
                                 {% endif %}
                             </abbr>
                         </samp>
@@ -103,7 +103,7 @@
                     <td colspan="2">
                         <samp>
                             <abbr title="attribute">
-                                {% if ticket.emergency is not null and ticket.emergency.id == 2 %}
+                                {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
                                     Non Urgent <i class="fa fa-check-square-o"></i>
                                 {% else %}
                                     Non Urgnet <i class="fa fa-square-o"></i>
@@ -216,11 +216,11 @@
 
                     {% if ticket.isReal == 1 %}
                         <tr>
-                            <td rowspan="{{ 1+ticket.mappings|length }}" colspan="4" style="vertical-align: middle;"><strong>Echipament:</strong> <samp><abbr title="attribute">{{ ticket.equipment.name }}</abbr></samp></td>
+                            <td rowspan="{{ 1+ticket.ticketMapping|length }}" colspan="4" style="vertical-align: middle;"><strong>Echipament:</strong> <samp><abbr title="attribute">{{ ticket.equipment.name }}</abbr></samp></td>
                             <td colspan="6"><strong>Sisteme afectate:</strong></td>
                         </tr>
 
-                        {% for mapping in ticket.mappings %}
+                        {% for mapping in ticket.ticketMapping %}
                             <tr>
                                 <td colspan="6">
                                     <samp>
@@ -361,7 +361,7 @@
 
 
                     for (var i=0, total = data.length; i < total; i++) {
-                        $('#div_ticket_affectedSystems').append('<div class="checkbox"><label for="ticket_mappings_' + data[i].id + '">' + data[i].name + '</label><input type="checkbox" id="ticket_mappings_' + data[i].id + '" name="ticket[mappings][]" readonly="readonly" value="' + data[i].id + '" /></div>');
+                        $('#div_ticket_affectedSystems').append('<div class="checkbox"><label for="ticket_ticketMapping_' + data[i].id + '">' + data[i].name + '</label><input type="checkbox" id="ticket_ticketMapping_' + data[i].id + '" name="ticket[ticketMapping][]" readonly="readonly" value="' + data[i].id + '" /></div>');
                     }
                 }
             });

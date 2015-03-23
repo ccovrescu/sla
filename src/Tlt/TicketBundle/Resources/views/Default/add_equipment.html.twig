@@ -226,7 +226,7 @@
 
 
                 for (var i=0, total = data.length; i < total; i++) {
-                    $('#div_ticket_affectedSystems').append('<div class="checkbox"><label for="ticket_mappings_' + data[i].id + '">' + data[i].name + '</label><input type="checkbox" id="ticket_mappings_' + data[i].id + '" name="ticket[mappings][]" readonly="readonly" value="' + data[i].id + '" /></div>');
+                    $('#div_ticket_affectedSystems').append('<div class="checkbox"><label for="ticket_ticketMapping_' + data[i].id + '">' + data[i].name + '</label><input type="checkbox" id="ticket_ticketMapping_' + data[i].id + '" name="ticket[ticketMapping][]" readonly="readonly" value="' + data[i].id + '" /></div>');
                 }
             }
         });

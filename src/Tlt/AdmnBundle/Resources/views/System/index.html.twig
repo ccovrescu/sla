@@ -50,21 +50,42 @@
             <table class="table table-bordered table-hover table-striped tablesorter">
 				<thead>
 					<tr>
-						<th>Denumire <i class="fa fa-sort"></i></th>
-						<th class="text-right">Disponibilitate</th>
-						<th class="text-right">Optiuni</th>
+						<th rowspan="2">Denumire <i class="fa fa-sort"></i></th>
+                        <th colspan="2" nowrap>Program disponibilitate</th>
+						<th rowspan="2" class="text-right">Disponibilitate  <i class="fa fa-sort"></i></th>
+						<th rowspan="2" class="text-right">Optiuni</th>
 					</tr>
+                    <tr>
+                        <th class="text-right">Start</th>
+                        <th class="text-right">Sfarsit</th>
+                    </tr>
                </thead>
                <tbody>
 					{% if systems %}
 						{% for system in systems %}
 							<tr>
 								<td>{{ system.name }}</td>
-								{% if system.guaranteedValues.first %}
-									<td class="text-right">{{ system.guaranteedValues.first.value|number_format(2, '.', ',') }} %</td>
-								{% else %}
-									<td class="text-right">-</td>
-								{% endif %}
+                                <td class="text-right">
+                                    {% if system.guaranteedValues is defined and system.guaranteedValues is not null %}
+                                        {{ system.guaranteedValues.first.minHour|date('H:i:s') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td class="text-right">
+                                    {% if system.guaranteedValues is defined and system.guaranteedValues is not null %}
+                                        {{ system.guaranteedValues.first.maxHour|date('H:i:s') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td class="text-right">
+                                    {% if system.guaranteedValues is defined and system.guaranteedValues is not null %}
+									    {{ system.guaranteedValues.first.value|number_format(2, '.', ',') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                    </td>
 								<td class="text-right"><a href="{{ path('admin_systems_edit', {'id' : system.id}) }}">modifica</a></td>
 							</tr>
 						{% endfor %}
@@ -72,7 +93,7 @@
                </tbody>
 			   <tfoot>
 					<tr>
-						<th colspan="3" class="text-center">Total {{ systems|length }} sisteme.</th>
+						<th colspan="5" class="text-center">Total {{ systems|length }} sisteme.</th>
 					</tr>
 			   </tfoot>
             </table>

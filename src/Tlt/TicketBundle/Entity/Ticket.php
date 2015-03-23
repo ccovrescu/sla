@@ -134,7 +134,7 @@ class Ticket extends AbstractEntity
      * )
      */
     protected $announcedTo;
-    
+
     /**
      * @ORM\Column(type="string", length=255)
      *
@@ -144,7 +144,6 @@ class Ticket extends AbstractEntity
      * )
      */
     protected $description;
-
 
     /**
      * @var boolean
@@ -203,7 +202,6 @@ class Ticket extends AbstractEntity
      * )
      */
     protected $compartment;
-
 
     /**
      * @var string
@@ -296,13 +294,9 @@ class Ticket extends AbstractEntity
     protected $resources;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Tlt\AdmnBundle\Entity\Mapping")
-     * @ORM\JoinTable(name="tickets_mappings",
-     *      joinColumns={@ORM\JoinColumn(name="ticket_id", referencedColumnName="id", onDelete="CASCADE")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="mapping_id", referencedColumnName="id", onDelete="CASCADE")}
-     *      )
-     **/
-    protected $mappings;
+     * @ORM\OneToMany(targetEntity="TicketMapping", mappedBy="ticket", cascade={"all"}, orphanRemoval=true)
+     */
+    protected $ticketMapping;
 
     /**
      * @var boolean
@@ -312,19 +306,12 @@ class Ticket extends AbstractEntity
     protected $isClosed;
 
     /**
-     * @ORM\Column(name="resolved_in", type="integer", nullable=true)
-     */
-    protected $resolvedIn;
-
-    /**
      * Constructor
      */
     public function __construct()
     {
         $this->ticketAllocations = new ArrayCollection();
-        $this->mappings = new ArrayCollection();
     }
-
 
     /**
      * Set id
@@ -533,7 +520,7 @@ class Ticket extends AbstractEntity
     public function getNotRealReason()
     {
         return $this->notRealReason;
-    }    
+    }
 
     /**
      * Get ticketAllocations
@@ -554,10 +541,10 @@ class Ticket extends AbstractEntity
     public function setTicketAllocations(Branch $branch)
     {
         $ticketAllocation = new TicketAllocation();
-        $ticketAllocation->setBranch( $branch );
+        $ticketAllocation->setBranch($branch);
 
         $ticketAllocation->seTicket($this);
-        $this->ticketAllocations->add( $ticketAllocation );
+        $this->ticketAllocations->add($ticketAllocation);
 
         return $this;
     }
@@ -573,7 +560,6 @@ class Ticket extends AbstractEntity
 
         $this->ticketAllocations->add($ticketAllocation);
     }
-
 
     /**
      * Add ticketAllocations
@@ -783,17 +769,6 @@ class Ticket extends AbstractEntity
     }
 
     /**
-     * Get mappings
-     *
-     * @return \Doctrine\Common\Collections\ArrayCollection
-     */
-    public function getMappings()
-    {
-        return $this->mappings;
-    }
-
-
-    /**
      * @ORM\PreUpdate
      */
     public function setNotRealReasonValue()
@@ -818,34 +793,11 @@ class Ticket extends AbstractEntity
     /**
      * Get compartment
      *
-     * @return string 
+     * @return string
      */
     public function getCompartment()
     {
         return $this->compartment;
-    }
-
-    /**
-     * Add mappings
-     *
-     * @param \Tlt\AdmnBundle\Entity\System $mappings
-     * @return Ticket
-     */
-    public function addMapping($mappings)
-    {
-        $this->mappings[] = $mappings;
-
-        return $this;
-    }
-
-    /**
-     * Remove mappings
-     *
-     * @param \Tlt\AdmnBundle\Entity\System $mappings
-     */
-    public function removeMapping($mappings)
-    {
-        $this->mappings->removeElement($mappings);
     }
 
     /**
@@ -864,7 +816,7 @@ class Ticket extends AbstractEntity
     /**
      * Get oldness
      *
-     * @return integer 
+     * @return integer
      */
     public function getOldness()
     {
@@ -887,7 +839,7 @@ class Ticket extends AbstractEntity
     /**
      * Get emergency
      *
-     * @return integer 
+     * @return integer
      */
     public function getEmergency()
     {
@@ -910,44 +862,11 @@ class Ticket extends AbstractEntity
     /**
      * Get isClosed
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getIsClosed()
     {
         return $this->isClosed;
-    }
-
-//    /**
-//     * Set resolvedIn
-//     *
-//     * @param integer $resolvedIn
-//     * @return Ticket
-//     */
-//    public function setResolvedIn($resolvedIn)
-//    {
-//        $this->resolvedIn = $resolvedIn;
-//
-//        return $this;
-//    }
-
-    /**
-     * Get resolvedIn
-     *
-     * @return integer 
-     */
-    public function getResolvedIn()
-    {
-        return $this->resolvedIn;
-    }
-
-    /**
-     * Gets triggered only on insert
-     *
-     * @ORM\PreUpdate
-     */
-    public function setResolvedInValue()
-    {
-        $this->resolvedIn = $this->getWorkingTime($this->announcedAt, $this->fixedAt);
     }
 
     /**
@@ -955,12 +874,15 @@ class Ticket extends AbstractEntity
      */
     private function getWorkingTime($startDate, $endDate, $startWorkingTime = '07:30:00', $endWorkingTime = '16:30:00')
     {
-        define ('ONEMINUTE', 60);
+
+        echo $startWorkingTime . ' - ' . $endWorkingTime . '<br/>';
+        if (!defined('ONEMINUTE'))
+            define ('ONEMINUTE', 60);
 
         // ESTABLISH THE MINUTES PER DAY FROM START AND END TIMES
-        $startWorkingTime	= strtotime($startWorkingTime);
-        $endWorkingTime		= strtotime($endWorkingTime);
-        $minutes_per_day	= (int)( ($endWorkingTime - $startWorkingTime) / 60 )+1;
+        $startWorkingTime = strtotime($startWorkingTime);
+        $endWorkingTime = strtotime($endWorkingTime);
+        $minutes_per_day = (int)(($endWorkingTime - $startWorkingTime) / 60) + 1;
 
         // ESTABLISH THE HOLIDAYS
         $holidays = array(
@@ -982,21 +904,20 @@ class Ticket extends AbstractEntity
         // Convert to TIMESTAMP
         // $start	= strtotime($startDate);
         // $end	= strtotime($endDate);
-        $start	=	$startDate->getTimestamp();
-        $end	=	$endDate->getTimestamp();
+        $start = $startDate->getTimestamp();
+        $end = $endDate->getTimestamp();
 
         // RESET WORK MINUTES
         $workminutes = 0;
 
         // ITERATE OVER THE DAYS
         $start = $start - ONEMINUTE;
-        while ($start < $end)
-        {
+        while ($start < $end) {
             $start = $start + ONEMINUTE;
 
             // ELIMINATE WEEKENDS - SAT AND SUN
             $weekday = date('D', $start);
-            if (substr($weekday,0,1) == 'S') continue;
+            if (substr($weekday, 0, 1) == 'S') continue;
 
             // ELIMINATE HOLIDAYS
             $iso_date = date('Y-m-d', $start);
@@ -1004,17 +925,60 @@ class Ticket extends AbstractEntity
 
             // ELIMINATE HOURS BEFORE BUSINESS HOURS
             $daytime = date('H:i:s', $start);
-            if(($daytime < date('H:i:s',$startWorkingTime))) continue;
+            if (($daytime < date('H:i:s', $startWorkingTime))) continue;
 
             // ELIMINATE HOURS PAST BUSINESS HOURS
             $daytime = date('H:i:s', $start);
-            if(($daytime > date('H:i:s',$endWorkingTime))) continue;
+            if (($daytime > date('H:i:s', $endWorkingTime))) continue;
 
             $workminutes++;
         } // end while
 
-        $workminutes = $workminutes-(ceil($workminutes/$minutes_per_day)>1 ? ceil($workminutes/$minutes_per_day)-1 : 1);
+        $workminutes = $workminutes - (ceil($workminutes / $minutes_per_day) > 1 ? ceil($workminutes / $minutes_per_day) - 1 : 1);
 
         return ($workminutes > 0 ? $workminutes : 0);
+    }
+
+    /**
+     * Add ticketMapping
+     *
+     * @param \Tlt\TicketBundle\Entity\TicketMapping $ticketMapping
+     * @return Ticket
+     */
+    public function addTicketMapping(TicketMapping $ticketMapping)
+    {
+        $ticketMapping->setResolvedIn(
+            $this->getWorkingTime(
+                $this->announcedAt,
+                $this->fixedAt,
+                $ticketMapping->getMapping()->getSystem()->getGuaranteedValues()->first()->getMinHour()->format('H:i:s'),
+                $ticketMapping->getMapping()->getSystem()->getGuaranteedValues()->first()->getMaxHour()->format('H:i:s')
+            )
+        );
+        $this->ticketMapping[] = $ticketMapping;
+
+        return $this;
+    }
+
+    /**
+     * Remove ticketMapping
+     *
+     * @param \Tlt\TicketBundle\Entity\TicketMapping $ticketMapping
+     */
+    public function removeTicketMapping(TicketMapping $ticketMapping)
+    {
+        $this->ticketMapping->removeElement($ticketMapping);
+        $ticketMapping->setMapping(null);
+        $ticketMapping->setTicket(null);
+    }
+
+    /**
+     * Get ticketMapping
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTicketMapping()
+    {
+        return $this->ticketMapping;
     }
 }

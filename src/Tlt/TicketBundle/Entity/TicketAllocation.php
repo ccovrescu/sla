@@ -23,7 +23,7 @@ class TicketAllocation extends AbstractEntity
 	
 	/**
     * @ORM\ManyToOne(targetEntity="Ticket", inversedBy="ticketAllocations")
-	* @ORM\JoinColumn(name="ticket", referencedColumnName="id")
+	* @ORM\JoinColumn(name="ticket", referencedColumnName="id", onDelete="CASCADE")
 	*/	
 	protected $ticket;
 	

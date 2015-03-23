@@ -136,7 +136,7 @@ class TicketType extends AbstractType {
                     'date_widget' => "single_text",
                     'time_widget' => "single_text",
                     'label' => 'Data si ora rezolvarii:',
-                    'data' => new \DateTime(),
+//                    'data' => new \DateTime(),
                 ));
             $builder->add(
                 'oldness', 'entity', array(
@@ -262,14 +262,18 @@ class TicketType extends AbstractType {
                     $form->remove('isClosed');
                 }
 
+
                 $equipment_id = ($data->getEquipment() != null ? $data->getEquipment()->getId() : null);
-                $this->addMappingsField($form, $equipment_id);
+                $ticket_id = ($data->getId() != null ? $data->getId() : null);
+                $this->addMappingsField($form, $equipment_id, $ticket_id);
             }
         });
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
+
+//            $em = $form->getConfig()->getOption('em');
 
             if (array_key_exists('isReal', $data)) {
                 if( $data['isReal'] == 1) {
@@ -287,7 +291,8 @@ class TicketType extends AbstractType {
                 }
 
                 $equipment_id = array_key_exists('equipment', $data) ? $data['equipment'] : null;
-                $this->addMappingsField($form, $equipment_id);
+                $ticket_id = ($form->getData()->getId() != null ? $form->getData()->getId() : null);
+                $this->addMappingsField($form, $equipment_id, $ticket_id);
             } else {
                 $form->remove('salveaza');
 
@@ -298,12 +303,13 @@ class TicketType extends AbstractType {
         });
     }
 
-    public function addMappingsField($form, $equipment_id)
+    public function addMappingsField($form, $equipment_id, $ticket_id)
     {
-        $form->add('mappings','entity',array(
+        $form->add('ticketMapping', new SpecialType($ticket_id), array(
             'class'     => 'Tlt\AdmnBundle\Entity\Mapping',
             'property' => 'system.name',
             'label'		=> 'Sisteme afectate',
+            'by_reference' => false,
             'expanded'  => true,
             'multiple' => true,
             'read_only' => true,

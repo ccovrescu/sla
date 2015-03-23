@@ -202,6 +202,9 @@ class DefaultController extends Controller
         if($ticket->getEmergency() == null)
             $ticket->setEmergency($defaultEmergency);
 
+        if ($ticket->getFixedAt() == null)
+            $ticket->setFixedAt( new \DateTime());
+
 
         $templateOptions = array(
             'ticket' => $ticket

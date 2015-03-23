@@ -137,17 +137,17 @@
                 </div>
                 <div class="col-lg-8" id="div_ticket_affectedSystems">
                     <div class="form-group">
-                        {{ form_label(form.mappings) }}
+                        {{ form_label(form.ticketMapping) }}
 
-                        {% if form.mappings|length>0 %}
-                            {% for mapping in form.mappings %}
+                        {% if form.ticketMapping|length>0 %}
+                            {% for mapping in form.ticketMapping %}
                                 <div class="checkbox">
                                     {{ form_label(mapping) }}
                                     {{ form_widget(mapping) }}
                                 </div>
                             {% endfor %}
                         {% else %}
-                            {{ form_widget(form.mappings) }}
+                            {{ form_widget(form.ticketMapping) }}
                         {% endif %}
                     </div>
                 </div>

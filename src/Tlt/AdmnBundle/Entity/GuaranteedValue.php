@@ -117,4 +117,50 @@ class GuaranteedValue
     {
         return $this->value;
     }
+
+    /**
+     * Set minHour
+     *
+     * @param \DateTime $minHour
+     * @return GuaranteedValue
+     */
+    public function setMinHour($minHour)
+    {
+        $this->minHour = $minHour;
+
+        return $this;
+    }
+
+    /**
+     * Get minHour
+     *
+     * @return \DateTime 
+     */
+    public function getMinHour()
+    {
+        return $this->minHour;
+    }
+
+    /**
+     * Set maxHour
+     *
+     * @param \DateTime $maxHour
+     * @return GuaranteedValue
+     */
+    public function setMaxHour($maxHour)
+    {
+        $this->maxHour = $maxHour;
+
+        return $this;
+    }
+
+    /**
+     * Get maxHour
+     *
+     * @return \DateTime 
+     */
+    public function getMaxHour()
+    {
+        return $this->maxHour;
+    }
 }
