@@ -352,26 +352,5 @@
                 return confirm('Nu ati selectat nici un sistem! Continuati?');
             }
         });
-
-        $("#ticket_equipment").change(function(){
-            var data = {
-                equipment_id: $(this).val()
-            };
-
-            $.ajax({
-                type: 'post',
-                url: '{{ path("get_allowed_systems") }}',
-                data: data,
-                success: function(data) {
-                    $('#div_ticket_affectedSystems').html('');
-                    $('#div_ticket_affectedSystems').append('<div class="form-group"><label class="required">Sisteme afectate</label>');
-
-
-                    for (var i=0, total = data.length; i < total; i++) {
-                        $('#div_ticket_affectedSystems').append('<div class="checkbox"><label for="ticket_ticketMapping_' + data[i].id + '">' + data[i].name + '</label><input type="checkbox" id="ticket_ticketMapping_' + data[i].id + '" name="ticket[ticketMapping][]" readonly="readonly" class="affectedSystems" value="' + data[i].id + '" /></div>');
-                    }
-                }
-            });
-        })
     </script>
 {% endblock %}
