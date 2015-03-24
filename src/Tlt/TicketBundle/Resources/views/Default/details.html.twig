@@ -115,8 +115,7 @@
                 <tr>
                     <td colspan="2"><strong>Nr. Interventie:</strong> <samp><abbr title="attribute">{{ ticket.id }}</abbr></samp></td>
                     <td colspan="4">
-                        <strong>Data:</strong> <samp><abbr title="data aparitiei">{{ ticket.announcedAt|date('Y-m-d') }}</abbr></samp>
-                        <strong>Ora:</strong> <samp><abbr title="attribute">{{ ticket.announcedAt|date('H:i') }}</abbr></samp>
+                        <strong>Data si ora anuntarii:</strong> <samp><abbr title="data aparitiei">{{ ticket.announcedAt|date('Y-m-d H:i') }}</abbr></samp>
                     </td>
                     <td colspan="4"><strong>Preluat sesizarea:</strong> <samp><abbr title="attribute">{{ ticket.takenBy|default('n/a') }}</abbr></samp></td>
                 </tr>
@@ -224,7 +223,7 @@
                             <tr>
                                 <td colspan="6">
                                     <samp>
-                                        <abbr title="attribute">
+                                        <abbr title="Indisponibilitate: {{ mapping.resolvedIn }} minute">
                                             <i class="fa fa-check-square-o"></i> {{ mapping.mapping.system.name }}
                                         </abbr>
                                     </samp>
