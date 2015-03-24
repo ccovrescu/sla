@@ -194,15 +194,22 @@
                                 <strong>S-a asigurat solutie de rezerva?</strong>
                                 <samp>
                                     <abbr title="attribute">
+                                        {# 1: Da#}
                                         {% if ticket.backupSolution.id == 1 %}
                                             <i class="fa fa-circle"></i> Da&nbsp;
                                             <i class="fa fa-circle-o"></i> Nu&nbsp;
                                             <i class="fa fa-circle-o"></i> Nu este cazul
-                                        {% elseif ticket.backupSolution.id == 0 %}
+                                        {% endif %}
+
+                                        {# 0: NU #}
+                                        {% if ticket.backupSolution.id == 2 %}
                                             <i class="fa fa-circle-o"></i> Da&nbsp;
                                             <i class="fa fa-circle"></i> Nu&nbsp;
                                             <i class="fa fa-circle-o"></i> Nu este cazul
-                                        {% elseif ticket.backupSolution.id == 2 %}
+                                        {% endif %}
+
+                                        {# 3: Nu este cazul#}
+                                        {% if ticket.backupSolution.id == 3 %}
                                             <i class="fa fa-circle-o"></i> Da&nbsp;
                                             <i class="fa fa-circle-o"></i> Nu&nbsp;
                                             <i class="fa fa-circle"></i> Nu este cazul
