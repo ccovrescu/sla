@@ -29,10 +29,16 @@
                         {{ form_errors(form.ticketType) }}
                     </div>
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-3">
                     <div class="form-group">
-                        {{ form_label(form.fixedAt) }}
-                        {{ form_widget(form.fixedAt) }}
+                        {{ form_label(form.fixedAt.date, 'Data rezolvarii') }}
+                        {{ form_widget(form.fixedAt.date) }}
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        {{ form_label(form.fixedAt.time, 'Timpul rezolvarii') }}
+                        {{ form_widget(form.fixedAt.time) }}
                     </div>
                 </div>
             </div><!-- row -->

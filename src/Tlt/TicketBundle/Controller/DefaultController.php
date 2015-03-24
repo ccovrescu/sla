@@ -51,6 +51,7 @@ class DefaultController extends Controller
         }
 
         $ticket = new Ticket();
+        $ticket->setAnnouncedAt(new \DateTime());
         $ticket->setTransmissionType('telefon');
         $ticket->setTakenBy($this->getUser()->getLastname() . ' ' . $this->getUser()->getFirstname());
 

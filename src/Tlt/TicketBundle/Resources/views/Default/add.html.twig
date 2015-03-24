@@ -15,10 +15,16 @@
     {{ form_errors(form) }}
 
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-3">
             <div class="form-group">
-                {{ form_label(form.announcedAt) }}
-                {{ form_widget(form.announcedAt) }}
+                {{ form_label(form.announcedAt.date, 'Data aparitiei') }}
+                {{ form_widget(form.announcedAt.date) }}
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="form-group">
+                {{ form_label(form.announcedAt.date, 'Timpul aparitiei') }}
+                {{ form_widget(form.announcedAt.time) }}
             </div>
         </div>
         <div class="col-lg-6">

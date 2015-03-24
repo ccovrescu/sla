@@ -32,11 +32,15 @@ class TicketType extends AbstractType {
 
             $builder->add(
                 'announcedAt', 'datetime', array(
-                    'date_widget' => "single_text",
-                    'time_widget' => "single_text",
-//                    'date_format'=> 'dd-MM-yyyy',
-                    'label' => 'Anuntat la:',
-                    'data' => new \DateTime(),
+                    'date_widget' => "choice",
+                    'time_widget' => "choice",
+                    'date_format'=> 'yyyy-MM-dd',
+                    'years' => array(
+                        '2015',
+                        '2016'
+                    ),
+//                    'label' => 'Anuntat la:',
+//                    'data' => new \DateTime(),
                 ));
             $builder->add(
                 'takenBy', 'text', array(
@@ -133,11 +137,14 @@ class TicketType extends AbstractType {
                 ));
             $builder->add(
                 'fixedAt', 'datetime', array(
-                    'date_widget' => "single_text",
-                    'time_widget' => "single_text",
-                    'label' => 'Data si ora rezolvarii:',
-//                    'data' => new \DateTime(),
-//                    'view_timezone' => 'Europe/Bucharest',
+                    'date_widget' => "choice",
+                    'time_widget' => 'choice',
+                    'date_format' => 'yyyy-MM-dd',
+                    'years' => array(
+                        '2015',
+                        '2016'
+                    ),
+//                    'label' => 'Data si ora rezolvarii:',
                 ));
             $builder->add(
                 'oldness', 'entity', array(

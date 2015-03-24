@@ -115,8 +115,8 @@
                 <tr>
                     <td colspan="2"><strong>Nr. Interventie:</strong> <samp><abbr title="attribute">{{ ticket.id }}</abbr></samp></td>
                     <td colspan="4">
-                        <strong>Data:</strong> <samp><abbr title="data aparitiei">{{ ticket.announcedAt|date('d-m-Y') }}</abbr></samp>
-                        <strong>Ora:</strong> <samp><abbr title="attribute">{{ ticket.announcedAt|date('h:i A') }}</abbr></samp>
+                        <strong>Data:</strong> <samp><abbr title="data aparitiei">{{ ticket.announcedAt|date('Y-m-d') }}</abbr></samp>
+                        <strong>Ora:</strong> <samp><abbr title="attribute">{{ ticket.announcedAt|date('H:i') }}</abbr></samp>
                     </td>
                     <td colspan="4"><strong>Preluat sesizarea:</strong> <samp><abbr title="attribute">{{ ticket.takenBy|default('n/a') }}</abbr></samp></td>
                 </tr>
@@ -174,7 +174,7 @@
                             <td colspan="3" nowrap><strong>Compartiment:</strong>  <samp><abbr title="attribute">{{ ticket.compartment }}</abbr></samp></td>
                         </tr>
                         <tr>
-                            <td colspan="4"><strong>Data si ora rezolvarii:</strong>  <samp><abbr title="attribute">{{ ticket.fixedAt|date('Y-m-d h:i A') }}</abbr></samp></td>
+                            <td colspan="4"><strong>Data si ora rezolvarii:</strong>  <samp><abbr title="attribute">{{ ticket.fixedAt|date('Y-m-d H:i') }}</abbr></samp></td>
                             <td colspan="6">
                                 <strong>Vechimea echipamentului:</strong>
                                 <samp>
