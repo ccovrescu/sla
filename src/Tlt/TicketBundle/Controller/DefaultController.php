@@ -120,9 +120,14 @@ class DefaultController extends Controller
      */
 	public function reallocateTicket(Request $request, $id)
 	{
-        $Ticket = $this->getDoctrine()
+        $ticket = $this->getDoctrine()
             ->getRepository('TltTicketBundle:Ticket')
             ->findOneById($id);
+
+        if ($ticket->getIsReal() != null)
+        {
+            throw new AccessDeniedException();
+        }
 
         $ticketAllocation = new TicketAllocation();
 		
@@ -161,7 +166,7 @@ class DefaultController extends Controller
 		return
 			array(
 //				'ticket' => $ticketCreate,
-				'ticket' => $Ticket,
+				'ticket' => $ticket,
 				'form' => $form->createView()
 			);	
 	}

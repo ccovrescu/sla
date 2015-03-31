@@ -204,7 +204,7 @@
             data: data,
             success: function(data) {
                 $("#ticket_equipment").val( $("#ticketEquipment_equipment option:selected").attr('value')).change();
-                $("#ticket_equipmentName").html(data[0].name.substring(0,12)+"...");
+                $("#ticket_equipmentName").html(data[0].name);
                 $('#myModal').modal('hide');
             }
         });

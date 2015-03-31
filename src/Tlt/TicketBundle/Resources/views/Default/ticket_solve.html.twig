@@ -112,7 +112,7 @@
 
 
             <div class="row">
-                <div class="col-lg-4">
+                <div class="col-lg-12">
                     <div class="form-group {% if form.equipment.vars.errors|length>0 %} has-error {% endif %}">
                         <!--
                         <label class="control-label" for="ticket_disabledEquipment">Echipament</label>
@@ -141,7 +141,10 @@
                         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
                     </div>
                 </div>
-                <div class="col-lg-8" id="div_ticket_affectedSystems">
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12" id="div_ticket_affectedSystems">
                     <div class="form-group">
                         {{ form_label(form.ticketMapping) }}
 

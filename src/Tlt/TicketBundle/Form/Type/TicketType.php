@@ -68,7 +68,7 @@ class TicketType extends AbstractType {
             $builder->add(
                 'contactInfo', 'text', array(
                     'max_length' => 128,
-                    'label' => 'Date de contact:',
+                    'label' => 'Date de contact ale sesizantului:',
                     'required' => false
                 ));
             $builder->add(

@@ -51,8 +51,8 @@
 				<thead>
 					<tr>
 						<th rowspan="2">Denumire <i class="fa fa-sort"></i></th>
-                        <th colspan="2" nowrap>Program disponibilitate</th>
-						<th rowspan="2" class="text-right">Disponibilitate  <i class="fa fa-sort"></i></th>
+                        <th colspan="2" class="text-center" nowrap>Program disponibilitate</th>
+						<th rowspan="2" class="text-right">Disponibilitate garantata <i class="fa fa-sort"></i></th>
 						<th rowspan="2" class="text-right">Optiuni</th>
 					</tr>
                     <tr>
@@ -85,7 +85,7 @@
                                     {% else %}
                                         -
                                     {% endif %}
-                                    </td>
+                                </td>
 								<td class="text-right"><a href="{{ path('admin_systems_edit', {'id' : system.id}) }}">modifica</a></td>
 							</tr>
 						{% endfor %}

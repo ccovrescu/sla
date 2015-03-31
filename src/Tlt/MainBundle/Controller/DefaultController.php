@@ -165,11 +165,14 @@ class DefaultController extends Controller
 	}
 	
     /**
-     * @Route("/sys_disp", name="systems_disponibility")
+     * @Route("/systems_disponibility", name="main_bundle_systems_disponibility")
      * @Template("TltMainBundle:Default:sys_disp.html.twig")
      */
     public function systemsDisponibilityAction(Request $request)
     {
+        $startPeriod = '2015-01-01';
+        $endPeriod = '2015-06-30';
+
 		$form = $this->createForm(
 			new ChooseType($this->getDoctrine()),
 			new Choose(),
@@ -204,7 +207,7 @@ class DefaultController extends Controller
 									
 				$indisponibleTime	=	$this->getDoctrine()
 												->getRepository('TltAdmnBundle:System')
-												->getIndisponibleTime('2014-07-01 00:00:00', '2014-12-31 23:59:59', $system);
+												->getIndisponibleTime($startPeriod, $endPeriod, $system);
 												
 				$guaranteedDisponibility	=	$this->getDoctrine()
 														->getRepository('TltAdmnBundle:System')
@@ -212,7 +215,7 @@ class DefaultController extends Controller
 											
 				$disponibility	=	$this->getDoctrine()
 											->getRepository('TltAdmnBundle:System')
-											->getDisponibility('2014-07-01 00:00:00', '2014-12-31 23:59:59', $system);
+											->getDisponibility($startPeriod, $endPeriod, $system);
 				$systems[]	=	array(
 									'id'			=>	$system->getId(),
 									'name'			=>	$system->getName(),
@@ -220,6 +223,7 @@ class DefaultController extends Controller
 									'disponibility'	=>	$disponibility
 								);
 			}
+//            die();
 		}
 		
         return

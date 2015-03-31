@@ -77,7 +77,7 @@ class SystemRepository extends EntityRepository
 
 		try {
 			return (int) current($query->getSingleResult());
-		} catch (\Doctrine\ORM\NoResultException $e) {
+		} catch (Doctrine\ORM\NoResultException $e) {
 			return null;
 		}
 	}
@@ -92,28 +92,42 @@ class SystemRepository extends EntityRepository
 
 		$rsm->addScalarResult('indisponibleTime', 'indisponibleTime');
 
-		$query = $this->_em->createNativeQuery(
-			"SELECT
-				SUM(tf.resolved_in) AS indisponibleTime
-			FROM
-				ticket_systems ts
-			LEFT JOIN
-				ticket_equipments te
-				ON te.id=ts.ticket_equipment
-			LEFT JOIN
-				ticket_create tc
-				ON tc.id=te.ticket_create
-			LEFT JOIN
-				ticket_fix tf
-				ON tf.ticket_create=tc.id
-			WHERE
-				ts.system=?
-				AND tf.resolved_at BETWEEN ? AND ?
-			GROUP BY
-				ts.system", $rsm
-		);   
+//		$query = $this->_em->createNativeQuery(
+//			"SELECT
+//				SUM(tf.resolved_in) AS indisponibleTime
+//			FROM
+//				ticket_systems ts
+//			LEFT JOIN
+//				ticket_equipments te
+//				ON te.id=ts.ticket_equipment
+//			LEFT JOIN
+//				ticket_create tc
+//				ON tc.id=te.ticket_create
+//			LEFT JOIN
+//				ticket_fix tf
+//				ON tf.ticket_create=tc.id
+//			WHERE
+//				ts.system=?
+//				AND tf.resolved_at BETWEEN ? AND ?
+//			GROUP BY
+//				ts.system", $rsm
+//		);
 
-		$query->setParameter(1, $system);
+        $query = $this->_em->createNativeQuery(
+            "
+            SELECT
+              SUM(ttm.resolved_in) AS indisponibleTime
+            FROM
+              tickets_ticket_mapping ttm
+              INNER JOIN tickets t ON t.id=ttm.ticket_id
+              INNER JOIN mappings mp ON mp.id=ttm.mapping_id
+            WHERE
+              mp.system=? AND t.fixed_at BETWEEN ? AND ?
+            GROUP BY mp.system
+            ", $rsm
+        );
+
+        $query->setParameter(1, $system);
 		$query->setParameter(2, $startMoment);
 		$query->setParameter(3, $endMoment);
 		
@@ -127,12 +141,20 @@ class SystemRepository extends EntityRepository
 	/**
 	 * Calculeaza disponibilitatea unui sistem intr-o perioada de timp.
 	 */
-	public function getDisponibility($startMoment='2014-07-01 00:00:00', $endMoment = '2014-12-31 23:59:59', $system)
+	public function getDisponibility($startMoment='2015-01-01', $endMoment = '2015-06-30', $system)
 	{
 		$start	= new \DateTime($startMoment);
 		$end	= new \DateTime($endMoment);
 		$interval	=	$start->diff($end);
+        $periodMinutes = $interval->format("%a")*24*60 + $interval->format("%i");
+
+        $indisponibleTime = $this->getIndisponibleTime($startMoment, $endMoment, $system);
+        $globalUnitsNo = $this->getGlobalUnitsNo($system);
+
+        $disponibility = round((1 - $indisponibleTime/$periodMinutes/$globalUnitsNo)*100, 2);
+
+//        echo $system->getName() . ' ind:' . $indisponibleTime . ' minute:' . $periodMinutes . ' ' . $globalUnitsNo . ' ' .$disponibility . '<br>';
 		
-		return round((1 - $this->getIndisponibleTime($startMoment, $endMoment, $system)/($interval->format("%a")*24*60 + $interval->format("%i"))/$this->getGlobalUnitsNo($system))*100, 2);
+		return $disponibility;
 	}
 }

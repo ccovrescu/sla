@@ -26,8 +26,7 @@
         </div>
     </div>
 
-
-
+    <!-- ICR PRINT -->
     <div class="row">
         <div class="col-lg-12">
             <div class="icr-logo">
@@ -42,21 +41,225 @@
         </div>
     </div>
 
+
+    <div class="main">
+        <div class="row">
+            <div class="item service-type top-cell left-cell">
+                {% if ticket.equipment is defined and ticket.equipment is not null %}
+                    {% if ticket.equipment.service.department.id == "1" %}
+                        DIP
+                    {% elseif ticket.equipment.service.department.id == "2" %}
+                        DTC
+                    {% elseif ticket.equipment.service.department.id == "3" %}
+                        DTI
+                    {% endif %}
+                {% else %}
+                    n/a
+                {% endif %}
+            </div>
+            <div class="item agency-center top-cell">
+                {% if ticket.ticketAllocations.first.branch.name|slice(0,7) == 'Agentia' %}
+                    Agentia {{ ticket.ticketAllocations.first.branch.name|slice(8) }}
+                {% else %}
+                    Centrul {{ ticket.ticketAllocations.first.branch.name|slice(8) }}
+                {% endif %}
+            </div>
+            <div class="item emergent top-cell">
+                {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
+                    Urgent <i class="fa fa-square-o"></i>
+                {% else %}
+                    Urgent <i class="fa fa-check-square-o"></i>
+                {% endif %}
+            </div>
+            <div class="item non-emergent top-cell right-cell">
+                {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
+                    Non Urgent <i class="fa fa-check-square-o"></i>
+                {% else %}
+                    Non Urgnet <i class="fa fa-square-o"></i>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="item ticket-no left-cell">
+                Nr. Intervenie: {{ ticket.id }}
+            </div>
+            <div class="item announced-at">
+                Data si ora anuntatrii: {{ ticket.announcedAt|date('d/m/Y H:i') }}
+            </div>
+            <div class="item taken-by">
+                Prelauat sesizarea: {{ ticket.takenBy }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="item transmission-type left-cell">
+                Mod de transmitere sesizare: {{ ticket.transmissionType|default('n/a') }}
+            </div>
+            <div class="item announced-to right-cell">
+                Persoana anuntata: {{ ticket.announcedTo }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="item launched-by left-cell">
+                Lansat de:
+                {% if ticket.equipment is defined and ticket.equipment is not null %}
+                    {{ ticket.equipment.owner.name }}
+                {% else %}
+                    n/a
+                {% endif %}
+            </div>
+            <div class="item announced-by right-cell">
+                Nume sesizant: {{ ticket.announcedBy }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="item description left-cell right-cell">
+                Descriere pe scurt deranjament:
+                <pre>
+                    {{ ticket.description }}
+                </pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="item is-real left-cell">
+                Este real:
+                {% if ticket.isReal is defined and ticket.isReal is not null %}
+                    {% if ticket.isReal == 1 %}
+                        <i class="fa fa-circle"></i> Da&nbsp;
+                        <i class="fa fa-circle-o"></i> Nu
+                    {% else %}
+                        <i class="fa fa-circle-o"></i> Da&nbsp;
+                        <i class="fa fa-circle"></i> Nu
+                    {% endif %}
+                {% else %}
+                    <i class="fa fa-circle-o"></i> Da&nbsp;
+                    <i class="fa fa-circle-o"></i> Nu
+                {% endif %}
+            </div>
+            <div class="item not-real-reason right-cell">
+                De ce nu este real:
+                <pre>
+                    {{ ticket.notRealReason }}
+                </pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="item fixed-by left-cell">
+                Persoana care rezolva:
+                {% if ticket.isReal is defined and ticket.isReal is not null %}
+                    {{ ticket.fixedBy }}
+                {% endif %}
+            </div>
+            <div class="item compartment right-cell">
+                Compartiment:
+                {% if ticket.isReal is defined and ticket.isReal is not null %}
+                    {{ ticket.compartment }}
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="item ticket-type left-cell">
+                Tip interventie:
+                {% if ticket.ticketType is defined and ticket.ticketType is not null %}
+                    {{ ticket.ticketType.name }}
+                {% endif %}
+            </div>
+            <div class="item fixed-at right-cell">
+                Data si ora rezolvarii:
+                {% if ticket.isReal is defined and ticket.isReal is not null %}
+                    {{ ticket.fixedAt|date('d/m/Y H:i') }}
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="item backup-solution left-cell">
+                S-a asigurat solutie de rezerva:
+                {% if ticket.isReal is defined and ticket.isReal is not null %}
+                    {# 1: Da #}
+                    {% if ticket.backupSolution.id == 1 %}
+                        <i class="fa fa-circle"></i> Da&nbsp;
+                        <i class="fa fa-circle-o"></i> Nu&nbsp;
+                        <i class="fa fa-circle-o"></i> Nu este cazul
+                    {% endif %}
+
+                    {# 2: NU #}
+                    {% if ticket.backupSolution.id == 2 %}
+                        <i class="fa fa-circle-o"></i> Da&nbsp;
+                        <i class="fa fa-circle"></i> Nu&nbsp;
+                        <i class="fa fa-circle-o"></i> Nu este cazul
+                    {% endif %}
+
+                    {# 3: Nu este cazul#}
+                    {% if ticket.backupSolution.id == 3 %}
+                        <i class="fa fa-circle-o"></i> Da&nbsp;
+                        <i class="fa fa-circle-o"></i> Nu&nbsp;
+                        <i class="fa fa-circle"></i> Nu este cazul
+                    {% endif %}
+                {% else %}
+                    <i class="fa fa-circle-o"></i> Da&nbsp;
+                    <i class="fa fa-circle-o"></i> Nu&nbsp;
+                    <i class="fa fa-circle-o"></i> Nu este cazul
+                {% endif %}
+            </div>
+            <div class="item oldness right-cell">
+                Vechimea echipamentului:
+                {% if ticket.isReal is defined and ticket.isReal is not null %}
+                    {% if ticket.oldness.id == 2 %}
+                        <i class="fa fa-circle-o"></i> 1-3&nbsp;
+                        <i class="fa fa-circle"></i> peste 3 ani
+                    {% else %}
+                        <i class="fa fa-circle"></i> 1-3&nbsp;
+                        <i class="fa fa-circle-o"></i> peste 3 ani
+                    {% endif %}
+                {% else %}
+                    <i class="fa fa-circle-o"></i> 1-3&nbsp;
+                    <i class="fa fa-circle-o"></i> peste 3 ani
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="item equipment left-cell right-cell">
+                Echipament:
+                {% if ticket.equipment is defined and ticket.equipment is not null %}
+                    <em>{{ ticket.equipment.name }}</em>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="item fixed-mode left-cell right-cell">
+                Mod de rezolvare:
+                <pre>
+                    {{ ticket.fixedMode }}
+                </pre>
+            </div>
+        </div>
+
+        <!-- last row -->
+        <div class="row">
+            <div class="item resources left-cell right-cell bottom-cell">
+                Resurse utilizate:
+                <pre>
+                    {{ ticket.resources }}
+                </pre>
+            </div>
+        </div>
+    </div>
+    <!-- // ICR PRINT -->
+
     <div class="row">
         <div class="col-lg-12">
-            <!--<div class="table-responsive">-->
-            <table class="table icr">
+            <table class="table icr no-print">
                 <tr>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                    <td>5</td>
-                    <td>6</td>
-                    <td>7</td>
-                    <td>8</td>
-                    <td>9</td>
-                    <td>10</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
                 </tr>
                 <tr>
                     <td colspan="1">
@@ -194,14 +397,14 @@
                                 <strong>S-a asigurat solutie de rezerva?</strong>
                                 <samp>
                                     <abbr title="attribute">
-                                        {# 1: Da#}
+                                        {# 1: Da #}
                                         {% if ticket.backupSolution.id == 1 %}
                                             <i class="fa fa-circle"></i> Da&nbsp;
                                             <i class="fa fa-circle-o"></i> Nu&nbsp;
                                             <i class="fa fa-circle-o"></i> Nu este cazul
                                         {% endif %}
 
-                                        {# 0: NU #}
+                                        {# 2: NU #}
                                         {% if ticket.backupSolution.id == 2 %}
                                             <i class="fa fa-circle-o"></i> Da&nbsp;
                                             <i class="fa fa-circle"></i> Nu&nbsp;

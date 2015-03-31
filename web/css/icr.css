@@ -10,7 +10,8 @@
 
     .icr td {
         border: double;
-        max-width: 10px;
+        max-width: 10pt;
+		nowrap;
     }
 
     abbr[title]:after {
@@ -23,18 +24,181 @@
 }
 
 @media screen {
-    .icr-logo, .icr-title, .icr-signatures {
+    .icr-logo, .icr-title, .icr-signatures, .main, .item{
         display: none;
     }
 }
 
 @media print {
+	* {
+		font-family: times;
+		font-size: 12pt;
+	}
+
+	.icr {
+		width: 200mm;
+	}
+
+    .main {
+        border: 1px solid #000000;
+    }
+
+	.row {
+		width: 210mm;
+		padding: 0mm;
+		margin: 0mm;
+	}
+
+    .item {
+        margin: 0.25mm;
+        padding: 1mm;
+        border: 1px solid #000000;
+        display: block;
+        float: left;
+    }
+
+    .top-cell {
+        margin-top: 0.5mm;
+    }
+    .bottom-cell {
+        margin-bottom: 0.5mm;
+    }
+    .left-cell {
+        margin-left: 0.5mm;
+    }
+    .right-cell {
+        margin-right: 0.5mm;
+    }
+
+
+	.col-lg-12 {
+		width: 210mm;
+		padding: 0mm;
+		margin: 0mm;
+		float: left;
+	}
+	
+	.service-type {
+		width: 15mm;
+	}
+	.agency-center {
+		width: 142.25mm;
+	}
+	.emergent {
+		width: 20mm;
+	}	
+	.non-emergent {
+		width: 30mm;
+	}
+	.ticket-no {
+		width: 45mm;
+	}
+	.announced-at {
+		width: 72mm;
+	}
+	.taken-by {
+		width: 90.75mm;
+	}
+	.launched-by {
+		width: 80mm;
+	}
+	.announced-by {
+		width: 128.25mm;
+	}
+	.transmission-type {
+		width: 100mm;
+	}
+	.announced-to {
+		width: 108.25mm;
+	}
+	.description {
+		width: 208.75mm;
+        height: 30mm;
+	}
+	.description pre {
+		text-align: left;
+		white-space: pre-line;
+		border: none;
+		margin: 0;
+		padding: 0;
+		font-family: times;
+		font-style: italic;		
+	}
+    .is-real {
+        width: 45mm;
+        height: 20mm;
+    }
+    .not-real-reason {
+        width: 163.25mm;
+        height: 20mm;
+    }
+    .not-real-reason pre {
+        text-align: left;
+        white-space: pre-line;
+        border: none;
+        margin: 0;
+        padding: 0;
+        font-family: times;
+        font-style: italic;
+    }
+    .fixed-by {
+        width: 104mm;
+    }
+    .compartment {
+        width: 104.25mm;
+    }
+    .ticket-type {
+        width: 136.25mm;
+    }
+    .fixed-at {
+        width: 72mm;
+    }
+    .backup-solution {
+        width: 118.25mm;
+    }
+    .oldness {
+        width: 90mm;
+    }
+    .equipment {
+        width: 208.75mm;
+    }
+    .fixed-mode {
+        width: 208.75mm;
+        height: 40mm;
+    }
+    .fixed-mode pre {
+        text-align: left;
+        white-space: pre-line;
+        border: none;
+        margin: 0;
+        padding: 0;
+        font-family: times;
+        font-style: italic;
+    }
+    .resources {
+        width: 208.75mm;
+        height: 40mm;
+    }
+    .resources pre {
+        text-align: left;
+        white-space: pre-line;
+        border: none;
+        margin: 0;
+        padding: 0;
+        font-family: times;
+        font-style: italic;
+    }
+
+
     .no-print {
         display: none;
     }
     .icr-title {
-        margin-top: 0;
-        margin-bottom: 20px;
+        margin-top: 5mm;
+        margin-bottom: 7mm;
+		font-family: times;
+		font-size: 12pt;
+		font-weight: bold;
     }
     .icr-logo {
         padding: 0px 15px 10px;
@@ -53,10 +217,14 @@
         margin: 0;
         padding: 0;
     }
+		
+	samp {
+	font-size: 11pt;
+	}
 
 
     body
-    {
+	{
         /* this affects the margin on the content before sending to printer */
         margin: 0px;
     }
@@ -64,8 +232,9 @@
 
 @page
 {
-    size: auto;   /* auto is the initial value */
+	 /* A4 */
+	size:210mm 297mm;
 
     /* this affects the margin in the printer settings */
-    margin: 2.5mm 2.5mm 2.5mm 2.5mm;
+    margin: 5mm 10mm 5mm 5mm;
 }

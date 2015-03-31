@@ -49,7 +49,7 @@
 					{% for system in systems %}
 						<tr {% if system.disponibility<system.guaranteed %} class="danger" {% endif %}>
 							<td>{{ system.id }}</td>
-							<td>{{ system.name|truncate(90) }}</td>
+							<td><a href="{{ path('admin_systems_details', {'id' : system.id}) }}">{{ system.name|truncate(90) }}</a></td>
 							<td class="text-right">{{ system.guaranteed|number_format(2, '.', ',') }} %</td>
 							<td class="text-right">
 									{{ system.disponibility|number_format(2, '.', ',') }} %

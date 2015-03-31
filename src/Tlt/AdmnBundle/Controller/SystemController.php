@@ -33,7 +33,8 @@ class SystemController extends Controller
 		$form->handleRequest($request);
 		
 		$systems = null;
-		
+        $unitsNo = array();
+
 		if ($form->isValid()) {
 			if ($form['department']->getData()!=0) {
 				$systems = $this->getDoctrine()
@@ -50,7 +51,7 @@ class SystemController extends Controller
 						'TltAdmnBundle:System:index.html.twig',
 						array(
 							'form' => $form->createView(),
-							'systems' => $systems
+							'systems' => $systems,
 						)
 					);
     }
@@ -115,6 +116,32 @@ class SystemController extends Controller
 			'form' => $form->createView(),
 		));
 	}
+
+    /**
+     * @Route("/systems/details/{id}", name="admin_systems_details")
+     * @Template("TltAdmnBundle:System:details.html.twig")
+     */
+    public function detailsAction(Request $request, $id)
+    {
+        $system = $this->getDoctrine()
+            ->getRepository('TltAdmnBundle:System')
+            ->find($id);
+
+        $unitsNo = $this->getDoctrine()
+            ->getRepository('TltAdmnBundle:System')
+            ->getGlobalUnitsNo($system);
+
+        $indisponibleTime = $this->getDoctrine()
+            ->getRepository('TltAdmnBundle:System')
+            ->getIndisponibleTime('2015-01-01', '2015-06-30', $system);
+
+        return array(
+            'system' => $system,
+            'unitsNo' => $unitsNo,
+            'indisponibleTime' => $indisponibleTime
+        );
+    }
+
 	
 	/**
      * @Route("/systems/success/{action}", name="admin_systems_success")
