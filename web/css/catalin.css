@@ -11592,7 +11592,7 @@ body .select2-dropdown-open .select2-choice {
 
 .form-signin .title-box .divider-vertical {
     float: left;
-    background: url("../bundles/oroui/img/vertical-divider.png") no-repeat;
+    background: url("../css/vertical-divider.png") no-repeat;
     width: 2px;
     height: 28px;
     margin: 0 10px 0
