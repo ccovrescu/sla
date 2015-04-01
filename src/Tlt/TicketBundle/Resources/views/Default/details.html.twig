@@ -117,7 +117,7 @@
                 {% endif %}
             </div>
             <div class="item announced-by right-cell">
-                Nume sesizant: {{ ticket.announcedBy }}
+                Nume sesizant: {{ ticket.announcedBy|length>50 ? ticket.announcedBy|slice(0,50) ~ '...' : ticket.announcedBY }}
             </div>
         </div>
         <div class="row">
