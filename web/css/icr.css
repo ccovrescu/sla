@@ -24,7 +24,7 @@
 }
 
 @media screen {
-    .icr-logo, .icr-title, .icr-signatures, .main, .item{
+    .icr-logo, .icr-title, .icr-signatures, .main, .item, .cod {
         display: none;
     }
 }
