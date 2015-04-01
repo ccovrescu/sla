@@ -54,7 +54,7 @@
                         DTI
                     {% endif %}
                 {% else %}
-                    n/a
+                    &nbsp;
                 {% endif %}
             </div>
             <div class="item agency-center top-cell">
@@ -65,17 +65,25 @@
                 {% endif %}
             </div>
             <div class="item emergent top-cell">
-                {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
-                    Urgent <i class="fa fa-square-o"></i>
+                {% if ticket.equipment is defined and ticket.equipment is not null %}
+                    {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
+                        Urgent <i class="fa fa-square-o"></i>
+                    {% else %}
+                        Urgent <i class="fa fa-check-square-o"></i>
+                    {% endif %}
                 {% else %}
-                    Urgent <i class="fa fa-check-square-o"></i>
+                    Urgent <i class="fa fa-square-o"></i>
                 {% endif %}
             </div>
             <div class="item non-emergent top-cell right-cell">
-                {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
-                    Non Urgent <i class="fa fa-check-square-o"></i>
+                {% if ticket.equipment is defined and ticket.equipment is not null %}
+                    {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
+                        Non Urgent <i class="fa fa-check-square-o"></i>
+                    {% else %}
+                        Non Urgnet <i class="fa fa-square-o"></i>
+                    {% endif %}
                 {% else %}
-                    Non Urgnet <i class="fa fa-square-o"></i>
+                    Non Urgent <i class="fa fa-square-o"></i>
                 {% endif %}
             </div>
         </div>
@@ -88,7 +96,7 @@
                 Data si ora anuntatrii: {{ ticket.announcedAt|date('d/m/Y H:i') }}
             </div>
             <div class="item taken-by">
-                Prelauat sesizarea: {{ ticket.takenBy }}
+                Preluat sesizarea: {{ ticket.takenBy }}
             </div>
         </div>
         <div class="row">
@@ -105,7 +113,7 @@
                 {% if ticket.equipment is defined and ticket.equipment is not null %}
                     {{ ticket.equipment.owner.name }}
                 {% else %}
-                    n/a
+                    &nbsp;
                 {% endif %}
             </div>
             <div class="item announced-by right-cell">
@@ -225,6 +233,26 @@
                 {% endif %}
             </div>
         </div>
+
+        <div class="row">
+            <div class="item affected-systems left-cell right-cell">
+                Sisteme afectate:
+                {% set systems = '' %}
+                {% if ticket.equipment is defined and ticket.equipment is not null %}
+                    {% for tm in ticket.ticketMapping %}
+                        {% if not loop.first %}
+                            {% set systems = systems ~ ', ' ~ tm.mapping.system.name %}
+                        {% else %}
+                            {% set systems = systems ~ tm.mapping.system.name %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <pre>
+                    {{ systems }}
+                </pre>
+            </div>
+        </div>
+
         <div class="row">
             <div class="item fixed-mode left-cell right-cell">
                 Mod de rezolvare:

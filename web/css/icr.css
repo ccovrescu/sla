@@ -113,7 +113,7 @@
 	}
 	.description {
 		width: 208.75mm;
-        height: 30mm;
+        height: 25mm;
 	}
 	.description pre {
 		text-align: left;
@@ -122,7 +122,7 @@
 		margin: 0;
 		padding: 0;
 		font-family: times;
-		font-style: italic;		
+		font-weight: bold;
 	}
     .is-real {
         width: 45mm;
@@ -139,7 +139,7 @@
         margin: 0;
         padding: 0;
         font-family: times;
-        font-style: italic;
+        font-weight: bold;
     }
     .fixed-by {
         width: 104mm;
@@ -162,6 +162,19 @@
     .equipment {
         width: 208.75mm;
     }
+    .affected-systems {
+        width: 208.75mm;
+        height: 25mm;
+    }
+    .affected-systems pre {
+        text-align: left;
+        white-space: pre-line;
+        border: none;
+        margin: 0;
+        padding: 0;
+        font-family: times;
+        font-size: 10pt;
+    }
     .fixed-mode {
         width: 208.75mm;
         height: 40mm;
@@ -173,11 +186,11 @@
         margin: 0;
         padding: 0;
         font-family: times;
-        font-style: italic;
+        font-weight: bold;
     }
     .resources {
         width: 208.75mm;
-        height: 40mm;
+        height: 30mm;
     }
     .resources pre {
         text-align: left;
@@ -186,7 +199,7 @@
         margin: 0;
         padding: 0;
         font-family: times;
-        font-style: italic;
+        font-weight: bold;
     }
 
 
