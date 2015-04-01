@@ -12,6 +12,9 @@ use Tlt\AdmnBundle\Form\Type\ChooseType;
 
 use Tlt\MainBundle\Model\SQL;
 
+use Tlt\MainBundle\Form\Model\AnexaFilters;
+use Tlt\MainBundle\Form\Type\AnexaFiltersType;
+
 class DefaultController extends Controller
 {
     /**
@@ -239,15 +242,12 @@ class DefaultController extends Controller
      */
 	public function anexaAction(Request $request)
 	{
+        $anexaFilters = new AnexaFilters();
+        $anexaFilters->setYear(date('Y'));
+
 		$form = $this->createForm(
-			new ChooseType($this->getDoctrine()),
-			new Choose(),
-			array(
-				'owner' => array(
-					'available'=>true,
-					'showAll' => true
-				),
-			)
+            new AnexaFiltersType(),
+            $anexaFilters
 		);
 		
 		$form->handleRequest($request);
@@ -256,11 +256,7 @@ class DefaultController extends Controller
 		$results = array();
 		
 		if ($form->isValid()) {
-			$owner = $this->getDoctrine()
-				->getRepository('TltAdmnBundle:Owner')
-				->findOneById($form['owner']->getData());
-
-			if ($owner) {
+			if ($anexaFilters->getOwner()) {
 				$departments = $this->getDoctrine()
 					->getRepository('TltAdmnBundle:Department')
 					->findAll();
@@ -284,10 +280,11 @@ class DefaultController extends Controller
 							ORDER BY ss.`service`
 						) AS t1
 						ON t1.service=mq.`service`
-						WHERE mq.`owner`=:owner AND sv.department=:department
+						WHERE mq.year=:year AND mq.`owner`=:owner AND sv.department=:department
 						ORDER BY sv.`id`"
 					);
-					$statement->bindValue('owner', $owner->getId());
+                    $statement->bindValue('year', $anexaFilters->getYear());
+					$statement->bindValue('owner', $anexaFilters->getOwner()->getId());
 					$statement->bindValue('department', $department->getId());
 					$statement->execute();
 					$results[$department->getName()] = $statement->fetchAll();
@@ -314,10 +311,11 @@ class DefaultController extends Controller
 							ORDER BY ss.`service`
 						) AS t1
 						ON t1.service=mq.`service`
-						WHERE sv.department=:department
+						WHERE mq.year=:year AND sv.department=:department
 						GROUP BY mq.`service`
 						ORDER BY sv.`id`"
 					);
+                    $statement->bindValue('year', $anexaFilters->getYear());
 					$statement->bindValue('department', $department->getId());
 					$statement->execute();
 					$results[$department->getName()] = $statement->fetchAll();
@@ -328,7 +326,6 @@ class DefaultController extends Controller
         return
 			array(
 				'form' => $form->createView(),
-				'owner'	=> $owner,
 				'results'	=> $results
 			);
 	}
