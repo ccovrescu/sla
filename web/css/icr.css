@@ -201,6 +201,9 @@
         font-family: times;
         font-weight: bold;
     }
+    .cod {
+        font-size: 10pt;
+    }
 
 
     .no-print {
@@ -249,5 +252,5 @@
 	size:210mm 297mm;
 
     /* this affects the margin in the printer settings */
-    margin: 5mm 10mm 5mm 5mm;
+    margin: 5mm 5mm 5mm 5mm;
 }
