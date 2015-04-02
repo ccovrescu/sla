@@ -50,8 +50,9 @@
                                     per serviciu </a></li>
                         </ul>
                     </li>
-                    <li><a href="{{ path('anexa') }}"><i class="fa fa-table"></i> Anexa A</a></li>
                 {% endif %}
+
+                <li><a href="{{ path('anexa') }}"><i class="fa fa-table"></i> Anexa A</a></li>
 
                 {% if is_granted('ROLE_ALLOWED_TO_EDIT_EQUIPMENTS') %}
                     <li class="dropdown">

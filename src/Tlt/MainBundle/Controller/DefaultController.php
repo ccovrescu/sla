@@ -243,153 +243,97 @@ class DefaultController extends Controller
 	public function anexaAction(Request $request)
 	{
         $anexaFilters = new AnexaFilters();
+
         $anexaFilters->setYear(date('Y'));
 
-		$form = $this->createForm(
-            new AnexaFiltersType(),
+        $form = $this->createForm(
+            new AnexaFiltersType($this->get('security.context')),
             $anexaFilters
-		);
-		
-		$form->handleRequest($request);
-		
-		$owner = null;
-		$results = array();
-		
-		if ($form->isValid()) {
+        );
 
-            if ($anexaFilters->getDepartment() == null)
-            {
-				$departments = $this->getDoctrine()
-					->getRepository('TltAdmnBundle:Department')
-					->findAll();
+        $form->handleRequest($request);
+
+        $results = array();
+
+        if ($form->isValid()) {
+
+            if ($anexaFilters->getDepartment() == null) {
+                $departments = $this->getDoctrine()
+                    ->getRepository('TltAdmnBundle:Department')
+                    ->findAll();
             } else {
                 $departments[] = $anexaFilters->getDepartment();
             }
 
-            foreach ($departments as $department)
-            {
-					$em = $this->getDoctrine()->getEntityManager();
-					$connection = $em->getConnection();
-					$statement = $connection->prepare(
-						"SELECT
-						    sv.name AS service,
-						    mp.price,
-						    IF(mq.quantity, mq.quantity, '-') AS quantity,
-						    IF(t1.total, t1.total,'-') as real_quantity
-						FROM
-						    money_quantities mq
-						LEFT JOIN
-						    services sv
-						    ON sv.id=mq.service
-						LEFT JOIN
-						    money_price mp
-						    ON (mp.service=mq.service AND mp.year=mq.year)
-						LEFT JOIN
-						    (
+            foreach ($departments as $department) {
+                    if ($anexaFilters->getOwner() != null) {
+                        $ownersParam = $anexaFilters->getOwner()->getId();
+                    } else {
+                        $ownersParam = implode(",", $this->getUser()->getOwnersIds());
+                    }
+
+                    $query = "
+                            SELECT
+                                ow.name as owner,
+                                sv.name as service,
+                                mp.price,
+                            "
+                    . ($anexaFilters->getOwner() != null ? "mq.quantity," : "SUM(mq.quantity) as quantity,") .
+                    "
+                                SUM(t.total) as real_quantity
+                            FROM
+                                owners ow
+                            JOIN
+                                services sv
+                            LEFT JOIN
+                                money_price mp
+                                ON mp.service=sv.id AND mp.year=:year
+                            LEFT JOIN
+                                money_quantities mq
+                                ON mq.service=sv.id AND mq.year=:year AND mq.owner=ow.id
+                            LEFT JOIN
+                                (
                                 SELECT
-                                    ss.service,
                                     eq.owner,
+                                    eq.service,
                                     SUM(eq.total) AS total
                                 FROM
-                                    service_to_systems ss
-                                LEFT JOIN
-                                    mappings mp
-                                    ON mp.system=ss.system
-                                LEFT JOIN
                                     equipments eq
-                                    ON (eq.id=mp.equipment AND eq.service=ss.service)
+                                WHERE
+                                    eq.is_active=1
                                 GROUP BY
-                                    ss.service, eq.owner
-                                ORDER BY
-                                    ss.service
-						    ) AS t1
-						    ON t1.service=mq.service AND t1.owner=mq.owner
-						WHERE
-						    mq.year=:year" . ($anexaFilters->getOwner() != null ? " AND mq.owner=:owner" : "") . " AND sv.department=:department
-                        " . ($anexaFilters->getOwner() == null ? " GROUP BY mq.service" : "") . "
-						ORDER BY sv.id"
-					);
+                                    eq.owner,
+                                    eq.service
+                                ) AS t
+                                ON t.owner=ow.id AND t.service=sv.id
+                            WHERE
+                                sv.department=:department AND ow.id IN ($ownersParam)
+                            GROUP BY
+                                sv.id
+                            "
+                    . ($anexaFilters->getOwner() != null ? ", ow.id" : "") .
+                    "
+                            ORDER BY
+                                sv.name
+	                        ";
+                $em = $this->getDoctrine()->getManager();
+                $connection = $em->getConnection();
+                $statement = $connection->prepare( $query );
 
-                    $statement->bindValue('year', $anexaFilters->getYear());
-                    if ($anexaFilters->getOwner() != null)
-					    $statement->bindValue('owner', $anexaFilters->getOwner()->getId());
-					$statement->bindValue('department', $department->getId());
+                $statement->bindValue('year', $anexaFilters->getYear());
+                $statement->bindValue('department', $department->getId());
 
-					$statement->execute();
-					$results[$department->getName()] = $statement->fetchAll();
+                $statement->execute();
+
+                $results[$department->getName()] = $statement->fetchAll();
             }
-//			if ($anexaFilters->getOwner()) {
-//				$departments = $this->getDoctrine()
-//					->getRepository('TltAdmnBundle:Department')
-//					->findAll();
-//
-//				foreach ($departments as $department)
-//				{
-//					$em = $this->getDoctrine()->getEntityManager();
-//					$connection = $em->getConnection();
-//					$statement = $connection->prepare(
-//						"SELECT sv.`name` AS service, mp.`price`, IF(mq.`quantity`, mq.`quantity`, '-') AS `quantity`, IF(t1.total, t1.total,'-') as real_quantity
-//						FROM money_quantities mq
-//						LEFT JOIN services sv ON sv.`id`=mq.`service`
-//						LEFT JOIN money_price mp ON (mp.`service`=mq.`service` AND mp.`year`=mq.`year`)
-//						LEFT JOIN owners ow ON ow.`id`=mq.`owner`
-//						LEFT JOIN (
-//							SELECT ss.`service`, SUM(eq.`total`) AS total FROM service_to_systems ss
-//							LEFT JOIN mappings mp ON mp.`system`=ss.`system`
-//							LEFT JOIN equipments eq ON (eq.id=mp.`equipment` AND eq.`service`=ss.`service`)
-//							WHERE eq.`owner`=:owner
-//							GROUP BY ss.`service`
-//							ORDER BY ss.`service`
-//						) AS t1
-//						ON t1.service=mq.`service`
-//						WHERE mq.year=:year AND mq.`owner`=:owner AND sv.department=:department
-//						ORDER BY sv.`id`"
-//					);
-//                    $statement->bindValue('year', $anexaFilters->getYear());
-//					$statement->bindValue('owner', $anexaFilters->getOwner()->getId());
-//					$statement->bindValue('department', $department->getId());
-//					$statement->execute();
-//					$results[$department->getName()] = $statement->fetchAll();
-//				}
-//			} else {
-//				$departments = $this->getDoctrine()
-//					->getRepository('TltAdmnBundle:Department')
-//					->findAll();
-//
-//				foreach ($departments as $department)
-//				{
-//					$em = $this->getDoctrine()->getEntityManager();
-//					$connection = $em->getConnection();
-//					$statement = $connection->prepare(
-//						"SELECT sv.`name` AS service, mp.`price`, SUM(mq.`quantity`) AS `quantity`, IF(t1.total, t1.total,'-') as real_quantity
-//						FROM money_quantities mq
-//						LEFT JOIN services sv ON sv.`id`=mq.`service`
-//						LEFT JOIN money_price mp ON (mp.`service`=mq.`service` AND mp.`year`=mq.`year`)
-//						LEFT JOIN (
-//							SELECT ss.`service`, SUM(eq.`total`) AS total FROM service_to_systems ss
-//							LEFT JOIN mappings mp ON mp.`system`=ss.`system`
-//							LEFT JOIN equipments eq ON (eq.id=mp.`equipment` AND eq.`service`=ss.`service`)
-//							GROUP BY ss.`service`
-//							ORDER BY ss.`service`
-//						) AS t1
-//						ON t1.service=mq.`service`
-//						WHERE mq.year=:year AND sv.department=:department
-//						GROUP BY mq.`service`
-//						ORDER BY sv.`id`"
-//					);
-//                    $statement->bindValue('year', $anexaFilters->getYear());
-//					$statement->bindValue('department', $department->getId());
-//					$statement->execute();
-//					$results[$department->getName()] = $statement->fetchAll();
-//				}
-//			}
-		}
-		
+        }
+
         return
-			array(
-				'form' => $form->createView(),
-				'results'	=> $results
-			);
+            array(
+                'form' => $form->createView(),
+                'results' => $results
+            );
 	}
 
     /**

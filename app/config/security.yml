@@ -79,7 +79,7 @@ security:
         - { path: ^/tickets/add, roles: ROLE_TICKET_INSERT }
         - { path: ^/tickets/add3, roles: ROLE_TICKET_INSERT }
         - { path: ^/tickets, roles: ROLE_USER }
-        - { path: ^/anexa, roles: ROLE_ADMIN }
+        - { path: ^/anexa, roles: ROLE_USER }
         - { path: ^/sla, roles: ROLE_ADMIN }
         - { path: ^/sys, roles: ROLE_ADMIN }
         - { path: ^/user/edit, roles: ROLE_ADMIN }

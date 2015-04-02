@@ -3,12 +3,12 @@
 {% block page %}
     <div class="row">
         <div class="col-lg-12">
-            <h1>Anexa
-                <small>A</small>
+            <h1>Anexa A
+                <small>Detalii</small>
             </h1>
             <ol class="breadcrumb">
-                <li><a href="{{ path('anexa') }}"><i class="icon-dashboard"></i> Anexa</a></li>
-                <li class="active"><i class="icon-file-alt"></i> A</li>
+                <li><a href="{{ path('homepage') }}"><i class="icon-dashboard"></i> Prima pagina</a></li>
+                <li class="active"><i class="icon-file-alt"></i> Anexa A</li>
             </ol>
         </div>
     </div><!-- /.row -->
@@ -63,10 +63,12 @@
                 <thead>
                 <tr>
                     <th class="text-left">Serviciu <i class="fa fa-sort"></i></th>
-                    <th class="text-right" nowrap>Pret unitar <i class="fa fa-sort"></i></th>
                     <th class="text-right" nowrap>Bucati (CTR) <i class="fa fa-sort"></i></th>
                     <th class="text-right" nowrap>Bucati (BD) <i class="fa fa-sort"></i></th>
-                    <th class="text-right" nowrap>Valoare (CTR)<i class="fa fa-sort"></i></th>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <th class="text-right" nowrap>Pret unitar <i class="fa fa-sort"></i></th>
+                        <th class="text-right" nowrap>Valoare (CTR)<i class="fa fa-sort"></i></th>
+                    {% endif %}
                 </tr>
                 </thead>
                 <tbody>
@@ -76,22 +78,27 @@
                         {% set total = total + result.price*result.quantity %}
                         <tr>
                             <td class="text-left">{{ result.service }}</td>
-                            <td class="text-right">{{ result.price }}</td>
                             <td class="text-right"><p
-                                        {% if result.quantity > result.real_quantity %}class="text-danger"{% endif %}>{{ result.quantity }}</p>
+                                        {% if result.quantity > result.real_quantity %}class="text-danger"{% endif %}>{{ result.quantity|number_format(0, '.', ',')|default(0) }}</p>
                             </td>
-                            <td class="text-right">{{ result.real_quantity }}</td>
-                            <td class="text-right">{{ (result.price*result.quantity)|number_format(2, '.', ',')|default(0) }}</td>
+                            <td class="text-right">{{ result.real_quantity|number_format(0, '.', ',')|default(0) }}</td>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <td class="text-right">{{ result.price|number_format(2, '.', ',')|default(0) }}</td>
+                                <td class="text-right">{{ (result.price*result.quantity)|number_format(2, '.', ',')|default(0) }}</td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 {% endif %}
                 </tbody>
-                <tfoot>
-                <tr>
-                    <th colspan="4" class="text-left">Total (CTR)</th>
-                    <th class="text-right">{{ total|number_format(2, '.', ',')|default(0) }}</th>
-                </tr>
-                </tfoot>
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <tfoot>
+                        <tr>
+                            <th colspan="4" class="text-left">Total (CTR)</th>
+                            <th class="text-right">{{ total|number_format(2, '.', ',')|default(0) }}</th>
+                        </tr>
+                    </tfoot>
+                {% endif %}
             </table>
         </div>
     {% endfor %}

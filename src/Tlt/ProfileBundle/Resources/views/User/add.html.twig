@@ -51,7 +51,7 @@
             </div>
         </div>
 
-        <div class="col-lg-6">
+        <div class="col-lg-3">
             {# Tip serviciu #}
             <div class="form-group">
                 {{ form_label(form.departments) }}
@@ -98,7 +98,25 @@
                         {% endif %}
                     </div>
                 {% endfor %}
-            </div>        </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            {# Entitatea #}
+            <div class="form-group">
+                {{ form_label(form.owners) }}
+                {% for owner in form.owners %}
+                    <div class="checkbox">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {{ form_label(owner) }}
+                            {{ form_widget(owner) }}
+                        {% else %}
+                            {{ form_label(owner) }}
+                            {{ form_widget(owner, {'attr' : {'disabled':'disabled'} }) }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 
     {{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}

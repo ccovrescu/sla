@@ -78,6 +78,15 @@ class User implements UserInterface, \Serializable
     private $departments;
 
     /**
+     * @ORM\ManyToMany(targetEntity="Tlt\AdmnBundle\Entity\Owner")
+     * @ORM\JoinTable(name="users_owners",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="owner_id", referencedColumnName="id")}
+     *      )
+     **/
+    private $owners;
+
+    /**
      * @ORM\Column(type="string", length=32)
      */
     private $salt;
@@ -104,6 +113,7 @@ class User implements UserInterface, \Serializable
         $this->salt = '';
         $this->branches = new ArrayCollection();
         $this->departments = new ArrayCollection();
+        $this->owners = new ArrayCollection();
         $this->roluri = new ArrayCollection();
     }
 
@@ -436,14 +446,14 @@ class User implements UserInterface, \Serializable
     }
 
     /**
-     * Add departments
+     * Add department
      *
-     * @param Department $departments
+     * @param Department $department
      * @return User
      */
-    public function addDepartment(Department $departments)
+    public function addDepartment(Department $department)
     {
-        $this->departments[] = $departments;
+        $this->departments[] = $department;
 
         return $this;
     }
@@ -451,11 +461,56 @@ class User implements UserInterface, \Serializable
     /**
      * Remove departments
      *
-     * @param Department $departments
+     * @param Department $department
      */
-    public function removeDepartment(Department $departments)
+    public function removeDepartment(Department $department)
     {
-        $this->departments->removeElement($departments);
+        $this->departments->removeElement($department);
+    }
+
+    /**
+     * Add owner
+     *
+     * @param Owner $owner
+     * @return User
+     */
+    public function addOwner(Owner $owner)
+    {
+        $this->owners[] = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Remove owner
+     *
+     * @param Owner $owner
+     */
+    public function removeOwner(Owner $owner)
+    {
+        $this->owners->removeElement($owner);
+    }
+
+    /**
+     * Get owners
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection
+     */
+    public function getOwners()
+    {
+        return $this->owners;
+    }
+
+    public function getOwnersIds()
+    {
+        $ids = array();
+        foreach ($this->owners as $owner)
+            $ids[] = $owner->getId();
+
+        if (empty($ids))
+            return null;
+        else
+            return $ids;
     }
 
     /**

@@ -64,6 +64,14 @@ class UserType extends AbstractType {
                 'multiple' => true,
 //                'read_only' => true
             ))
+            ->add('owners','entity',array(
+                    'class'     => 'Tlt\AdmnBundle\Entity\Owner',
+                    'property'  => 'name',
+                    'label'		=> 'Entitatea',
+                    'expanded'  => true,
+                    'multiple' => true,
+//                'read_only' => true
+            ))
             ->add('roluri','entity',array(
                 'class'     => 'Tlt\ProfileBundle\Entity\Role',
                 'property'  => 'name',

@@ -113,15 +113,15 @@ class EquipmentRepository extends EntityRepository
 			$qb->andWhere('sv.department=:department')
 				->setParameter('department', $department);
 				
-		// echo '<pre>';
-		// var_dump($qb->getQuery()->getSql());
-		// var_dump($qb->getQuery()->getParameters());
-		// echo '</pre>';
-		// die();
+//		 echo '<pre>';
+//		 var_dump($qb->getQuery()->getSql());
+//		 var_dump($qb->getQuery()->getParameters());
+//		 echo '</pre>';
+//		 die();
 					
 		try {
 			return $qb->getQuery()->getResult();
-		} catch (\Doctrine\ORM\NoResultException $e) {
+		} catch (NoResultException $e) {
 			return null;
 		}
 	}

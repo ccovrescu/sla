@@ -41,7 +41,7 @@
 
                 {% if app.user.branches|length>1 %}
                     <tr>
-                        <td rowspan="{{ app.user.branches|length + 1}}">Zona:</td>
+                        <td rowspan="{{ app.user.branches|length + 1}}">Agentia/Centrul:</td>
                     </tr>
                         {% for branch in app.user.branches %}
                             <tr>
@@ -50,8 +50,24 @@
                         {% endfor %}
                 {% else %}
                     <tr>
-                        <td>Zona:</td>
+                        <td>Agentia/Centrul:</td>
                         <td>{{ app.user.branches.first.name }}</td>
+                    </tr>
+                {% endif %}
+
+                {% if app.user.owners|length>1 %}
+                    <tr>
+                        <td rowspan="{{ app.user.owners|length + 1}}">Entitatea:</td>
+                    </tr>
+                    {% for owner in app.user.owners %}
+                        <tr>
+                            <td>{{ owner.name }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td>Entitatea:</td>
+                        <td>{{ app.user.owners.first.name }}</td>
                     </tr>
                 {% endif %}
 
