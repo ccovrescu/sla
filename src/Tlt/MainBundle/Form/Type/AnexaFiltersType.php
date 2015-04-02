@@ -24,7 +24,8 @@ class AnexaFiltersType extends AbstractType
                     'property'		=>	'name',
                     'label'			=>	'Entitatea',
                     'empty_value'   => 'Toate',
-                    'required'		=>	false
+                    'empty_data'    => null,
+                    'required'      => false
                 )
             )
             ->add('department', 'entity', array(
@@ -32,7 +33,8 @@ class AnexaFiltersType extends AbstractType
                     'property'		=>	'name',
                     'label'			=>	'Departamentul',
                     'empty_value'   => 'Toate',
-                    'required'		=>	false
+                    'empty_data'    => null,
+                    'required'      => false
                 )
             )
             ->add('Arata', 'submit');

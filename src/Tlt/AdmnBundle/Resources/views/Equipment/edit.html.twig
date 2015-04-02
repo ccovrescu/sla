@@ -64,10 +64,11 @@
 			
 			{{ form_rest(form) }}
 		{{ form_end(form) }}
+
+    {% include 'TltAdmnBundle:Equipment:properties.html.twig' %}
 			
 {% endblock %}
 
 {% block javascripts %}
 	{{ parent() }}
-</script>	
 {% endblock %}

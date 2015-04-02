@@ -24,14 +24,14 @@
         </div>
         <div class="col-lg-4">
             <div class="form-group">
-                {{ form_label(form.owner) }}
-                {{ form_widget(form.owner, {'attr': {'class': 'form-control'} }) }}
+                {{ form_label(form.department) }}
+                {{ form_widget(form.department, {'attr': {'class': 'form-control'} }) }}
             </div>
         </div>
         <div class="col-lg-4">
             <div class="form-group">
-                {{ form_label(form.department) }}
-                {{ form_widget(form.department, {'attr': {'class': 'form-control'} }) }}
+                {{ form_label(form.owner) }}
+                {{ form_widget(form.owner, {'attr': {'class': 'form-control'} }) }}
             </div>
         </div>
         <div class="col-lg-2">
@@ -81,7 +81,7 @@
                                         {% if result.quantity > result.real_quantity %}class="text-danger"{% endif %}>{{ result.quantity }}</p>
                             </td>
                             <td class="text-right">{{ result.real_quantity }}</td>
-                            <td class="text-right">{{ result.price*result.quantity }}</td>
+                            <td class="text-right">{{ (result.price*result.quantity)|number_format(2, '.', ',')|default(0) }}</td>
                         </tr>
                     {% endfor %}
                 {% endif %}

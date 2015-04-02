@@ -215,7 +215,8 @@ class EquipmentController extends Controller
 				
 			
 			return $this->render('TltAdmnBundle:Equipment:edit.html.twig', array(
-				'form' => $form->createView(),
+                    'form' => $form->createView(),
+                    'equipment' => $equipment
 			));
 		}
 		else
