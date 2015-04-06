@@ -22,25 +22,17 @@ class EquipmentController extends Controller
      */
     public function indexAction(Request $request)
     {
-		$department = $this->getDoctrine()
-									->getRepository('TltAdmnBundle:Department')
-									->findById(1);
-									
-		$service = $this->getDoctrine()
-									->getRepository('TltAdmnBundle:Service')
-									->findById(1);
-		
-		$zoneLocation = $this->getDoctrine()
-									->getRepository('TltAdmnBundle:ZoneLocation')
-									->findById(107);
-		
-		$filter	=	new Filter();
-		// $filter->setDepartment($department);
-		// $filter->setService($service);
-		// $filter->setZoneLocation($zoneLocation);
-		
+        $session = $this->get('session');
+
+        // Check if data already was submitted and validated
+        if ($session->has('submittedData')) {
+            $filter = $session->get('submittedData');
+        } else {
+            $filter = new Filter();
+        }
+
 		$form	=	$this->createForm(
-						new FilterType( $this->getUser() ),
+						new FilterType($this->getDoctrine()->getManager(), $this->getUser() ),
 						$filter,
 						array(
 							'zone'			=>	true,
@@ -51,11 +43,14 @@ class EquipmentController extends Controller
 							'method'		=>	'GET',
 						)
 					);
-		
+
 		$form->handleRequest($request);
 		
 		$equipments = null;
 		if ($form->isValid()) {
+            // Data is valid so save it in session for another request
+            $session->set('submittedData', $form->getData());
+
 			$equipments = $this->getDoctrine()
 									->getRepository('TltAdmnBundle:Equipment')
 										->findAllJoinedToBranchesAndServices(
@@ -66,11 +61,6 @@ class EquipmentController extends Controller
 											( $filter->getService() ? $filter->getService()->getId() : null),
 											$this->getUser()->getBranchesIds(),
 											$this->getUser()->getDepartmentsIds()
-											// $form['owner']->getData(),
-											// $form['branch']->getData(),
-											// $form['location']->getData(),
-											// $form['department']->getData(),
-											// $form['service']->getData()
 										);
 		}
 		

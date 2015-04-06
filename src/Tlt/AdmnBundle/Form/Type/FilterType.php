@@ -1,6 +1,7 @@
 <?php
 namespace Tlt\AdmnBundle\Form\Type;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -11,28 +12,36 @@ use Tlt\AdmnBundle\Form\EventListener\ServiceListener;
 use Tlt\AdmnBundle\Form\EventListener\DepartmentListener;
 use Tlt\AdmnBundle\Form\EventListener\OwnerListener;
 
+use Tlt\ProfileBundle\Entity\User;
+
 class FilterType extends AbstractType
 {
 	private $user;
+
+    /**
+     * @var ObjectManager
+     */
+    private $em;
 	
-	public function __construct(\Tlt\ProfileBundle\Entity\User $user = null)
+	public function __construct(ObjectManager $em, User $user = null)
 	{
+        $this->em   = $em;
 		$this->user	=	$user;
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
         if (array_key_exists('department', $options) && $options['department'])
-			$builder->addEventSubscriber(new DepartmentListener( $this->user ));
+			$builder->addEventSubscriber(new DepartmentListener( $this->em, $this->user ));
 		if (array_key_exists('service', $options) && $options['service'])
-            $builder->addEventSubscriber(new ServiceListener( $this->user ));
+            $builder->addEventSubscriber(new ServiceListener( $this->em, $this->user ));
 		
 		if (array_key_exists('zone', $options) && $options['zone'])
-			$builder->addEventSubscriber(new BranchListener( $this->user ));
+			$builder->addEventSubscriber(new BranchListener( $this->em, $this->user ));
 		if (array_key_exists('zoneLocation', $options) && $options['zoneLocation'])
-            $builder->addEventSubscriber(new LocationListener());
+            $builder->addEventSubscriber(new LocationListener($this->em));
 		if (array_key_exists('owner', $options) && $options['owner'])
-			$builder->addEventSubscriber(new OwnerListener( $this->user ));
+			$builder->addEventSubscriber(new OwnerListener( $this->em, $this->user ));
 			
 		$builder
 			->add('Arata', 'submit');

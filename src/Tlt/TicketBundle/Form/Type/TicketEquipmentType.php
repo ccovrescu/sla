@@ -1,6 +1,8 @@
 <?php
 namespace Tlt\TicketBundle\Form\Type;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -14,12 +16,21 @@ use Tlt\TicketBundle\Form\EventListener\EquipmentListener;
 use Tlt\ProfileBundle\Entity\User;
 
 
-class TicketEquipmentType extends AbstractType {
+class TicketEquipmentType extends AbstractType
+{
+    /**
+     * @var ObjectManager
+     */
+    private $em;
 
+    /**
+     * @var User
+     */
     private $user;
 
-    public function __construct(User $user = null)
+    public function __construct(ObjectManager $em, User $user = null)
     {
+        $this->em = $em;
         $this->user	=	$user;
     }
 
@@ -28,16 +39,16 @@ class TicketEquipmentType extends AbstractType {
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options) {
         if (array_key_exists('department', $options) && $options['department'])
-            $builder->addEventSubscriber(new DepartmentListener( $this->user, false));
+            $builder->addEventSubscriber(new DepartmentListener( $this->em, $this->user, false));
         if (array_key_exists('service', $options) && $options['service'])
-            $builder->addEventSubscriber(new ServiceListener( $this->user, false));
+            $builder->addEventSubscriber(new ServiceListener( $this->em, $this->user, false));
 
         if (array_key_exists('zone', $options) && $options['zone'])
-            $builder->addEventSubscriber(new BranchListener( $this->user, false ));
+            $builder->addEventSubscriber(new BranchListener( $this->em, $this->user, false ));
         if (array_key_exists('zoneLocation', $options) && $options['zoneLocation'])
-            $builder->addEventSubscriber(new LocationListener($this->user, false));
+            $builder->addEventSubscriber(new LocationListener( $this->em, $this->user, false));
         if (array_key_exists('owner', $options) && $options['owner'])
-            $builder->addEventSubscriber(new OwnerListener( $this->user, false ));
+            $builder->addEventSubscriber(new OwnerListener( $this->em, $this->user, false ));
         if (array_key_exists('equipment', $options) && $options['equipment'])
             $builder->addEventSubscriber(new EquipmentListener( $this->user, false ));
 

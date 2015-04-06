@@ -6,17 +6,36 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 
 use Tlt\ProfileBundle\Entity\User;
 
 class DepartmentListener implements EventSubscriberInterface
 {
+    /**
+     * @var ObjectManager
+     */
+    private $em;
+
+    /**
+     * @var User
+     */
 	private $user;
+
+    /**
+     * @var bool
+     */
     private $showAll;
- 
-    public function __construct(User $user = null, $showAll = true)
+
+    /**
+     * @param ObjectManager $em
+     * @param User $user
+     * @param bool $showAll
+     */
+    public function __construct(ObjectManager $em, User $user = null, $showAll = true)
     {
+        $this->em = $em;
 		$this->user = $user;
         $this->showAll = $showAll;
     }
@@ -56,7 +75,12 @@ class DepartmentListener implements EventSubscriberInterface
 												};
 		
 		if ($department_id) {
-            $formOptions['data'] = $department_id;
+            $department = $this->em
+                ->getRepository('TltAdmnBundle:Department')
+                ->find($department_id);
+
+            if ($department != null)
+                $formOptions['data'] = $department;
       }
 
         $form->add('department', 'entity', $formOptions);
@@ -72,7 +96,7 @@ class DepartmentListener implements EventSubscriberInterface
         }
  
         $accessor = PropertyAccess::createPropertyAccessor();
-        $department_id	=	($accessor->getValue($data, 'department')) ? $accessor->getValue($data, 'department') : null;
+        $department_id	=	($accessor->getValue($data, 'department')) ? $accessor->getValue($data, 'department')->getId() : null;
 
         $this->addDepartmentForm($form, $department_id);
     }
@@ -83,7 +107,7 @@ class DepartmentListener implements EventSubscriberInterface
         $data = $event->getData();
 
         $department_id = array_key_exists('department', $data) ? $data['department'] : null;
- 
+
         $this->addDepartmentForm($form, $department_id);
     }
 }

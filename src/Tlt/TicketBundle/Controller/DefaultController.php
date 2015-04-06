@@ -143,7 +143,7 @@ class DefaultController extends Controller
             $ticketAllocation->setFromHost($this->container->get('request')->getClientIp());
 
 //            $ticketAllocation->seTicketCreate( $ticketCreate );
-            $ticketAllocation->seTicket( $Ticket );
+            $ticketAllocation->seTicket( $ticket );
 
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
@@ -377,7 +377,7 @@ class DefaultController extends Controller
         $ticketEquipment->setOwner($currentOwner);
 
         $form = $this->createForm(
-            new TicketEquipmentType($this->getUser()),
+            new TicketEquipmentType($this->getDoctrine()->getManager(), $this->getUser()),
             $ticketEquipment,
             array(
                 'department'    =>  true,

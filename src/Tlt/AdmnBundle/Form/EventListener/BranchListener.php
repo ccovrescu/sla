@@ -6,17 +6,36 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 
 use Tlt\ProfileBundle\Entity\User;
 
 class BranchListener implements EventSubscriberInterface
 {
+    /**
+     * @var ObjectManager
+     */
+    private $em;
+
+    /**
+     * @var User
+     */
 	private $user;
+
+    /**
+     * @var bool
+     */
     private $showAll;
- 
-    public function __construct(User $user = null, $showAll = true)
+
+    /**
+     * @param ObjectManager $em
+     * @param User $user
+     * @param bool $showAll
+     */
+    public function __construct(ObjectManager $em, User $user = null, $showAll = true)
     {
+        $this->em = $em;
 		$this->user	=	$user;
         $this->showAll = $showAll;
     }
@@ -29,7 +48,7 @@ class BranchListener implements EventSubscriberInterface
         );
     }
 	
-    private function addBranchForm($form, $department_id = null, $service_id = null, $branch_id = null)
+    private function addBranchForm($form, $department_id = null, $service_id = null, $zone_id = null)
     {
         $formOptions = array(
             'class'         => 'TltAdmnBundle:Branch',
@@ -77,8 +96,13 @@ class BranchListener implements EventSubscriberInterface
 												};
 		
  
-         if ($branch_id) {
-             $formOptions['data'] = $branch_id;
+         if ($zone_id) {
+             $zone = $this->em
+                 ->getRepository('TltAdmnBundle:Branch')
+                 ->find($zone_id);
+
+             if ($zone != null)
+                 $formOptions['data'] = $zone;
          }
  
         $form->add('branch', 'entity', $formOptions);
@@ -95,42 +119,11 @@ class BranchListener implements EventSubscriberInterface
  
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        $zone = $accessor->getValue($data, 'branch');
-        $service = $accessor->getValue($data, 'service');
-        $department = $accessor->getValue($data, 'department');
-
-        $zone_id = ($zone) ? $zone->getId() : null;
-        $service_id = ($service) ? $service->getId() : null;
-        $department_id = ($department) ? $department->getId() : null;
+        $zone_id	=	($accessor->getValue($data, 'branch')) ? $accessor->getValue($data, 'branch')->getId() : null;
+        $service_id	=	($accessor->getValue($data, 'service')) ? $accessor->getValue($data, 'service')->getId() : null;
+        $department_id	=	($accessor->getValue($data, 'department')) ? $accessor->getValue($data, 'department')->getId() : null;
 
         $this->addBranchForm($form, $department_id, $service_id, $zone_id);
-
-/*        $zoneLocation	=	$accessor->getValue($data, 'zoneLocation');
-		// zoneLocation is selected
-		if ($zoneLocation != null)
-		{
-			$branch_id			=	($zoneLocation) ? $zoneLocation->getBranch()->getId() : null;
-			
-			$this->addBranchForm($form, null, null, $branch_id);
-		// service is selected
-		} else {
-			$service	=	$accessor->getValue($data, 'service');
-
-			if ($service != null)
-			{
-				$this->addBranchForm($form, null, $service->getId(), $zone_id);
-			// department is selected
-			} else {
-				$department	=	$accessor->getValue($data, 'department');
-				if ($department != null)
-				{
-					$this->addBranchForm($form, $department->getId(), 'department');
-				// nothing is selected
-				} else {
-					$this->addBranchForm($form, null);
-				}
-			}
-		}*/
     }
  
     public function preSubmit(FormEvent $event)

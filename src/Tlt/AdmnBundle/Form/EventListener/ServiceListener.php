@@ -6,17 +6,38 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 
 use Tlt\ProfileBundle\Entity\User;
 
 class ServiceListener implements EventSubscriberInterface
 {
-	private $user;
+    /**
+     * @var ObjectManager
+     */
+    private $em;
+
+    /**
+     * @var User
+     */
+    private $user;
+
+    /**
+     * @var bool
+     */
     private $showAll;
+
+
+    /**
+     * @param ObjectManager $em
+     * @param User $user
+     * @param bool $showAll
+     */
  
-    public function __construct(User $user = null, $showAll = true)
+    public function __construct(ObjectManager $em, User $user = null, $showAll = true)
     {
+        $this->em   = $em;
 		$this->user	=	$user;
         $this->showAll = $showAll;
     }
@@ -29,11 +50,11 @@ class ServiceListener implements EventSubscriberInterface
         );
     }
 	
-    private function addServiceForm($form, $department_id = null, $service = null)
+    private function addServiceForm($form, $department_id = null, $service_id = null)
     {
 		$userBranches		=	$this->user->getBranchesIds();
 		$userDepartments	=	$this->user->getDepartmentsIds();
-		
+
         $formOptions = array(
             'class'         => 'TltAdmnBundle:Service',
             'label'         => 'Serviciul',
@@ -48,7 +69,7 @@ class ServiceListener implements EventSubscriberInterface
             $formOptions['empty_value'] = '-- Toate --';
         }
 
-        $formOptions['query_builder'] = function (EntityRepository $repository) use ($department_id, $service, $userBranches, $userDepartments) {
+        $formOptions['query_builder'] = function (EntityRepository $repository) use ($department_id, $userBranches, $userDepartments) {
                 $qb = $repository->createQueryBuilder('sv')
 										->innerJoin('sv.equipments', 'eq')
 										->innerJoin('eq.zoneLocation', 'zl')
@@ -62,15 +83,20 @@ class ServiceListener implements EventSubscriberInterface
 										
 										// if ($department_id)
 											$qb->andWhere('sv.department = :department')
-												->setParameter('department', $department_id);
- 
+                                                ->setParameter('department', $department_id);
+
                 return $qb;
             };
 
-        if ($service) {
-            $formOptions['data'] = $service;
-        }		
- 
+        if ($service_id) {
+            $service = $this->em
+                ->getRepository('TltAdmnBundle:Service')
+                ->find($service_id);
+
+            if ($service != null)
+                $formOptions['data'] = $service;
+        }
+
         $form->add('service', 'entity', $formOptions);
     }
 	
@@ -84,44 +110,20 @@ class ServiceListener implements EventSubscriberInterface
         }
  
         $accessor	= PropertyAccess::createPropertyAccessor();
- 
-        $service	=	$accessor->getValue($data, 'service');
-        $department	=	$accessor->getValue($data, 'department');
-
-        $service_id	=	($service) ? $service->getId() : null;
-        $department_id	=	($department) ? $department->getId() : null;
+        $department_id	=	($accessor->getValue($data, 'department')) ? $accessor->getValue($data, 'department')->getId() : null;
+        $service_id	=	($accessor->getValue($data, 'service')) ? $accessor->getValue($data, 'service')->getId() : null;
 
         $this->addServiceForm($form, $department_id, $service_id);
-
-		/* service is selected
-		if ($service != null)
-		{
-//			$service		= $service[0];
-			$department_id	=	($service) ? $service->getDepartment()->getId() : null;
-			
-			$this->addServiceForm($form, $department_id, $service);
-		/* department is selected
-		} else {
-			$department	=	$accessor->getValue($data, 'department');
-			if ($department != null)
-			{
-//				$department		= $department[0];
-    			$this->addServiceForm($form, $department->getId(), 'department');
-			/* nothing is selected
-			} else {
-				$this->addServiceForm($form, null);
-			}
-		}*/
     }
 	
     public function preSubmit(FormEvent $event)
     {
         $data = $event->getData();
         $form = $event->getForm();
- 
+
         $department_id = array_key_exists('department', $data) ? $data['department'] : null;
         $service_id = array_key_exists('service', $data) ? $data['service'] : null;
- 
+
         $this->addServiceForm($form, $department_id, $service_id);
-    }	
+    }
 }
