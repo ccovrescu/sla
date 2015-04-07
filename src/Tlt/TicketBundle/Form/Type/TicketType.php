@@ -34,7 +34,7 @@ class TicketType extends AbstractType {
                 'announcedAt', 'datetime', array(
                     'date_widget' => "choice",
                     'time_widget' => "choice",
-                    'date_format'=> 'yyyy-MM-dd',
+                    'date_format'=> 'dd.MM.yyyy',
                     'years' => array(
                         '2015',
                         '2016'
@@ -52,7 +52,8 @@ class TicketType extends AbstractType {
                 'transmissionType', 'entity', array(
                     'class' => 'TltTicketBundle:TransmissionType',
                     'property' => 'name',
-                    'empty_value' => '-- Selectati --'
+                    'empty_value' => '-- Selectati --',
+                    'label' => 'Mod de transmitere sesizare:'
 //                'transmissionType', 'choice', array(
 //                    'label' => 'Mod de transmitere sesizare:',
 //                    'empty_value' => '-- Selectati --',
@@ -143,7 +144,7 @@ class TicketType extends AbstractType {
                 'fixedAt', 'datetime', array(
                     'date_widget' => "choice",
                     'time_widget' => 'choice',
-                    'date_format' => 'yyyy-MM-dd',
+                    'date_format' => 'dd.MM.yyyy',
                     'years' => array(
                         '2015',
                         '2016'
