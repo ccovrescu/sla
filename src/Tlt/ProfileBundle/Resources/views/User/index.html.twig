@@ -3,9 +3,9 @@
 {% block page %}
     <div class="row">
         <div class="col-lg-12">
-            <h1>Agentii/Centre <small>Index</small></h1>
+            <h1>Utilizatori <small>Index</small></h1>
             <ol class="breadcrumb">
-                <li><a href="{{ path('admin_index') }}"><i class="icon-dashboard"></i> Administrare</a></li>
+                <li><a href="{{ path('homepage') }}"><i class="icon-dashboard"></i> Prima pagina</a></li>
                 <li class="active"><i class="icon-file-alt"></i> Utilizatori</li>
             </ol>
         </div>
@@ -38,7 +38,7 @@
             {% if users %}
                 {% for user in users %}
                     <tr>
-                        <td><a href="#">{{ user.username }}</a></td>
+                        <td><a href="{{ path('profile_user_details', {'id' : user.id}) }}">{{ user.username }}</a></td>
                         <td>{{ user.lastname }}</td>
                         <td>{{ user.firstname }}</td>
                         <!--
