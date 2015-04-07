@@ -24,7 +24,7 @@
 }
 
 @media screen {
-    .icr-logo, .icr-title, .icr-signatures, .main, .item, .cod {
+    .icr-logo, .icr-title, .icr-signatures, .main, .item, .cod, .anexe, .icr-sign, .complete {
         display: none;
     }
 }
@@ -32,7 +32,8 @@
 @media print {
 	* {
 		font-family: times;
-		font-size: 12pt;
+        font-style: italic;
+		font-size: 10pt;
 	}
 
 	.icr {
@@ -40,11 +41,12 @@
 	}
 
     .main {
+        width: 179.75mm;
         border: 1px solid #000000;
     }
 
 	.row {
-		width: 210mm;
+		width: 180mm;
 		padding: 0mm;
 		margin: 0mm;
 	}
@@ -70,50 +72,47 @@
         margin-right: 0.5mm;
     }
 
-
 	.col-lg-12 {
-		width: 210mm;
+		width: 180mm;
 		padding: 0mm;
 		margin: 0mm;
 		float: left;
 	}
 	
 	.service-type {
-		width: 15mm;
+		width: 55mm;
 	}
 	.agency-center {
-		width: 142.25mm;
+		width: 80mm;
+        height: 100%;
 	}
 	.emergent {
-		width: 20mm;
+		width: 42mm;
 	}	
-	.non-emergent {
+	.ticket-no {
 		width: 30mm;
 	}
-	.ticket-no {
-		width: 45mm;
-	}
 	.announced-at {
-		width: 72mm;
+		width: 50mm;
 	}
 	.taken-by {
-		width: 90.75mm;
+		width: 97mm;
 	}
 	.launched-by {
-		width: 80mm;
+		width: 80.5mm;
 	}
 	.announced-by {
-		width: 128.25mm;
+		width: 97mm;
 	}
 	.transmission-type {
-		width: 100mm;
+		width: 80.5mm;
 	}
 	.announced-to {
-		width: 108.25mm;
+		width: 97mm;
 	}
 	.description {
-		width: 208.75mm;
-        height: 25mm;
+		width: 178mm;
+        height: 20mm;
 	}
 	.description pre {
 		text-align: left;
@@ -125,12 +124,12 @@
 		font-weight: bold;
 	}
     .is-real {
-        width: 45mm;
-        height: 20mm;
+        width: 55mm;
+        height: 15mm;
     }
     .not-real-reason {
-        width: 163.25mm;
-        height: 20mm;
+        width: 122.5mm;
+        height: 15mm;
     }
     .not-real-reason pre {
         text-align: left;
@@ -145,26 +144,26 @@
         width: 104mm;
     }
     .compartment {
-        width: 104.25mm;
+        width: 122.5mm;
     }
     .ticket-type {
-        width: 136.25mm;
+        width: 55mm;
     }
     .fixed-at {
-        width: 72mm;
+        width: 73.5mm;
     }
     .backup-solution {
-        width: 118.25mm;
+        width: 107.5mm;
     }
     .oldness {
-        width: 90mm;
+        width: 70mm;
     }
     .equipment {
-        width: 208.75mm;
+        width: 178mm;
     }
     .affected-systems {
-        width: 208.75mm;
-        height: 25mm;
+        width: 178mm;
+        height: 20mm;
     }
     .affected-systems pre {
         text-align: left;
@@ -176,8 +175,8 @@
         font-size: 10pt;
     }
     .fixed-mode {
-        width: 208.75mm;
-        height: 40mm;
+        width: 178mm;
+        height: 30mm;
     }
     .fixed-mode pre {
         text-align: left;
@@ -189,8 +188,8 @@
         font-weight: bold;
     }
     .resources {
-        width: 208.75mm;
-        height: 30mm;
+        width: 178mm;
+        height: 25mm;
     }
     .resources pre {
         text-align: left;
@@ -202,7 +201,9 @@
         font-weight: bold;
     }
     .cod {
+        margin-top: 2mm;
         font-size: 10pt;
+        font-style: normal;
     }
 
 
@@ -210,23 +211,30 @@
         display: none;
     }
     .icr-title {
-        margin-top: 5mm;
-        margin-bottom: 7mm;
+        margin-top: 2mm;
+        margin-bottom: 0mm;
 		font-family: times;
 		font-size: 12pt;
 		font-weight: bold;
+        font-style: normal;
     }
+
     .icr-logo {
         padding: 0px 15px 10px;
-        margin-bottom: 20px;
-        border-bottom: 3px solid #808080;
     }
-    .icr-signatures {
-        margin-top: 30px;
-        border-collapse: collapse;
+
+    .icr-sign {
+        margin: 3mm 0mm 3mm 0mm;
     }
-    .icr-signatures tbody tr td {
-        border: none;
+
+    .icr-sign-box {
+        width: 45mm;
+        display: block;
+        float: left;
+    }
+
+    .complete {
+        margin-bottom: 5mm;
     }
 
     #wrapper, #page-wrapper {
@@ -252,5 +260,5 @@
 	size:210mm 297mm;
 
     /* this affects the margin in the printer settings */
-    margin: 5mm 5mm 5mm 5mm;
+    margin: 5mm 15mm 4mm 15mm;
 }

@@ -2,6 +2,7 @@ parameters:
 #    tlt_ticket.example.class: Tlt\TicketBundle\Example
 
 services:
-#    tlt_ticket.example:
-#        class: %tlt_ticket.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    ticket.twig.str_pad_extension:
+        class: Tlt\TicketBundle\Twig\StringPaddingExtension
+        tags:
+            - { name: twig.extension }

@@ -193,6 +193,12 @@ class DefaultController extends Controller
             ->getRepository('TltTicketBundle:Emergency')
             ->findOneById(1);
 
+
+        $transmissionTypes = $this->getDoctrine()
+            ->getRepository('TltTicketBundle:TransmissionType')
+            ->findAll();
+
+
         if ($ticket->getFixedBy() == null)
             $ticket->setFixedBy($this->getUser()->getFirstname() . ' ' . $this->getUser()->getLastname());
 
@@ -213,7 +219,8 @@ class DefaultController extends Controller
 
 
         $templateOptions = array(
-            'ticket' => $ticket
+            'ticket' => $ticket,
+            'transmissionTypes' => $transmissionTypes
         );
 
 
@@ -393,5 +400,21 @@ class DefaultController extends Controller
             array(
                 'form' => $form->createView()
             );
+    }
+
+    /**
+     * @Route("/tickets/blank-icr", name="tickets_blank_icr")
+     * @Template("TltTicketBundle:Default:blank_icr.html.twig")
+     */
+    public function blankIcrAction()
+    {
+        $transmissionTypes = $this->getDoctrine()
+            ->getRepository('TltTicketBundle:TransmissionType')
+            ->findAll();
+
+        return array(
+            'ticket' => null,
+            'transmissionTypes' => $transmissionTypes
+        );
     }
 }

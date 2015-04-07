@@ -106,9 +106,13 @@ class Ticket extends AbstractEntity
     protected $takenBy;
 
     /**
-     * @var string
+     * @ORM\ManyToOne(targetEntity="TransmissionType")
+     * @ORM\JoinColumn(name="transmission_type", referencedColumnName="id")
      *
-     * @ORM\Column(name="transmission_type", type="string", length=64)
+     * @Assert\NotBlank(
+     *     message = "Campul este obligatoriu. Selectati una dintre variante.",
+     *     groups={"insert"}
+     * )
      */
     protected $transmissionType;
 
@@ -433,7 +437,7 @@ class Ticket extends AbstractEntity
     /**
      * Set transmissionType
      *
-     * @param string $transmissionType
+     * @param TransmissionType $transmissionType
      * @return Ticket
      */
     public function setTransmissionType($transmissionType)
@@ -446,7 +450,7 @@ class Ticket extends AbstractEntity
     /**
      * Get transmissionType
      *
-     * @return string
+     * @return TransmissionType
      */
     public function getTransmissionType()
     {

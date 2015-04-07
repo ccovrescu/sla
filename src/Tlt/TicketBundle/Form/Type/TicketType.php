@@ -49,15 +49,19 @@ class TicketType extends AbstractType {
                     'required' => false
                 ));
             $builder->add(
-                'transmissionType', 'choice', array(
-                    'label' => 'Mod de transmitere sesizare:',
-                    'empty_value' => '-- Selectati --',
-                    'choices' => array(
-                        'telefon' => 'telefon',
-                        'direct' => 'direct',
-                        'autosesizare' => 'autosesizare',
-                        'adresa' => 'adresa'
-                    )
+                'transmissionType', 'entity', array(
+                    'class' => 'TltTicketBundle:TransmissionType',
+                    'property' => 'name',
+                    'empty_value' => '-- Selectati --'
+//                'transmissionType', 'choice', array(
+//                    'label' => 'Mod de transmitere sesizare:',
+//                    'empty_value' => '-- Selectati --',
+//                    'choices' => array(
+//                        'telefon' => 'telefon',
+//                        'direct' => 'direct',
+//                        'autosesizare' => 'autosesizare',
+//                        'adresa' => 'adresa'
+//                    )
                 ));
             $builder->add(
                 'announcedBy', 'text', array(
