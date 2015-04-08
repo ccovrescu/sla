@@ -153,7 +153,7 @@ class Ticket extends AbstractEntity
     /**
      * @var boolean
      *
-     * @ORM\Column(name="is_real", type="boolean")
+     * @ORM\Column(name="is_real", type="boolean", nullable=true)
      *
      * @Assert\NotBlank(
      *     message = "Campul este obligatoriu. Selectati una dintre variante.",
