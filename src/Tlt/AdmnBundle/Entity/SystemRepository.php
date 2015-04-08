@@ -122,6 +122,7 @@ class SystemRepository extends EntityRepository
               INNER JOIN tickets t ON t.id=ttm.ticket_id
               INNER JOIN mappings mp ON mp.id=ttm.mapping_id
             WHERE
+              t.is_real=1 AND t.backup_solution=0 AND
               mp.system=? AND t.fixed_at BETWEEN ? AND ?
             GROUP BY mp.system
             ", $rsm
