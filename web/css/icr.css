@@ -16,6 +16,11 @@
 		nowrap;
     }
 
+    .icr form {
+        font-family: sans-serif;
+        font-style: normal;
+    }
+
     abbr[title]:after {
         content: none;
     }
