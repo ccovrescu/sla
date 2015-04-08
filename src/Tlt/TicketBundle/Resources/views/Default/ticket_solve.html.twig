@@ -19,52 +19,44 @@
             </div>
         </div><!-- row -->
 
-        <div class="{% if form.isReal is defined and form.vars.value.isReal != "1" %} hidden {% endif %}" id="solve-form">
+        <div class="row {% if form.isReal is defined and form.vars.value.isReal != "0" %} hidden {% endif %}" id="div_fix_row">
+            <div class="col-lg-3">
+                <div class="form-group {% if form.fixedBy.vars.errors|length>0 %} has-error {% endif %}">
+                    {{ form_label(form.fixedBy, form.fixedBy.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                    {{ form_widget(form.fixedBy, {'attr': {'class': 'form-control', 'placeholder':'Numele persoanei care rezolva'}}) }}
+                    {{ form_errors(form.fixedBy) }}
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group {% if form.compartment.vars.errors|length>0 %} has-error {% endif %}">
+                    {{ form_label(form.compartment, form.compartment.vars.label, {'label_attr':{'class':'control-label'} }) }}
+                    {{ form_widget(form.compartment, {'attr': {'class': 'form-control', 'placeholder':'Compartimentul TELETRANS care rezolva tichetul'}}) }}
+                    {{ form_errors(form.compartment) }}
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group">
+                    {{ form_label(form.fixedAt.date, 'Data rezolvarii') }}
+                    {{ form_widget(form.fixedAt.date) }}
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <div class="form-group">
+                    {{ form_label(form.fixedAt.time, 'Timpul rezolvarii') }}
+                    {{ form_widget(form.fixedAt.time) }}
+                </div>
+            </div>
+        </div>
 
+        <div class="{% if form.isReal is defined and form.vars.value.isReal != "1" %} hidden {% endif %}" id="solve-form">
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-3">
                     <div class="form-group {% if form.ticketType.vars.errors|length>0 %} has-error {% endif %}">
                         {{ form_label(form.ticketType, form.ticketType.vars.label, {'label_attr':{'class':'control-label'} }) }}
                         {{ form_widget(form.ticketType, {'attr': {'class': 'form-control', 'placeholder':'Introduceti o scurta descriere a deranjamentului reclamat'}}) }}
                         {{ form_errors(form.ticketType) }}
                     </div>
                 </div>
-                <div class="col-lg-3">
-                    <div class="form-group">
-                        {{ form_label(form.fixedAt.date, 'Data rezolvarii') }}
-                        {{ form_widget(form.fixedAt.date) }}
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="form-group">
-                        {{ form_label(form.fixedAt.time, 'Timpul rezolvarii') }}
-                        {{ form_widget(form.fixedAt.time) }}
-                    </div>
-                </div>
-            </div><!-- row -->
-
-
-
-
-
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="form-group {% if form.fixedBy.vars.errors|length>0 %} has-error {% endif %}">
-                        {{ form_label(form.fixedBy, form.fixedBy.vars.label, {'label_attr':{'class':'control-label'} }) }}
-                        {{ form_widget(form.fixedBy, {'attr': {'class': 'form-control', 'placeholder':'Numele persoanei care rezolva'}}) }}
-                        {{ form_errors(form.fixedBy) }}
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="form-group {% if form.compartment.vars.errors|length>0 %} has-error {% endif %}">
-                        {{ form_label(form.compartment, form.compartment.vars.label, {'label_attr':{'class':'control-label'} }) }}
-                        {{ form_widget(form.compartment, {'attr': {'class': 'form-control', 'placeholder':'Compartimentul TELETRANS care rezolva tichetul'}}) }}
-                        {{ form_errors(form.compartment) }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
                 <div class="col-lg-4">
                     <div class="form-group">
                         {{ form_label(form.backupSolution) }}
@@ -78,7 +70,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-3">
                     <div class="form-group">
                         {{ form_label(form.oldness) }}
                         {#{ form_widget(form.oldness) }#}
@@ -90,7 +82,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-2">
                     <div class="form-group">
                         {{ form_label(form.emergency) }}
                         {#{ form_widget(form.oldness) }#}
