@@ -36,14 +36,15 @@
                 </div>
             </div>
             <div class="col-lg-3">
-                <div class="form-group">
-                    {{ form_label(form.fixedAt.date, 'Data rezolvarii') }}
+                <div class="form-group {% if form.fixedAt.vars.errors|length>0 %} has-error {% endif %}">
+                    {{ form_label(form.fixedAt.date, 'Data rezolvarii', {'label_attr':{'class':'control-label'} }) }}
                     {{ form_widget(form.fixedAt.date) }}
+                    {{ form_errors(form.fixedAt) }}
                 </div>
             </div>
             <div class="col-lg-2">
-                <div class="form-group">
-                    {{ form_label(form.fixedAt.time, 'Timpul rezolvarii') }}
+                <div class="form-group {% if form.fixedAt.vars.errors|length>0 %} has-error {% endif %}">
+                    {{ form_label(form.fixedAt.time, 'Ora rezolvarii', {'label_attr':{'class':'control-label'} }) }}
                     {{ form_widget(form.fixedAt.time) }}
                 </div>
             </div>

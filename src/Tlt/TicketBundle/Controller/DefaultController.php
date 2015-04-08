@@ -244,6 +244,12 @@ class DefaultController extends Controller
                 return $templateOptions;
             }
 
+            if ($ticket->getFixedAt() < $ticket->getAnnouncedAt()) {
+                    $form->get('fixedAt')->addError(new FormError('Data/Ora rezolvarii nu poate fi mai mica decat data/ora sesizarii'));
+                    $templateOptions['form'] = $form->createView();
+                    return $templateOptions;
+            }
+
             // perform some action, such as saving the task to the database
             $em = $this->getDoctrine()->getManager();
 
