@@ -251,66 +251,8 @@
 	{{ parent() }}
 
     <script type="text/javascript">
-        $("#ticket_isReal").change(function() {
-            if ($('#ticket_isReal').val().length==1) {
-
-                if ($('#ticket_isReal').val()==0) {
-                    $('#div_ticket_notRealReason').removeClass('hidden');
-                    $('#div_ticket_isClosed').removeClass('hidden');
-                    $('#div_fix_row').removeClass('hidden');
-
-                    if (!$('#solve-form').hasClass('hidden')) {
-                        $('#solve-form').addClass('hidden');
-                    }
-
-                    if (!$('#ticket_reallocate').hasClass('hidden')) {
-                        $('#ticket_reallocate').addClass('hidden');
-                    }
-                } else {
-                    if (!$('#div_ticket_notRealReason').hasClass('hidden')) {
-                        $('#div_ticket_notRealReason').addClass('hidden');
-                    }
-
-                    if (!$('#ticket_reallocate').hasClass('hidden')) {
-                        $('#ticket_reallocate').addClass('hidden');
-                    }
-
-                    $('#div_fix_row').removeClass('hidden');
-                    $('#solve-form').removeClass('hidden');
-                    $('#div_ticket_isClosed').removeClass('hidden');
-                }
-            } else {
-                if (!$('#div_ticket_notRealReason').hasClass('hidden')) {
-                    $('#div_ticket_notRealReason').addClass('hidden');
-                }
-
-                if (!$('#div_ticket_isClosed').hasClass('hidden')) {
-                    $('#div_ticket_isClosed').addClass('hidden');
-                }
-
-                if (!$('#div_fix_row').hasClass('hidden')) {
-                    $('#div_fix_row').addClass('hidden');
-                }
-
-                if (!$('#solve-form').hasClass('hidden')) {
-                    $('#solve-form').addClass('hidden');
-                }
-
-                if ($('#ticket_reallocate').hasClass('hidden')) {
-                    $('#ticket_reallocate').removeClass('hidden');
-                }
-            }
-        });
-
-        $("#ticket_reseteaza").click(function() {
-            $("#ticket_equipment").val('').change();
-            $("#ticket_equipmentName").html('selectati un echipament');
-            $('#ticket_isReal').val('').change();
-            $('#ticket_isReal option[value=""]').attr('selected', true);
-        });
-
         $("#ticket_salveaza").click(function() {
-            if($("#ticket_isReal").val()==1 && $(".affectedSystems:checked").length==0)
+            if($(".affectedSystems:checked").length==0)
             {
                 return confirm('Nu ati selectat nici un sistem! Continuati?');
             }

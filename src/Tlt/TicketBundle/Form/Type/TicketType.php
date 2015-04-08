@@ -112,7 +112,8 @@ class TicketType extends AbstractType {
                     'choices' => array(
                         '0' => 'Nu',
                         '1' => 'Da'
-                    )
+                    ),
+                    'required' => false
                 ));
             $builder->add(
                 'notRealReason', 'textarea', array(

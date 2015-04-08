@@ -4,9 +4,10 @@ namespace Tlt\TicketBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 use Tlt\TicketBundle\Entity\Ticket;
 use Tlt\TicketBundle\Form\Type\TicketType;
 use Tlt\TicketBundle\Entity\TicketAllocation;
@@ -237,6 +238,12 @@ class DefaultController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            if ($ticket->getIsReal()==1 && $ticket->getNotRealReason() != null) {
+                $form->get('notRealReason')->addError(new FormError('Un tichet real nu poate avea motivatie ca nu este real'));
+                $templateOptions['form'] = $form->createView();
+                return $templateOptions;
+            }
+
             // perform some action, such as saving the task to the database
             $em = $this->getDoctrine()->getManager();
 

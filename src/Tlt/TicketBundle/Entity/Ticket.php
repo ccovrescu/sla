@@ -153,7 +153,12 @@ class Ticket extends AbstractEntity
     /**
      * @var boolean
      *
-     * @ORM\Column(name="is_real", type="boolean", nullable=true)
+     * @ORM\Column(name="is_real", type="boolean")
+     *
+     * @Assert\NotBlank(
+     *     message = "Campul este obligatoriu. Selectati una dintre variante.",
+     *     groups={"not-real", "solve"}
+     * )
      */
     protected $isReal;
 
@@ -179,7 +184,7 @@ class Ticket extends AbstractEntity
      *
      * @Assert\NotBlank(
      *     message = "Campul este obligatoriu. Selectati una dintre variante.",
-     *     groups={"solve"}
+     *     groups={"not-real", "solve"}
      * )
      */
     protected $ticketType;
@@ -274,7 +279,7 @@ class Ticket extends AbstractEntity
      * @ORM\JoinColumn(name="equipment_id", referencedColumnName="id", nullable=true)
      * @Assert\NotNull(
      *     message = "Trebuie sa alegeti un echipament.",
-     *     groups={"solve"}
+     *     groups={"not-real", "solve"}
      * )
      */
     protected $equipment;
