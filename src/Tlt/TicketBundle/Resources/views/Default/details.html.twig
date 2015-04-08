@@ -37,7 +37,7 @@
     </tr>
     <tr>
         <td colspan="4" class="text-center">
-            Departamentul TELETRANS (DTI/DTC/DIP)<br/>
+            <strong>Departamentul TELETRANS (DTI/DTC/DIP)</strong><br/>
             <abbr title="attribute">
                 {% if ticket.equipment is defined and ticket.equipment is not null %}
                     {% if ticket.equipment.service.department.id == "1" %}
@@ -53,7 +53,7 @@
             </abbr>
         </td>
         <td colspan="4" class="text-center">
-            Entitate TELETRANS (Executiv/Agentie/Centru)<br/>
+            <strong>Entitate TELETRANS (Executiv/Agentie/Centru)</strong><br/>
             <abbr title="attribute">
                 {% if ticket is not null %}
                     {{ ticket.ticketAllocations.first.branch.name|str_pad(60)|replace({' ':'&nbsp;'})|raw }}
@@ -72,7 +72,7 @@
         </td>
         <td colspan="2">
             <br/>
-            Urgent:
+            <strong>Urgent:</strong>
             {% if ticket.equipment is defined and ticket.equipment is not null %}
                 {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
                     DA <i class="fa fa-square-o"></i> &nbsp; NU <i class="fa fa-check-square-o"></i>
@@ -87,20 +87,20 @@
     </tr>
     <tr>
         <td colspan="2">
-            Nr. SLA:
+            <strong>Nr. SLA:</strong>
             <abbr title="attribute">
                 {{ ticket.id|default(" ")|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
             </abbr>
             <br/>&nbsp;
         </td>
         <td colspan="4" class="text-center">
-            Data/Ora sesizarii:<br/>
+            <strong>Data/Ora sesizarii:</strong><br/>
             <abbr title="attribute">
                 {{ (ticket is not null ? ticket.announcedAt|date('d.m.Y H:i') : " ")|str_pad(35)|replace({' ':'&nbsp;'})|raw }}
             </abbr>
         </td>
         <td colspan="4" class="text-center">
-            Persoana din tura care preia sesizarea:<br/>
+            <strong>Persoana din tura care preia sesizarea:</strong><br/>
             <abbr title="attribute">
                 {{ticket.takenBy|default(" ")|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
             </abbr>
@@ -108,7 +108,7 @@
     </tr>
     <tr>
         <td colspan="5" class="text-center">
-            Mod de transmitere sesizare:<br/>
+            <strong>Mod de transmitere sesizare:</strong><br/>
 
             {% set transmission = '(' %}
             {% for tType in transmissionTypes %}
@@ -122,7 +122,7 @@
             {{ (transmission ~ ')')|raw }}
         </td>
         <td colspan="5" class="text-center">
-            Persoana anuntata:<br/>
+            <strong>Persoana anuntata:</strong><br/>
             <abbr title="attribute">
                 {{ ticket.announcedTo|default(" ")|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
             </abbr>
@@ -130,25 +130,20 @@
     </tr>
     <tr>
         <td colspan="5" class="text-center">
-            Sesizare lansata de: (Ex/DEN/DET/ST/OMEPA)<br/>
+            <strong>Sesizare lansata de: (Ex/DEN/DET/ST/OMEPA)</strong><br/>
             <abbr title="attribute">
                 {{ ticket.equipment.owner.name|default(" ")|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
             </abbr>
         </td>
         <td colspan="5" class="text-center">
-            Persoana care face sesizarea:<br/>
+            <strong>Persoana care face sesizarea:</strong><br/>
             <abbr title="attribute">
                 {{ ticket.announcedBy|default(" ")|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
             </abbr>
         </td>
     </tr>
     <tr>
-        <td colspan="10">
-            Descriere pe scurt deranjament:
-                <pre>
-                    {{ ticket.description|default('') }}
-                </pre>
-        </td>
+        <td colspan="10"><strong>Descriere pe scurt deranjament:</strong> <pre><samp><abbr title="attribute">{{ ticket.description|default(' ') }}</abbr></samp></pre></td>
     </tr>
 
     <!-- Este sau nu real -->
