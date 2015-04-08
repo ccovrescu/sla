@@ -36,28 +36,32 @@
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td colspan="1">
-            {% if ticket.equipment is defined and ticket.equipment is not null %}
-                {% if ticket.equipment.service.department.id == "1" %}
-                    <samp>DIP</samp>
-                {% elseif ticket.equipment.service.department.id == "2" %}
-                    <samp>DTC</samp>
-                {% elseif ticket.equipment.service.department.id == "3" %}
-                    <samp>DTI</samp>
-                {% endif %}
-            {% else %}
-                <samp><abbr title="attribute">n/a</abbr></samp>
-            {% endif %}
-
-        </td>
-        <td colspan="5">
-            <samp>
-                {% if ticket.ticketAllocations.first.branch.name|slice(0,7) == 'Agentia' %}
-                    <strong>Agentia</strong> <abbr title="attribute">{{ ticket.ticketAllocations.first.branch.name|slice(8) }}</abbr>
+        <td colspan="4" class="text-center">
+            Departamentul TELETRANS (DTI/DTC/DIP)<br/>
+            <abbr title="attribute">
+                {% if ticket.equipment is defined and ticket.equipment is not null %}
+                    {% if ticket.equipment.service.department.id == "1" %}
+                        {{ "DIP"|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+                    {% elseif ticket.equipment.service.department.id == "2" %}
+                        {{ "DTC"|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+                    {% elseif ticket.equipment.service.department.id == "3" %}
+                        {{ "DTI"|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+                    {% endif %}
                 {% else %}
-                    <strong>Centrul</strong> <abbr title="attribute">{{ ticket.ticketAllocations.first.branch.name|slice(8) }}</abbr>
+                    {{ " "|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
                 {% endif %}
-            </samp>
+            </abbr>
+        </td>
+        <td colspan="4" class="text-center">
+            Entitate TELETRANS (Executiv/Agentie/Centru)<br/>
+            <abbr title="attribute">
+                {% if ticket is not null %}
+                    {{ ticket.ticketAllocations.first.branch.name|str_pad(60)|replace({' ':'&nbsp;'})|raw }}
+                {% else %}
+                    {{ " "|str_pad(60)|replace({' ':'&nbsp;'})|raw }}
+                {% endif %}
+            </abbr>
+            <br/>&nbsp;
 
 
             {% if ticket.isReal is defined and ticket.isReal is null %}
@@ -67,56 +71,84 @@
             {% endif %}
         </td>
         <td colspan="2">
-            <samp>
-                <abbr title="attribute">
-                    {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
-                        Urgent <i class="fa fa-square-o"></i>
-                    {% else %}
-                        Urgent <i class="fa fa-check-square-o"></i>
-                    {% endif %}
-                </abbr>
-            </samp>
+            <br/>
+            Urgent:
+            {% if ticket.equipment is defined and ticket.equipment is not null %}
+                {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
+                    DA <i class="fa fa-square-o"></i> &nbsp; NU <i class="fa fa-check-square-o"></i>
+                {% else %}
+                    DA <i class="fa fa-check-square-o"></i> &nbsp; NU <i class="fa fa-square-o"></i>
+                {% endif %}
+            {% else %}
+                DA <i class="fa fa-square-o"></i> &nbsp;NU <i class="fa fa-square-o"></i>
+            {% endif %}
+            <br/>&nbsp;
         </td>
+    </tr>
+    <tr>
         <td colspan="2">
-            <samp>
-                <abbr title="attribute">
-                    {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
-                        Non Urgent <i class="fa fa-check-square-o"></i>
-                    {% else %}
-                        Non Urgnet <i class="fa fa-square-o"></i>
-                    {% endif %}
-                </abbr>
-            </samp>
+            Nr. SLA:
+            <abbr title="attribute">
+                {{ ticket.id|default(" ")|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+            </abbr>
+            <br/>&nbsp;
+        </td>
+        <td colspan="4" class="text-center">
+            Data/Ora sesizarii:<br/>
+            <abbr title="attribute">
+                {{ (ticket is not null ? ticket.announcedAt|date('d.m.Y H:i') : " ")|str_pad(35)|replace({' ':'&nbsp;'})|raw }}
+            </abbr>
+        </td>
+        <td colspan="4" class="text-center">
+            Persoana din tura care preia sesizarea:<br/>
+            <abbr title="attribute">
+                {{ticket.takenBy|default(" ")|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
+            </abbr>
         </td>
     </tr>
     <tr>
-        <td colspan="2"><strong>Nr. Interventie:</strong> <samp><abbr title="attribute">{{ ticket.id }}</abbr></samp></td>
-        <td colspan="4">
-            <strong>Data si ora anuntarii:</strong> <samp><abbr title="data aparitiei">{{ ticket.announcedAt|date('d.m.Y H:i') }}</abbr></samp>
+        <td colspan="5" class="text-center">
+            Mod de transmitere sesizare:<br/>
+
+            {% set transmission = '(' %}
+            {% for tType in transmissionTypes %}
+                {% if loop.first %}
+                    {% set transmission = '(' ~ ((ticket is null or tType==ticket.transmissionType) ? tType.name|capitalize : '<strike>' ~ tType.name|capitalize ~ '</strike>') %}
+                {% else %}
+                    {% set transmission = transmission ~ '/' ~ (( ticket is null or tType==ticket.transmissionType) ? tType.name|capitalize : '<strike>' ~ tType.name|capitalize ~ '</strike>') %}
+                {% endif %}
+            {% endfor %}
+
+            {{ (transmission ~ ')')|raw }}
         </td>
-        <td colspan="4"><strong>Preluat sesizarea:</strong> <samp><abbr title="attribute">{{ ticket.takenBy|default('n/a') }}</abbr></samp></td>
-    </tr>
-    <tr>
-        <td colspan="5">
-            <strong>Lansat de:</strong>
-            <samp>
-                <abbr title="attribute">
-                    {% if ticket.equipment is defined and ticket.equipment is not null %}
-                        {{ ticket.equipment.owner.name }}
-                    {% else %}
-                        <samp><abbr title="attribute">n/a</abbr></samp>
-                    {% endif %}
-                </abbr>
-            </samp>
+        <td colspan="5" class="text-center">
+            Persoana anuntata:<br/>
+            <abbr title="attribute">
+                {{ ticket.announcedTo|default(" ")|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
+            </abbr>
         </td>
-        <td colspan="5"><strong>Nume sesizant:</strong> <samp><abbr title="attribute">{{ ticket.announcedBy|default('n/a') }}</abbr></samp></td>
     </tr>
     <tr>
-        <td colspan="5"><strong>Mod de transmitere sesizare:</strong> <samp><abbr title="attribute">{{ ticket.transmissionType|default('n/a') }}</abbr></samp></td>
-        <td colspan="5"><strong>Persoana anuntata:</strong> <samp><abbr title="attribute">{{ ticket.announcedTo|default('n/a') }}</abbr></samp></td>
+        <td colspan="5" class="text-center">
+            Sesizare lansata de: (Ex/DEN/DET/ST/OMEPA)<br/>
+            <abbr title="attribute">
+                {{ ticket.equipment.owner.name|default(" ")|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
+            </abbr>
+        </td>
+        <td colspan="5" class="text-center">
+            Persoana care face sesizarea:<br/>
+            <abbr title="attribute">
+                {{ ticket.announcedBy|default(" ")|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
+            </abbr>
+        </td>
     </tr>
     <tr>
-        <td colspan="10"><strong>Descriere pe scurt deranjament:</strong> <samp><abbr title="attribute">{{ ticket.description }}</abbr></samp></td>
+        <td colspan="10">
+            Descriere pe scurt deranjament:
+                <pre>
+                    {{ ticket.description|default('') }}
+                </pre>
+        </td>
     </tr>
 
     <!-- Este sau nu real -->
@@ -130,82 +162,84 @@
                     <samp>
                         <abbr title="attribute">
                             {% if ticket.isReal == 1 %}
-                                <i class="fa fa-circle"></i> Da&nbsp;
-                                <i class="fa fa-circle-o"></i> Nu
+                                <i class="fa fa-check-square-o"></i> Da&nbsp;
+                                <i class="fa fa-square-o"></i> Nu
                             {% else %}
-                                <i class="fa fa-circle-o"></i> Da&nbsp;
-                                <i class="fa fa-circle"></i> Nu
+                                <i class="fa fa-square-o"></i> Da&nbsp;
+                                <i class="fa fa-check-square-o"></i> Nu
                             {% endif %}
                         </abbr>
                     </samp>
                 </td>
                 <td colspan="7"><strong>De ce nu este real?</strong> <pre><samp><abbr title="attribute">{{ ticket.notRealReason|default(' ') }}</abbr></samp></pre></td>
             </tr>
-        {% endif %}
-
-        {% if ticket.isReal == 1 %}
             <tr>
-                <td colspan="4"><strong>Tip interventie:</strong>  <samp><abbr title="attribute">{{ ticket.ticketType.name }}</abbr></samp></td>
-                <td colspan="3" nowrap><strong>Persoana care rezolva:</strong>  <samp><abbr title="attribute">{{ ticket.fixedBy }}</abbr></samp></td>
-                <td colspan="3" nowrap><strong>Compartiment:</strong>  <samp><abbr title="attribute">{{ ticket.compartment }}</abbr></samp></td>
+                <td colspan="3" class="text-center">
+                    <strong>Tip interventie:</strong><br/>
+                    <samp><abbr title="attribute">{{ ticket.ticketType.name|default('') }}</abbr></samp>
+                </td>
+                <td colspan="7" nowrap class="text-center">
+                    <strong>Compartimentul din cadrul TELETRANS implicat in rezolvarea sesizarii:</strong><br/>
+                    <samp><abbr title="attribute">{{ ticket.compartment }}</abbr></samp>
+                </td>
             </tr>
             <tr>
-                <td colspan="4"><strong>Data si ora rezolvarii:</strong>  <samp><abbr title="attribute">{{ ticket.fixedAt|date('d.m.Y H:i') }}</abbr></samp></td>
-                <td colspan="6">
-                    <strong>Vechimea echipamentului:</strong>
+                <td colspan="4">
+                    <strong>Vechime echipament:</strong>
                     <samp>
                         <abbr title="attribute">
                             {% if ticket.oldness.id == 2 %}
-                                <i class="fa fa-circle-o"></i> 1-3&nbsp;
-                                <i class="fa fa-circle"></i> peste 3 ani
+                                <i class="fa fa-square-o"></i> 1-3&nbsp;
+                                <i class="fa fa-check-square-o"></i> peste 3 ani
                             {% else %}
-                                <i class="fa fa-circle"></i> 1-3&nbsp;
-                                <i class="fa fa-circle-o"></i> peste 3 ani
+                                <i class="fa fa-check-square-o"></i> 1-3&nbsp;
+                                <i class="fa fa-square-o"></i> peste 3 ani
                             {% endif %}
                         </abbr>
                     </samp>
                 </td>
-            </tr>
-            <tr>
-                <td colspan="10">
+                <td colspan="6">
                     <strong>S-a asigurat solutie de rezerva?</strong>
                     <samp>
                         <abbr title="attribute">
                             {# 1: Da #}
                             {% if ticket.backupSolution.id == 1 %}
-                                <i class="fa fa-circle"></i> Da&nbsp;
-                                <i class="fa fa-circle-o"></i> Nu&nbsp;
-                                <i class="fa fa-circle-o"></i> Nu este cazul
+                                <i class="fa fa-check-square-o"></i> Da&nbsp;
+                                <i class="fa fa-square-o"></i> Nu&nbsp;
+                                <i class="fa fa-square-o"></i> Nu este cazul
                             {% endif %}
 
                             {# 2: NU #}
                             {% if ticket.backupSolution.id == 2 %}
-                                <i class="fa fa-circle-o"></i> Da&nbsp;
-                                <i class="fa fa-circle"></i> Nu&nbsp;
-                                <i class="fa fa-circle-o"></i> Nu este cazul
+                                <i class="fa fa-square-o"></i> Da&nbsp;
+                                <i class="fa fa-check-square-o"></i> Nu&nbsp;
+                                <i class="fa fa-square-o"></i> Nu este cazul
                             {% endif %}
 
                             {# 3: Nu este cazul#}
                             {% if ticket.backupSolution.id == 3 %}
-                                <i class="fa fa-circle-o"></i> Da&nbsp;
-                                <i class="fa fa-circle-o"></i> Nu&nbsp;
-                                <i class="fa fa-circle"></i> Nu este cazul
+                                <i class="fa fa-square-o"></i> Da&nbsp;
+                                <i class="fa fa-square-o"></i> Nu&nbsp;
+                                <i class="fa fa-check-square-o"></i> Nu este cazul
                             {% endif %}
                         </abbr>
                     </samp>
                 </td>
-            </tr>
-        {% endif %}
 
-        {% if ticket.isReal == 1 %}
+            </tr>
             <tr>
-                <td rowspan="{{ 1+ticket.ticketMapping|length }}" colspan="4" style="vertical-align: middle;"><strong>Echipament:</strong> <samp><abbr title="attribute">{{ ticket.equipment.name }}</abbr></samp></td>
-                <td colspan="6"><strong>Sisteme afectate:</strong></td>
+                <td colspan="10"><strong>Echipament:</strong> <samp><abbr title="attribute">{{ ticket.equipment.name|default('') }}</abbr></samp></td>
+            </tr>
+            <tr>
+                <td  rowspan="{{ 1+ticket.ticketMapping|length }}" colspan="2"><strong>Sisteme afectate:</strong></td>
+                {% if ticket.ticketMapping is not defined or ticket.ticketMapping|length==0 %}
+                    <td colspan="8"><samp><abbr title="attribute">Nici unul.</abbr></samp></td>
+                {% endif %}
             </tr>
 
             {% for mapping in ticket.ticketMapping %}
                 <tr>
-                    <td colspan="6">
+                    <td colspan="8">
                         <samp>
                             <abbr title="Indisponibilitate: {{ mapping.resolvedIn }} minute">
                                 <i class="fa fa-check-square-o"></i> {{ mapping.mapping.system.name }}
@@ -216,10 +250,19 @@
             {% endfor %}
 
             <tr>
+                <td colspan="5" nowrap>
+                    <strong>Persoana care rezolva:</strong>
+                    <samp><abbr title="attribute">{{ ticket.fixedBy }}</abbr></samp>
+                </td>
+                <td colspan="5">
+                    <strong>Data/Ora rezolvare:</strong>
+                    <samp><abbr title="attribute">{{ ticket.fixedAt|date('d.m.Y H:i') }}</abbr></samp></td>
+            </tr>
+            <tr>
                 <td colspan="10"><strong>Mod de rezolvare:</strong> <pre><abbr title="attribute">{{ ticket.fixedMode }}</abbr></pre></td>
             </tr>
             <tr>
-                <td colspan="10"><strong>Resurse utilizate:</strong> <pre><abbr title="attribute">{{ ticket.resources|default(' ') }}</abbr></pre></td>
+                <td colspan="10"><strong>Resurse utilizate:</strong> <pre><abbr title="attribute">{{ ticket.resources|default('') }}</abbr></pre></td>
             </tr>
         {% endif %}
     {% endif %}
@@ -230,11 +273,11 @@
                 <samp>
                     <abbr title="attribute">
                         {% if ticket.isClosed == 1 %}
-                            <i class="fa fa-circle"></i> Da&nbsp;
-                            <i class="fa fa-circle-o"></i> Nu&nbsp;
+                            <i class="fa fa-check-square-o"></i> Da&nbsp;
+                            <i class="fa fa-square-o"></i> Nu&nbsp;
                         {% else %}
-                            <i class="fa fa-circle-o"></i> Da&nbsp;
-                            <i class="fa fa-circle"></i> Nu
+                            <i class="fa fa-square-o"></i> Da&nbsp;
+                            <i class="fa fa-check-square-o"></i> Nu
                         {% endif %}
                     </abbr>
                 </samp>
