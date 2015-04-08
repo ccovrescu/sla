@@ -160,7 +160,7 @@
     <div class="item compartment right-cell text-center">
         Compartimentul din cadrul TELETRANS implicat in rezolvarea sesizarii:<br/>
         <abbr title="attribute">
-            {{ (ticket.equipment is defined and ticket.equipment is not null ? ticket.compartment : ' ')|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
+            {{ticket.compartment|default(' ')|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
         </abbr>
     </div>
 </div>
