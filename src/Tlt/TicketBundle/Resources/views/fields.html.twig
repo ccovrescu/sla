@@ -1,0 +1,24 @@
+{%- block date_widget -%}
+    {%- if widget == 'single_text' -%}
+        {{ block('form_widget_simple') }}
+    {%- else -%}
+        <div {{ block('widget_container_attributes') }}>
+            {{- date_pattern|replace({
+            '{{ year }}':  form_widget(form.year, {'attr' :{'class':'input-sm'} }),
+            '{{ month }}': form_widget(form.month, {'attr' :{'class':'input-sm'} }),
+            '{{ day }}':   form_widget(form.day, {'attr' :{'class':'input-sm'} }),
+            })|raw -}}
+        </div>
+    {%- endif -%}
+{%- endblock date_widget -%}
+
+{%- block time_widget -%}
+    {%- if widget == 'single_text' -%}
+        {{ block('form_widget_simple') }}
+    {%- else -%}
+        {%- set vars = widget == 'text' ? { 'attr': { 'size': 1 }} : {} -%}
+        <div {{ block('widget_container_attributes') }}>
+        {{ form_widget(form.hour, {'attr' :{'class':'input-sm'} }, vars) }}{% if with_minutes %}:{{ form_widget(form.minute,  {'attr' :{'class':'input-sm'} }, vars) }}{% endif %}{% if with_seconds %}:{{ form_widget(form.second, vars) }}{% endif %}
+    </div>
+    {%- endif -%}
+{%- endblock time_widget -%}
