@@ -44,8 +44,8 @@
             </tr>
             </thead>
             <tbody>
-            {% if tickets %}
-                {% for ticket in tickets %}
+            {% if pagination %}
+                {% for ticket in pagination %}
                     <tr
                             {% if ticket.isReal is defined and ticket.isReal is null %}
                                 class="warning"
@@ -103,24 +103,17 @@
             </tbody>
             <tfoot>
             <tr>
-                <th colspan="7" class="text-center">Total {{ tickets|length }} tichete</th>
+                <th colspan="7" class="text-center">Total {{ pagination.getTotalItemCount }} tichete</th>
             </tr>
             </tfoot>
         </table>
     </div>
 
-
-    <div class="row hidden">
-        <div class="col-lg-12">
-            <div class="alert alert-success alert-dismissable">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                Intreruperea se calculeaza in <strong>minute</strong> ca diferenta dintre momentul rezolvarii tichetului (<strong>Rezolvat la</strong>) si momentul anuntarii tichetului (<strong>Anuntat la)</strong>, din care se scad urmatoarele:
-                <ul>
-                    <li>timpul curs in weekend (Sambata si Duminica)</li>
-                    <li>timpul curs in cadrul sarbatorilor legale</li>
-                    <li>timpul curs in afara programului normal de lucru (Program normal de lucru: 07:30 - 16:30)</li>
-                </ul>
-            </div>
+    <div class="row">
+        {# display navigation #}
+        <div class="navigation text-center">
+            {% do pagination.setTemplate('TltTicketBundle:Default:pagination.html.twig') %}
+            {{ knp_pagination_render(pagination) }}
         </div>
     </div>
 

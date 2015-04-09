@@ -21,11 +21,14 @@ class DefaultController extends Controller
      * @Route("/tickets", name="tickets")
      * @Template()
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $tickets1 = $this->getDoctrine()
             ->getRepository('TltTicketBundle:Ticket')
-            ->findTicketsByBranchesAndDepartments($this->getUser()->getBranchesIds(), $this->getUser()->getDepartmentsIds());
+            ->findTicketsByBranchesAndDepartments(
+                $this->getUser()->getBranchesIds(),
+                $this->getUser()->getDepartmentsIds()
+            );
 
         $tickets2 = $this->getDoctrine()
             ->getRepository('TltTicketBundle:Ticket')
@@ -34,10 +37,17 @@ class DefaultController extends Controller
         $tickets = array_merge($tickets1, $tickets2);
         arsort($tickets);
 
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $tickets,
+            $request->query->get('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
+
 		return $this->render(
 			'TltTicketBundle:Default:index.html.twig',
 			array(
-				'tickets' => $tickets
+				'pagination' => $pagination,
 			));
 	}
 
