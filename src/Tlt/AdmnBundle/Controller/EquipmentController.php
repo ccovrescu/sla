@@ -46,7 +46,7 @@ class EquipmentController extends Controller
 
 		$form->handleRequest($request);
 		
-		$equipments = null;
+		$equipments = array();
 		if ($form->isValid()) {
             // Data is valid so save it in session for another request
             $session->set('submittedData', $form->getData());
@@ -63,10 +63,18 @@ class EquipmentController extends Controller
 											$this->getUser()->getDepartmentsIds()
 										);
 		}
+
+        $paginator  = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $equipments,
+            $request->query->get('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
+
 		
         return array(
 			'form'		=>	$form->createView(),
-			'equipments'	=>	$equipments
+			'pagination'	=>	$pagination
 		);
     }
 	

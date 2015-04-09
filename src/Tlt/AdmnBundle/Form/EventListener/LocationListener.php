@@ -81,13 +81,15 @@ class LocationListener implements EventSubscriberInterface
 												return $qb;
 											};
 
-        if ($zoneLocation_id) {
+        if (strlen($zoneLocation_id)>0) {
             $zoneLocation = $this->em
                 ->getRepository('TltAdmnBundle:ZoneLocation')
                 ->find($zoneLocation_id);
 
             if ($zoneLocation != null)
                 $formOptions['data'] = $zoneLocation;
+        } else {
+            $formOptions['data'] = null;
         }
 
         $form->add('zoneLocation', 'entity', $formOptions);

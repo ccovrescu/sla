@@ -3,9 +3,9 @@
 {% if pageCount > 1 %}
     <ul class="pagination">
         {% if first is defined and current != first %}
-                <li>
-                    <a href="{{ path(route, query|merge({(pageParameterName): first})) }}">&larr; Prima pagina</a>
-                </li>
+            <li>
+                <a href="{{ path(route, query|merge({(pageParameterName): first})) }}">&larr; Prima pagina</a>
+            </li>
         {% endif %}
 
         {% if previous is defined %}
@@ -31,8 +31,8 @@
 
         {% if next is defined %}
             <li>
-            <a href="{{ path(route, query|merge({(pageParameterName): next})) }}">&raquo;</a>
-        </li>
+                <a href="{{ path(route, query|merge({(pageParameterName): next})) }}">&raquo;</a>
+            </li>
         {% endif %}
 
         {% if last is defined and current != last %}

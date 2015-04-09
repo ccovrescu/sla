@@ -112,7 +112,7 @@
     <div class="row">
         {# display navigation #}
         <div class="navigation text-center">
-            {% do pagination.setTemplate('TltTicketBundle:Default:pagination.html.twig') %}
+            {% do pagination.setTemplate('::pagination.html.twig') %}
             {{ knp_pagination_render(pagination) }}
         </div>
     </div>

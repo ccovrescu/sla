@@ -88,13 +88,15 @@ class ServiceListener implements EventSubscriberInterface
                 return $qb;
             };
 
-        if ($service_id) {
+        if (strlen($service_id)>0) {
             $service = $this->em
                 ->getRepository('TltAdmnBundle:Service')
                 ->find($service_id);
 
             if ($service != null)
                 $formOptions['data'] = $service;
+        } else {
+            $formOptions['data'] = null;
         }
 
         $form->add('service', 'entity', $formOptions);

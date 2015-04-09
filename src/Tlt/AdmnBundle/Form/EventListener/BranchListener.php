@@ -96,13 +96,15 @@ class BranchListener implements EventSubscriberInterface
 												};
 		
  
-         if ($zone_id) {
+         if (strlen($zone_id)>0) {
              $zone = $this->em
                  ->getRepository('TltAdmnBundle:Branch')
                  ->find($zone_id);
 
              if ($zone != null)
                  $formOptions['data'] = $zone;
+         } else {
+             $formOptions['data'] = null;
          }
  
         $form->add('branch', 'entity', $formOptions);

@@ -99,13 +99,15 @@ class OwnerListener implements EventSubscriberInterface
                 return $qb;
             };
 
-        if ($owner_id) {
+        if (strlen($owner_id)>0) {
             $owner = $this->em
                 ->getRepository('TltAdmnBundle:Owner')
                 ->find($owner_id);
 
             if ($owner != null)
                 $formOptions['data'] = $owner;
+        } else {
+            $formOptions['data'] = null;
         }
 
         $form->add( 'owner', 'entity', $formOptions);

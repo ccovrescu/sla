@@ -74,14 +74,16 @@ class DepartmentListener implements EventSubscriberInterface
 													return $qb;
 												};
 		
-		if ($department_id) {
+		if (strlen($department_id)>0) {
             $department = $this->em
                 ->getRepository('TltAdmnBundle:Department')
                 ->find($department_id);
 
             if ($department != null)
                 $formOptions['data'] = $department;
-      }
+        } else {
+            $formOptions['data'] = null;
+        }
 
         $form->add('department', 'entity', $formOptions);
     }

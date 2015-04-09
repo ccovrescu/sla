@@ -120,7 +120,7 @@ class EquipmentRepository extends EntityRepository
 //		 die();
 					
 		try {
-			return $qb->getQuery()->getResult();
+			return $qb->getQuery();//->getResult();
 		} catch (NoResultException $e) {
 			return null;
 		}
