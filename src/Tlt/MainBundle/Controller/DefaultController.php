@@ -256,41 +256,39 @@ class DefaultController extends Controller
         $results = array();
 
         if ($form->isValid()) {
+            $department = $anexaFilters->getDepartment();
 
-            if ($anexaFilters->getDepartment() == null) {
-                $departments = $this->getDoctrine()
-                    ->getRepository('TltAdmnBundle:Department')
-                    ->findAll();
+            $services = $this->getDoctrine()
+                    ->getRepository('TltAdmnBundle:Service')
+                    ->findBy(array('department' => $department));
+
+            if ($anexaFilters->getOwner() != null) {
+                $ownersParam = $anexaFilters->getOwner()->getId();
             } else {
-                $departments[] = $anexaFilters->getDepartment();
+                $ownersParam = implode(",", $this->getUser()->getOwnersIds());
             }
 
-            foreach ($departments as $department) {
-                    if ($anexaFilters->getOwner() != null) {
-                        $ownersParam = $anexaFilters->getOwner()->getId();
-                    } else {
-                        $ownersParam = implode(",", $this->getUser()->getOwnersIds());
-                    }
-
+            foreach ($services as $service)
+            {
+                if ($service->getId() < 25) {
                     $query = "
                             SELECT
                                 ow.name as owner,
                                 sv.name as service,
                                 mp.price,
-                            "
-                    . ($anexaFilters->getOwner() != null ? "mq.quantity," : "SUM(mq.quantity) as quantity,") .
-                    "
-                                SUM(t.total) as real_quantity
+                                "
+                                . ($anexaFilters->getOwner() != null ? "mq.quantity, t.total as real_quantity" : "SUM(mq.quantity) as quantity, SUM(t.total) as real_quantity") .
+                                "
                             FROM
                                 owners ow
                             JOIN
                                 services sv
                             LEFT JOIN
                                 money_price mp
-                                ON mp.service=sv.id AND mp.year=:year
+                                ON mp.service=sv.id
                             LEFT JOIN
                                 money_quantities mq
-                                ON mq.service=sv.id AND mq.year=:year AND mq.owner=ow.id
+                                ON mq.service=sv.id AND mq.year=mp.year AND mq.owner=ow.id
                             LEFT JOIN
                                 (
                                 SELECT
@@ -307,25 +305,89 @@ class DefaultController extends Controller
                                 ) AS t
                                 ON t.owner=ow.id AND t.service=sv.id
                             WHERE
-                                sv.department=:department AND ow.id IN ($ownersParam)
+                                sv.id=:service
+                                AND mp.year=:year
+                                AND ow.id IN ($ownersParam)
                             GROUP BY
                                 sv.id
-                            "
-                    . ($anexaFilters->getOwner() != null ? ", ow.id" : "") .
-                    "
+                                "
+                                . ($anexaFilters->getOwner() != null ? ", ow.id" : "") .
+                                "
                             ORDER BY
                                 sv.name
 	                        ";
-                $em = $this->getDoctrine()->getManager();
-                $connection = $em->getConnection();
-                $statement = $connection->prepare( $query );
 
-                $statement->bindValue('year', $anexaFilters->getYear());
-                $statement->bindValue('department', $department->getId());
+                    $em = $this->getDoctrine()->getManager();
+                    $connection = $em->getConnection();
+                    $statement = $connection->prepare( $query );
 
-                $statement->execute();
+                    $statement->bindValue('year', $anexaFilters->getYear());
+                    $statement->bindValue('service', $service->getId());
 
-                $results[$department->getName()] = $statement->fetchAll();
+                    $statement->execute();
+
+                    $results[$department->getName()][] = $statement->fetchAll()[0];
+                } else {
+                    $query = "
+                            SELECT
+                                ow.name as owner,
+                                sv.name as service,
+                                mp.price,
+                                "
+                                . ($anexaFilters->getOwner() != null ? "mq.quantity, m.total as real_quantity" : "SUM(mq.quantity) as quantity, SUM(m.total) as real_quantity") .
+                                "
+                            FROM
+                                owners ow
+                            JOIN
+                                services sv
+                            LEFT JOIN
+                                money_price mp
+                                ON mp.service=sv.id
+                            LEFT JOIN
+                                money_quantities mq
+                                ON mq.service=sv.id AND mq.year=mp.year AND mq.owner=ow.id
+                            LEFT JOIN
+                                (
+                                SELECT
+                                    eq.owner,
+                                    eq.service,
+                                    COUNT(mps.id) as total
+                                FROM
+                                    mappings mps
+                                LEFT JOIN
+                                    equipments eq
+                                    ON eq.id=mps.equipment
+                                WHERE
+                                    eq.is_active=1
+                                GROUP BY
+                                    eq.owner,
+                                    eq.service
+                                ) AS m
+                                ON m.owner=ow.id AND m.service=sv.id
+                            WHERE
+                                sv.id=:service
+                                AND mp.year=:year
+                                AND ow.id IN ($ownersParam)
+                            GROUP BY
+                                sv.id
+                                "
+                        . ($anexaFilters->getOwner() != null ? ", ow.id" : "") .
+                        "
+                            ORDER BY
+                                sv.name
+	                        ";
+
+                    $em = $this->getDoctrine()->getManager();
+                    $connection = $em->getConnection();
+                    $statement = $connection->prepare( $query );
+
+                    $statement->bindValue('year', $anexaFilters->getYear());
+                    $statement->bindValue('service', $service->getId());
+
+                    $statement->execute();
+
+                    $results[$department->getName()][] = $statement->fetchAll()[0];
+                }
             }
         }
 
