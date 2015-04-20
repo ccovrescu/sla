@@ -160,7 +160,11 @@
     <div class="item compartment right-cell text-center">
         Compartimentul din cadrul TELETRANS implicat in rezolvarea sesizarii:<br/>
         <abbr title="attribute">
-            {{ticket.compartment|default(' ')|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
+            {% if ticket.equipment is defined and ticket.equipment is not null %}
+                {{ticket.compartment|default(' ')|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
+            {% else %}
+                {{ ' '|str_pad(70)|replace({' ':'&nbsp;'})|raw  }}
+            {% endif %}
         </abbr>
     </div>
 </div>
@@ -244,13 +248,21 @@
     <div class="item fixed-by left-cell">
         Persoana care rezolva:
         <abbr title="attribute">
-            {{ ticket.fixedBy|default(' ')|str_pad(50, ' ', 1)|replace({' ':'&nbsp;'})|raw }}
+            {% if ticket.equipment is defined and ticket.equipment is not null %}
+                {{ ticket.fixedBy|default(' ')|str_pad(50, ' ', 1)|replace({' ':'&nbsp;'})|raw }}
+            {% else %}
+                {{ ' '|str_pad(50)|replace({' ':'&nbsp;'})|raw  }}
+            {% endif %}
         </abbr>
     </div>
     <div class="item fixed-at right-cell">
         Data/Ora rezolvarii:
         <abbr title="attribute">
-            {{ (ticket.fixedAt is not null ? ticket.fixedAt|date('d.m.Y H:i') : " ")|str_pad(30)|replace({' ':'&nbsp;'})|raw }}
+            {% if ticket.equipment is defined and ticket.equipment is not null %}
+                {{ (ticket.fixedAt is not null ? ticket.fixedAt|date('d.m.Y H:i') : " ")|str_pad(30)|replace({' ':'&nbsp;'})|raw }}
+            {% else %}
+                {{ ' '|str_pad(30)|replace({' ':'&nbsp;'})|raw  }}
+            {% endif %}
         </abbr>
     </div>
 </div>
