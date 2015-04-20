@@ -68,7 +68,7 @@ class EquipmentController extends Controller
         $pagination = $paginator->paginate(
             $equipments,
             $request->query->get('page', 1)/*page number*/,
-            10/*limit per page*/
+            20/*limit per page*/
         );
 
 		
