@@ -58,17 +58,19 @@
 			{{ form_rest(form) }}
 		{{ form_end(form) }}
 
-		
-		<div class="row">
-          <div class="col-lg-8 text-left">
-                <h2>Lista echipamentelor</h2>
-          </div>
-          <div class="col-lg-4 text-right">
-              <div class="panel-body">
-                <button type="submit" class="btn btn-primary" onclick="location.href='{{ path('admin_equipments_add') }}'">Adauga echipament</button>
-              </div>
-          </div>
-        </div><!-- /.row -->		
+
+    <div class="row">
+        <div class="col-lg-8 text-left">
+            <h2>Lista echipamentelor</h2>
+        </div>
+        <div class="col-lg-4 text-right">
+            <div class="panel-body">
+                <button type="submit" class="btn btn-primary"
+                        onclick="location.href='{{ path('admin_equipments_add') }}'">Adauga echipament
+                </button>
+            </div>
+        </div>
+    </div><!-- /.row -->
 		
            <div class="table-responsive">
             <table class="table table-bordered table-hover table-striped tablesorter">
@@ -131,13 +133,9 @@
             </table>
         </div>
 
-    <div class="row">
         {# display navigation #}
-        <div class="navigation text-center">
             {% do pagination.setTemplate('::pagination.html.twig') %}
             {{ knp_pagination_render(pagination) }}
-        </div>
-    </div>
 {% endblock  %}
 
 {% block javascripts %}

@@ -50,6 +50,8 @@ class EquipmentController extends Controller
 		if ($form->isValid()) {
             // Data is valid so save it in session for another request
             $session->set('submittedData', $form->getData());
+            if ($request->query->get('limit') != null)
+                $session->set('limit', $request->query->get('limit', 10));
 
 			$equipments = $this->getDoctrine()
 									->getRepository('TltAdmnBundle:Equipment')
@@ -65,16 +67,17 @@ class EquipmentController extends Controller
 		}
 
         $paginator  = $this->get('knp_paginator');
+        $paginator->setDefaultPaginatorOptions(array('limit' => $session->get('limit', $request->query->get('limit', 10))));
         $pagination = $paginator->paginate(
             $equipments,
             $request->query->get('page', 1)/*page number*/,
-            20/*limit per page*/
+            $session->get('limit', $request->query->get('limit', 10))/*limit per page*/
         );
 
 		
         return array(
 			'form'		=>	$form->createView(),
-			'pagination'	=>	$pagination
+			'pagination'	=>	$pagination,
 		);
     }
 	

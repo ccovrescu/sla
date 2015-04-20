@@ -1,48 +1,69 @@
 {# default Sliding pagination control implementation #}
 
 {% if pageCount > 1 %}
-    <ul class="pagination">
-        {% if first is defined and current != first %}
-            <li>
-                <a href="{{ path(route, query|merge({(pageParameterName): first})) }}">&larr; Prima pagina</a>
-            </li>
-        {% endif %}
+    <div class="row">
+        <div class="col-lg-4 text-left">
+            Arata
+            <div class="btn-group pagination">
+                <button type="button" class="btn btn-default">{{ limit }}</button>
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span
+                            class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="{{ path(route, query|merge({('limit'): 10})) }}">10</a></li>
+                    <li><a href="{{ path(route, query|merge({('limit'): 20})) }}">20</a></li>
+                    <li><a href="{{ path(route, query|merge({('limit'): 30})) }}">30</a></li>
+                    <li><a href="{{ path(route, query|merge({('limit'): 50})) }}">50</a></li>
+                </ul>
+            </div>
+            <!-- /btn-group -->
+            elemente / pagina
+        </div>
 
-        {% if previous is defined %}
-            <li>
-                <a href="{{ path(route, query|merge({(pageParameterName): previous})) }}">&laquo;</a>
-            </li>
-        {% else %}
-            <li class="disabled">
-                <a href="#">&laquo;</a>
-            </li>
-        {% endif %}
+        <div class="col-lg-8 text-right">
+            <ul class="pagination">
+                {% if first is defined and current != first %}
+                    <li>
+                        <a href="{{ path(route, query|merge({(pageParameterName): first})) }}">&larr; Prima pagina</a>
+                    </li>
+                {% endif %}
 
-        {% for page in pagesInRange %}
-            {% if page != current %}
-                <li>
-                    <a href="{{ path(route, query|merge({(pageParameterName): page})) }}">{{ page }}</a>
-                </li>
-            {% else %}
-                <li class="active"><a href="#">{{ page }}</a></li>
-            {% endif %}
+                {% if previous is defined %}
+                    <li>
+                        <a href="{{ path(route, query|merge({(pageParameterName): previous})) }}">&laquo;</a>
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <a href="#">&laquo;</a>
+                    </li>
+                {% endif %}
 
-        {% endfor %}
+                {% for page in pagesInRange %}
+                    {% if page != current %}
+                        <li>
+                            <a href="{{ path(route, query|merge({(pageParameterName): page})) }}">{{ page }}</a>
+                        </li>
+                    {% else %}
+                        <li class="active"><a href="#">{{ page }}</a></li>
+                    {% endif %}
 
-        {% if next is defined %}
-            <li>
-                <a href="{{ path(route, query|merge({(pageParameterName): next})) }}">&raquo;</a>
-            </li>
-        {% endif %}
+                {% endfor %}
 
-        {% if last is defined and current != last %}
-            <li>
-                <a href="{{ path(route, query|merge({(pageParameterName): last})) }}">Ultima pagina &rarr;</a>
-            </li>
-        {% else %}
-            <li class="disabled">
-                <a href="#">&raquo;</a>
-            </li>
-        {% endif %}
-    </ul>
+                {% if next is defined %}
+                    <li>
+                        <a href="{{ path(route, query|merge({(pageParameterName): next})) }}">&raquo;</a>
+                    </li>
+                {% endif %}
+
+                {% if last is defined and current != last %}
+                    <li>
+                        <a href="{{ path(route, query|merge({(pageParameterName): last})) }}">Ultima pagina &rarr;</a>
+                    </li>
+                {% else %}
+                    <li class="disabled">
+                        <a href="#">&raquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div><!-- row -->
 {% endif %}

@@ -23,6 +23,10 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $session = $this->get('session');
+        if ($request->query->get('limit') != null)
+            $session->set('limit', $request->query->get('limit', 10));
+
         $tickets1 = $this->getDoctrine()
             ->getRepository('TltTicketBundle:Ticket')
             ->findTicketsByBranchesAndDepartments(
@@ -38,10 +42,11 @@ class DefaultController extends Controller
         arsort($tickets);
 
         $paginator  = $this->get('knp_paginator');
+        $paginator->setDefaultPaginatorOptions(array('limit' => $session->get('limit', $request->query->get('limit', 10))));
         $pagination = $paginator->paginate(
             $tickets,
             $request->query->get('page', 1)/*page number*/,
-            10/*limit per page*/
+            $session->get('limit', $request->query->get('limit', 10))/*limit per page*/
         );
 
 		return $this->render(
