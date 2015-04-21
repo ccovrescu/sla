@@ -60,12 +60,12 @@
 
                         <td>{{ ticket.id }}</td>
                         <td>
-                            {% if ticket.equipment is defined and ticket.equipment is not null %}
-                                {% if ticket.equipment.service.department.id == "1" %}
+                            {% if ticket.department is defined and ticket.department is not null %}
+                                {% if ticket.department == "1" %}
                                     IP
-                                {% elseif ticket.equipment.service.department.id == "2" %}
+                                {% elseif ticket.department == "2" %}
                                     TC
-                                {% elseif ticket.equipment.service.department.id == "3" %}
+                                {% elseif ticket.department == "3" %}
                                     TI
                                 {% endif %}
                             {% else %}
