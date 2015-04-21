@@ -273,6 +273,12 @@ class DefaultController extends Controller
                     return $templateOptions;
             }
 
+            if (count($ticket->getTicketMapping())==0) {
+                $form->get('ticketMapping')->addError(new FormError('Trebuie sa selectati cel putin un sistem.'));
+                $templateOptions['form'] = $form->createView();
+                return $templateOptions;
+            }
+
             // perform some action, such as saving the task to the database
             $em = $this->getDoctrine()->getManager();
 

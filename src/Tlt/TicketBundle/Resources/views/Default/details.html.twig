@@ -293,13 +293,4 @@
 
 {% block javascripts %}
 	{{ parent() }}
-
-    <script type="text/javascript">
-        $("#ticket_salveaza").click(function() {
-            if($(".affectedSystems:checked").length==0)
-            {
-                return confirm('Nu ati selectat nici un sistem! Continuati?');
-            }
-        });
-    </script>
 {% endblock %}
