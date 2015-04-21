@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints\Null;
 
 
 class TicketRepository extends EntityRepository {
-
+/*
     public function findTicketsByBranchesAndDepartments($userBranches = null, $userDepartments = null)
     {
         $qbs = $this->getEntityManager()->createQueryBuilder();
@@ -69,4 +69,5 @@ class TicketRepository extends EntityRepository {
             return null;
         }
     }
+*/
 }

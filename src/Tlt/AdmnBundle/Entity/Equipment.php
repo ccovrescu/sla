@@ -50,9 +50,9 @@ class Equipment extends AbstractEntity
     private $service;
 	
 	/**
-	 * @var integer
+	 * @var float
      *
-     * @ORM\Column(name="total", type="float")
+     * @ORM\Column(name="total", type="decimal", precision=7, scale=2)
 	 */
 	private $total;
 	

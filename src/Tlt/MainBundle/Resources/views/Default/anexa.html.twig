@@ -78,9 +78,9 @@
                         <tr>
                             <td class="text-left">{{ result.service }}</td>
                             <td class="text-right"><p
-                                        {% if result.quantity > result.real_quantity %}class="text-danger"{% endif %}>{{ result.quantity|number_format(0, '.', ',')|default(0) }}</p>
+                                        {% if result.quantity > result.real_quantity %}class="text-danger"{% endif %}>{{ result.quantity|number_format(2, '.', ',')|default(0) }}</p>
                             </td>
-                            <td class="text-right">{{ result.real_quantity|number_format(0, '.', ',')|default(0) }}</td>
+                            <td class="text-right">{{ result.real_quantity|number_format(2, '.', ',')|default(0) }}</td>
                             {% if is_granted('ROLE_ADMIN') %}
                                 <td class="text-right">{{ result.price|number_format(2, '.', ',')|default(0) }}</td>
                                 <td class="text-right">{{ (result.price*result.quantity)|number_format(2, '.', ',')|default(0) }}</td>

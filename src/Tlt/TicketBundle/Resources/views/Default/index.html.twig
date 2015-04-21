@@ -31,17 +31,19 @@
 
 
     <div class="table-responsive">
-        <table class="table table-bordered table-hover tablesorter">
+        <table class="table table-bordered table-hover">
             <thead>
-            <tr>
-                <th nowrap>Nr <i class="fa fa-sort"></i></th>
-                <th nowrap>Tip serviciu <i class="fa fa-sort"></i></th>
-                <th nowrap>Anuntat de</th>
-                <th nowrap>Anuntat la</th>
-                <th nowrap>Rezolvat la</th>
-                <th class="text-left">Descriere</th>
-                <th class="text-left">Optiuni</th>
-            </tr>
+                {% set params = pagination.getParams() %}
+                {% set direction = params['direction'] is defined ? params['direction'] : null %}
+                <tr>
+                    <th nowrap>{{ knp_pagination_sortable(pagination, 'Nr', 't.id') }} {% if pagination.isSorted('t.id') %} <i class="fa fa-sort-{{ direction }}"></i>{% endif %}</th>
+                    <th nowrap>Tip serviciu</th>
+                    <th nowrap>Anuntat de</th>
+                    <th nowrap>{{ knp_pagination_sortable(pagination, 'Anuntat la', 't.announcedAt') }} {% if pagination.isSorted('t.announcedAt') %} <i class="fa fa-sort-{{ direction }}"></i>{% endif %}</th>
+                    <th nowrap>Rezolvat la</th>
+                    <th class="text-left">Descriere</th>
+                    <th class="text-left">Optiuni</th>
+                </tr>
             </thead>
             <tbody>
             {% if pagination %}
@@ -117,8 +119,4 @@
 
 {% block javascripts %}
     {{ parent() }}
-
-    <!-- Page Specific Plugins -->
-    <script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
-    <script src="{{ asset('js/tablesorter/tables.js') }}"></script>
 {% endblock %}

@@ -27,27 +27,35 @@ class DefaultController extends Controller
         if ($request->query->get('limit') != null)
             $session->set('limit', $request->query->get('limit', 10));
 
-        $tickets1 = $this->getDoctrine()
-            ->getRepository('TltTicketBundle:Ticket')
-            ->findTicketsByBranchesAndDepartments(
-                $this->getUser()->getBranchesIds(),
-                $this->getUser()->getDepartmentsIds()
-            );
+        $subQueryDQL = $this->getDoctrine()->getManager()->createQueryBuilder();
+        $subQueryDQL = $subQueryDQL->select($subQueryDQL->expr()->max('ta2.insertedAt'))
+            ->from('TltTicketBundle:TicketAllocation', 'ta2')
+            ->where($subQueryDQL->expr()->eq('ta2.ticket', 't.id'))
+            ->getDQL();
 
-        $tickets2 = $this->getDoctrine()
-            ->getRepository('TltTicketBundle:Ticket')
-            ->findTicketsByNullEquipmentAndBranches($this->getUser()->getBranchesIds());
+        $allowedDepartments = $this->getUser()->getDepartmentsIds();
+        $allowedDepartments[] = null;
 
-        $tickets = array_merge($tickets1, $tickets2);
-        arsort($tickets);
+        $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
+        $qb = $qb->select('t.id', 't.announcedBy', 't.announcedAt', 't.description', 't.isReal')
+            ->from('TltTicketBundle:Ticket', 't')
+            ->innerJoin('t.ticketAllocations', 'ta', 'WITH', $qb->expr()->eq('ta.insertedAt', '(' . $subQueryDQL . ')') )
+            ->leftJoin('t.equipment', 'e')
+            ->leftJoin('e.service', 'sv');
+        $qb->andWhere('ta.branch IN (:userBranches)');
+        $qb->setParameter('userBranches', $this->getUser()->getBranchesIds());
+        $qb->andWhere('sv.department IN (:userDepartments) OR sv.department IS NULL');
+        $qb->setParameter('userDepartments', $allowedDepartments);
+        $qb->orderBy('t.id', 'DESC');
 
         $paginator  = $this->get('knp_paginator');
         $paginator->setDefaultPaginatorOptions(array('limit' => $session->get('limit', $request->query->get('limit', 10))));
         $pagination = $paginator->paginate(
-            $tickets,
+            $qb,
             $request->query->get('page', 1)/*page number*/,
-            $session->get('limit', $request->query->get('limit', 10))/*limit per page*/
+            $session->get('limit', $request->query->get('limit', 10)) /*limit per page*/
         );
+
 
 		return $this->render(
 			'TltTicketBundle:Default:index.html.twig',

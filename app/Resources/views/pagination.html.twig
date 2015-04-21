@@ -1,6 +1,6 @@
 {# default Sliding pagination control implementation #}
 
-{% if pageCount > 1 %}
+{% if pageCount >= 1 %}
     <div class="row">
         <div class="col-lg-4 text-left">
             Arata
@@ -13,6 +13,7 @@
                     <li><a href="{{ path(route, query|merge({('limit'): 20})) }}">20</a></li>
                     <li><a href="{{ path(route, query|merge({('limit'): 30})) }}">30</a></li>
                     <li><a href="{{ path(route, query|merge({('limit'): 50})) }}">50</a></li>
+                    <li><a href="{{ path(route, query|merge({('limit'): 100000})) }}">Toate</a></li>
                 </ul>
             </div>
             <!-- /btn-group -->
