@@ -5,7 +5,7 @@
         <div class="col-lg-4 text-left">
             Arata
             <div class="btn-group pagination">
-                <button type="button" class="btn btn-default">{{ limit }}</button>
+                <button type="button" class="btn btn-default">{{ (limit<100000 ? limit : 'Toate') }}</button>
                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span
                             class="caret"></span></button>
                 <ul class="dropdown-menu">
