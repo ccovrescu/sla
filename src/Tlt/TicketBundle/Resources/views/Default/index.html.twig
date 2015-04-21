@@ -75,7 +75,7 @@
                         <td>{{ ticket.announcedBy }}</td>
                         <td nowrap>{{ ticket.announcedAt|date('d-m-Y H:i') }}</td>
                         <td nowrap>
-                            {% if ticket.fixedAt is defined and ticket.fixedAt is not null%}
+                            {% if ticket.fixedAt is defined and ticket.fixedAt is not null %}
                                 {{ ticket.fixedAt|date('d-m-Y H:i') }}
                             {% else %}
                                 -

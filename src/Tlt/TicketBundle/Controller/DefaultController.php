@@ -37,7 +37,7 @@ class DefaultController extends Controller
         $allowedDepartments[] = null;
 
         $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
-        $qb = $qb->select('t.id', 't.announcedBy', 't.announcedAt', 't.description', 't.isReal')
+        $qb = $qb->select('t.id', 't.announcedBy', 't.announcedAt', 't.fixedAt', 't.description', 't.isReal')
             ->from('TltTicketBundle:Ticket', 't')
             ->innerJoin('t.ticketAllocations', 'ta', 'WITH', $qb->expr()->eq('ta.insertedAt', '(' . $subQueryDQL . ')') )
             ->leftJoin('t.equipment', 'e')
