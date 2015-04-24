@@ -43,9 +43,9 @@ class Ticket extends AbstractEntity
      *     groups={"insert"}
      * ),
      * @Assert\Length(
-     *     min = 4,
+     *     min = 3,
      *     max = 128,
-     *     minMessage = "Numele sesizantului si compartimentul trebuie sa contina cel putin 4 caractere.",
+     *     minMessage = "Numele sesizantului si compartimentul trebuie sa contina cel putin 3 caractere.",
      *     maxMessage = "Numele sesizantului si compartimentul trebuie sa contina cel mult 128 caractere.",
      *     groups={"insert"}
      * ),
