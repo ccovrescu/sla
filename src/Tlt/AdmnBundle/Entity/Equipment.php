@@ -74,22 +74,17 @@ class Equipment extends AbstractEntity
 	
     /**
      * @ORM\OneToMany(targetEntity="PropertyValue", mappedBy="equipment")
+     * @ORM\OrderBy({"property" = "ASC"})
      */
     protected $propertiesValues;
 
-	
-	
-	
-	
 	protected $branch;
-	
-	
-	
+
+
     public function __construct()
     {
         $this->propertiesValues = new ArrayCollection();
     }	
-	
 
     /**
      * Set id
@@ -137,8 +132,7 @@ class Equipment extends AbstractEntity
     {
         return $this->name;
     }
-	
-	
+
     /**
      * Set owner
      *
@@ -161,8 +155,7 @@ class Equipment extends AbstractEntity
     {
         return $this->owner;
     }
-	
-	
+
     /**
      * Set zoneLocation
      *
@@ -231,8 +224,7 @@ class Equipment extends AbstractEntity
     {
         return $this->total;
     }
-	
-	
+
     /**
      * Set inPam
      *
@@ -256,7 +248,6 @@ class Equipment extends AbstractEntity
         return $this->inPam;
     }
 	
-
     /**
      * Get isActive
      *
@@ -280,8 +271,6 @@ class Equipment extends AbstractEntity
         return $this;
     }
 
-
-	
 	public function getUniqueName()
 	{
 		$uniqueName = $this->name;

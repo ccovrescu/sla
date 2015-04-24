@@ -58,7 +58,11 @@ class DefaultController extends Controller
 
         if ($form->get('search')->getData() !== null)
         {
-            $qb->andWhere('t.id = :id')->setParameter('id', (int) $form->get('search')->getData());
+            $qb->andWhere(
+                $qb->expr()->like('t.id', ':id') . ' OR ' . $qb->expr()->like('t.announcedBy', ':announcedBy')
+            );
+            $qb->setParameter('id', $form->get('search')->getData());
+            $qb->setParameter('announcedBy', '%' . $form->get('search')->getData(). '%' );
         }
 
         $qb->orderBy('t.id', 'DESC');

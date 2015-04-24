@@ -58,27 +58,9 @@ class EquipmentRepository extends EntityRepository
 	// public function findAllJoinedToBranchesAndServices($owner, $branch, $location, $department, $service, $userBranches = null)
 	public function findAllJoinedToBranchesAndServices($owner, $branch, $zoneLocation, $department, $service, $userBranches = null, $userDepartments = null)
 	{
-		// var_dump($owner);
-		// var_dump($branch);
-		// var_dump($zoneLocation);
-		// var_dump($department);
-		// var_dump($service);
-		// var_dump($userBranches);
-		// die();
-		
 		$qb = $this->getEntityManager()->createQueryBuilder('e');
 
 		$qb->select(
-				// array(
-					// 'e.id',
-					// 'e.name as equipment',
-					// 'e.total as total',
-					// 'e.inPam as inPam',
-					// 'o.name as owner',
-					// 'l.name as location',
-					// 'b.name as branch',
-					// 's.name as service'
-				// )
 				'eq'
 			)
 			->from('TltAdmnBundle:Equipment', 'eq')
@@ -112,13 +94,9 @@ class EquipmentRepository extends EntityRepository
 		elseif ($department)
 			$qb->andWhere('sv.department=:department')
 				->setParameter('department', $department);
-				
-//		 echo '<pre>';
-//		 var_dump($qb->getQuery()->getSql());
-//		 var_dump($qb->getQuery()->getParameters());
-//		 echo '</pre>';
-//		 die();
-					
+
+        $qb->addOrderBy('eq.name', 'asc');
+
 		try {
 			return $qb->getQuery();//->getResult();
 		} catch (NoResultException $e) {

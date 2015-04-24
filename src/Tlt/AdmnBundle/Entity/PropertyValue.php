@@ -30,6 +30,7 @@ class PropertyValue extends AbstractEntity
     /**
      * @ORM\ManyToOne(targetEntity="Property", inversedBy="propertyValues", cascade={"persist", "remove"})
 	 * @ORM\JoinColumn(name="property_id", referencedColumnName="id")
+     * @ORM\OrderBy({"name" = "ASC"})
      */	 
     private $property;
 	

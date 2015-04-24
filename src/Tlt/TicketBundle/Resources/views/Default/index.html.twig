@@ -57,7 +57,7 @@
                 <tr>
                     <th nowrap>{{ knp_pagination_sortable(pagination, 'Nr', 't.id') }} {% if pagination.isSorted('t.id') %} <i class="fa fa-sort-{{ direction }}"></i>{% endif %}</th>
                     <th nowrap>Tip serviciu</th>
-                    <th nowrap>Anuntat de</th>
+                    <th nowrap>{{ knp_pagination_sortable(pagination, 'Anuntat de', 't.announcedBy') }} {% if pagination.isSorted('t.announcedBy') %} <i class="fa fa-sort-{{ direction }}"></i>{% endif %}</th>
                     <th nowrap>{{ knp_pagination_sortable(pagination, 'Anuntat la', 't.announcedAt') }} {% if pagination.isSorted('t.announcedAt') %} <i class="fa fa-sort-{{ direction }}"></i>{% endif %}</th>
                     <th nowrap>Rezolvat la</th>
                     <th class="text-left">Descriere</th>

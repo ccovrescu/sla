@@ -73,15 +73,15 @@
     </div><!-- /.row -->
 		
            <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped tablesorter">
+            <table class="table table-bordered table-hover table-striped">
 				<thead>
 					<tr>
-						<th>Denumire <i class="fa fa-sort"></i></th>
-						<th class="text-right" nowrap>Buc <i class="fa fa-sort"></i></th>
-						<th nowrap>In PAM <i class="fa fa-sort"></i></th>
-						<th>Entitate <i class="fa fa-sort"></i></th>
-						<th>Locatia <i class="fa fa-sort"></i></th>
-						<th>Serviciu <i class="fa fa-sort"></i></th>
+						<th>Denumire</th>
+						<th class="text-right" nowrap>Buc</th>
+						<th nowrap>In PAM</th>
+						<th>Entitate</th>
+						<th>Locatia</th>
+						<th>Serviciu</th>
 						<th class="text-center">Optiuni</th>
 					</tr>
                </thead>
@@ -134,14 +134,14 @@
         </div>
 
         {# display navigation #}
-            {% do pagination.setTemplate('::pagination.html.twig') %}
-            {{ knp_pagination_render(pagination) }}
+        {% do pagination.setTemplate('::pagination.html.twig') %}
+        {{ knp_pagination_render(pagination) }}
 {% endblock  %}
 
 {% block javascripts %}
 	{{ parent() }}
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
 $("#loading").dialog({
         maxWidth:200,
@@ -324,8 +324,4 @@ $("#filter_service").change(function(){
 	}
 });
 </script>
-
-	<!-- Page Specific Plugins -->
-	<script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
-	<script src="{{ asset('js/tablesorter/tables.js') }}"></script>
 {% endblock %}
