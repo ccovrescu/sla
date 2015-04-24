@@ -18,6 +18,25 @@
     </div><!-- /.row -->
 
 
+
+    <div class="row">
+        <div class="col-lg-10">
+            &nbsp;
+        </div>
+        <div class="col-lg-2">
+            {{ form_start(form) }}
+            <div class="form-group input-group">
+                {{ form_widget(form.search, {'attr': {'class': 'form-control text-right', 'placeholder':'numar'}}) }}
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+                </span>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div><!-- /.row -->
+
+
+
     <div class="row">
         <div class="col-lg-8 text-left">
             <h2>Lista tichete</h2>

@@ -23,6 +23,15 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $form = $this->createFormBuilder(array())
+            ->add('search', 'text', array(
+                    'required' => false,
+                ))
+            ->setMethod('GET')
+            ->getForm();
+
+        $form->handleRequest($request);
+
         $session = $this->get('session');
         if ($request->query->get('limit') != null)
             $session->set('limit', $request->query->get('limit', 10));
@@ -46,6 +55,12 @@ class DefaultController extends Controller
         $qb->setParameter('userBranches', $this->getUser()->getBranchesIds());
         $qb->andWhere('sv.department IN (:userDepartments) OR sv.department IS NULL');
         $qb->setParameter('userDepartments', $allowedDepartments);
+
+        if ($form->get('search')->getData() !== null)
+        {
+            $qb->andWhere('t.id = :id')->setParameter('id', (int) $form->get('search')->getData());
+        }
+
         $qb->orderBy('t.id', 'DESC');
 
         $paginator  = $this->get('knp_paginator');
@@ -56,10 +71,10 @@ class DefaultController extends Controller
             $session->get('limit', $request->query->get('limit', 10)) /*limit per page*/
         );
 
-
 		return $this->render(
 			'TltTicketBundle:Default:index.html.twig',
 			array(
+                'form' => $form->createView(),
 				'pagination' => $pagination,
 			));
 	}
