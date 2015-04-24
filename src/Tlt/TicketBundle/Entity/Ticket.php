@@ -199,9 +199,9 @@ class Ticket extends AbstractEntity
      *     groups={"solve"}
      * )
      * @Assert\Length(
-     *     min = 7,
+     *     min = 3,
      *     max = 128,
-     *     minMessage = "Numele compartimentului trebuie sa contina cel putin 7 caractere.",
+     *     minMessage = "Numele compartimentului trebuie sa contina cel putin 3 caractere.",
      *     maxMessage = "Numele compartimentului trebuie sa contina cel mult 128 caractere.",
      *     groups={"solve"}
      * ),
