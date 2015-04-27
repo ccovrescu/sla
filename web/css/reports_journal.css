@@ -1,0 +1,30 @@
+@media print {
+    .no-print {
+        display: none;
+    }
+
+    * {
+        font-family: times;
+        font-style: italic;
+        font-size: 9pt;
+    }
+
+    body
+    {
+        /* this affects the margin on the content before sending to printer */
+        margin: 0px;
+    }
+
+    #wrapper {
+        padding: 0;
+    }
+}
+
+@page
+{
+    /* A4 */
+    size:297mm 210mm;
+
+    /* this affects the margin in the printer settings */
+    margin: 5mm 5mm 5mm 5mm;
+}

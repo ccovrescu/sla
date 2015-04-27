@@ -69,9 +69,7 @@ class Equipment extends AbstractEntity
      * @ORM\Column(name="is_active", type="boolean")
 	 */
 	private $isActive = true;
-	
-	
-	
+
     /**
      * @ORM\OneToMany(targetEntity="PropertyValue", mappedBy="equipment")
      * @ORM\OrderBy({"property" = "ASC"})

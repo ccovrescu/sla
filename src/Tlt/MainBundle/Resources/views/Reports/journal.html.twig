@@ -1,0 +1,128 @@
+{% extends '::base.html.twig' %}
+
+{% form_theme form 'TltTicketBundle::fields.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/reports_journal.css' ) }}" rel="stylesheet">
+{% endblock %}
+
+{% block page %}
+    <div class="row no-print">
+        <div class="col-lg-12">
+            <h1>Jurnal
+                <small>Tichete</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{{ path('homepage') }}"><i class="icon-dashboard"></i> Prima pagina</a></li>
+                <li class="active"><i class="icon-file-alt"></i>Rapoarte</li>
+            </ol>
+        </div>
+    </div><!-- /.row -->
+
+    {{ form_start(form, {'attr': {'class':'breadcrumb'} }) }}
+
+    <div class="row no-print">
+        <div class="col-lg-3">
+            <div class="form-group">
+                {{ form_label(form.owner) }}
+                {{ form_widget(form.owner, {'attr': {'class': 'form-control'} }) }}
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="form-group">
+                {{ form_label(form.department) }}
+                {{ form_widget(form.department, {'attr': {'class': 'form-control'} }) }}
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="form-group">
+                {{ form_label(form.start) }}
+                {{ form_widget(form.start) }}
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="form-group">
+                {{ form_label(form.end) }}
+                {{ form_widget(form.end) }}
+            </div>
+        </div>
+    </div>
+    <div class="row no-print">
+        <div class="col-lg-12">
+            <div class="text-right">
+                <div class="form-group">
+                    <br/>
+                    {{ form_widget(form.Arata, {'attr': {'class': 'btn btn-primary' }}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+
+    <div class="row text-center">
+        <h2>Lista sesizarilor in intervalul {{ form.start.vars.value.day }}.{{ form.start.vars.value.month }}.{{ form.start.vars.value.year }} - {{ form.end.vars.value.day }}.{{ form.end.vars.value.month }}.{{ form.end.vars.value.year }}</h2>
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th nowrap>Nr crt</th>
+                    <th nowrap>ID sesizare</th>
+                    <th nowrap>Anuntat de</th>
+                    <th nowrap>Locatia</th>
+                    <th nowrap>Unitatea</th>
+                    <th>Tip serviciu</th>
+                    <th>Descriere</th>
+                    <th nowrap>Anuntat la</th>
+                    <th nowrap>Rezolvat la</th>
+                    <th>Rezolvare</th>
+                    <th nowrap>Timp scurs</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% if tickets %}
+                    {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ ticket.id }}</td>
+                            <td>{{ ticket.announcedBy }}</td>
+                            <td>{{ ticket.equipment.zoneLocation.location.name }}</td>
+                            <td>{{ ticket.equipment.zoneLocation.branch.name }}</td>
+                            <td>
+                                {% if ticket.equipment is defined and ticket.equipment is not null %}
+                                    {% if ticket.equipment.service.department.id == "1" %}
+                                        IP
+                                    {% elseif ticket.equipment.service.department.id == "2" %}
+                                        TC
+                                    {% elseif ticket.equipment.service.department.id == "3" %}
+                                        TI
+                                    {% endif %}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>{{ ticket.description }}</td>
+                            <td>{{ ticket.announcedAt|date('d.m.Y H:i') }}</td>
+                            <td>{{ ticket.fixedAt|date('d.m.Y H:i') }}</td>
+                            <td>{{ ticket.fixedMode }}</td>
+                            <td>{{ ticket.fixedAt.diff(ticket.announcedAt)|date('%h:%i') }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row no-print">
+        <div class="col-lg-12 text-center">
+            <button type="button" class="btn btn-success" onclick="window.print()">Printeaza jurnalul</button>
+        </div>
+    </div>
+{% endblock %}

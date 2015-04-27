@@ -245,11 +245,11 @@ class DefaultController extends Controller
         $anexaFilters = new AnexaFilters();
 
         $anexaFilters->setYear(date('Y'));
-
         $form = $this->createForm(
             new AnexaFiltersType($this->get('security.context')),
             $anexaFilters
         );
+
 
         $form->handleRequest($request);
 
