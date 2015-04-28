@@ -72,7 +72,7 @@ class Equipment extends AbstractEntity
 
     /**
      * @ORM\OneToMany(targetEntity="PropertyValue", mappedBy="equipment")
-     * @ORM\OrderBy({"property" = "ASC"})
+     * @ORM\OrderBy({"id" = "ASC"})
      */
     protected $propertiesValues;
 
