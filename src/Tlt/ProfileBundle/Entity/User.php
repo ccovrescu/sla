@@ -65,6 +65,7 @@ class User implements UserInterface, \Serializable
      *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="branch_id", referencedColumnName="id", onDelete="CASCADE")}
      *      )
+     * @ORM\OrderBy({"name"="desc"})
      **/
     private $branches;
 

@@ -2,13 +2,36 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
     <style type="text/css">
-        <!-- .normal {font-family: arial, verdana; font-size: 10pt; font-weight: normal; color: #808285;} -->
-        <!-- .link A:link, A:visited, A:active, A:hover {font-family: arial, verdana; font-size: 10pt; font-weight: bold; color: #00AEEF;} -->
+        <!--
+        div {
+            font-family: arial, verdana;
+            font-size: 11pt;
+            font-weight: normal;
+            color: #000000;
+        }
+        -->
+        <!--
+        .link A:link, A:visited, A:active, A:hover {
+            font-family: arial, verdana;
+            font-size: 10pt;
+            font-weight: bold;
+            color: #00AEEF;
+        }
+
+        -->
     </style>
 </head>
 <body>
-<div class="normal">
-    Pentru detalii accesati link-ul urmator: [ <a href="http:{{ url('ticket_details', {'id': ticket.id}, true) }}">Tichet {{ ticket.id }}</a> ]
+<div>A aparut un nou tichet in aplicatia de calcul SLA. Mai jos sunt prezentate cateva detalii:</div>
+<hr />
+<div><strong>Tichet nr:</strong> {{ ticket.id }}</div>
+<div><strong>Entitatea:</strong> {{ ticket.ticketAllocations.last.branch.name }}</div>
+<div><strong>Anuntat de:</strong> {{ ticket.announcedBy }}. <strong>Date de contact:</strong> {{ ticket.contactInfo|default('-') }}</div>
+<div><strong>Anunta la:</strong> {{ ticket.announcedAt|date('d.m.Y H:i') }}</div>
+<div><strong>Descriere:</strong> {{ ticket.description }}</div>
+<hr />
+<div>Pentru mai multe detalii accesati link-ul urmator: [ <a
+            href="http:{{ url('ticket_details', {'id': ticket.id}, true) }}">Tichet {{ ticket.id }}</a> ]
 </div>
 </body>
 </html>

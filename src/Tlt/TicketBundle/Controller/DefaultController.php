@@ -128,7 +128,7 @@ class DefaultController extends Controller
             $message = $mailer->createMessage()
                 ->setSubject('Tichet nou')
                 ->setFrom('no-reply@teletrans.ro', 'Aplicatie SLA')
-                ->setTo($ticket->getTicketAllocations()->last()->getBranch()->getEmails())
+//                ->setTo($ticket->getTicketAllocations()->last()->getBranch()->getEmails())
                 ->setBody(
                     $this->renderView(
                         // app/Resources/views/Emails/ticket_new.html.twig
@@ -137,9 +137,19 @@ class DefaultController extends Controller
                     ),
                     'text/html'
                 );
+
+            $emails = explode(";", $ticket->getTicketAllocations()->last()->getBranch()->getEmails());
+            foreach ($emails as $index => $email)
+            {
+                if ($index==0)
+                    $message->setTo(trim($email));
+                else {
+//                    $message->addCc(trim($email));
+                    $message->addTo(trim($email));
+                }
+            }
+
             $mailer->send($message);
-
-
 
             return $this->redirect(
                 $this->generateUrl(

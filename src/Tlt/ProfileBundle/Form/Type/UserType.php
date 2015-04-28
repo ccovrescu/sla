@@ -12,6 +12,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Doctrine\ORM\EntityRepository;
+
 class UserType extends AbstractType {
 
     private $action;
@@ -58,7 +60,10 @@ class UserType extends AbstractType {
             ))
             ->add('branches','entity',array(
                 'class'     => 'Tlt\AdmnBundle\Entity\Branch',
-                'property'  => 'name',
+                    'query_builder' => function(EntityRepository $repository) {
+                        return $repository->createQueryBuilder('b')->orderBy('b.name', 'ASC');
+                    },
+//                'property'  => 'name',
                 'label'		=> 'Zona',
                 'expanded'  => true,
                 'multiple' => true,
@@ -66,7 +71,10 @@ class UserType extends AbstractType {
             ))
             ->add('owners','entity',array(
                     'class'     => 'Tlt\AdmnBundle\Entity\Owner',
-                    'property'  => 'name',
+                    'query_builder' => function(EntityRepository $repository) {
+                        return $repository->createQueryBuilder('o')->orderBy('o.name', 'ASC');
+                    },
+//                    'property'  => 'name',
                     'label'		=> 'Entitatea',
                     'expanded'  => true,
                     'multiple' => true,
