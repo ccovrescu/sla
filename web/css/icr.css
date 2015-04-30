@@ -13,7 +13,7 @@
         max-width: 10pt;
         font-family: times;
         font-style: italic;
-		nowrap;
+        white-space: nowrap;
     }
 
     .icr form {

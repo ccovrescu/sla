@@ -3,6 +3,11 @@
         display: none;
     }
 
+    a[href]:after {
+        content: none !important;
+    }
+
+
     * {
         font-family: times;
         font-style: italic;
@@ -18,6 +23,7 @@
     #wrapper {
         padding: 0;
     }
+
 }
 
 @page

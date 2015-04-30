@@ -72,17 +72,18 @@
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
-                    <th nowrap>Nr crt</th>
-                    <th nowrap>ID sesizare</th>
-                    <th nowrap>Anuntat de</th>
-                    <th nowrap>Locatia</th>
-                    <th nowrap>Unitatea</th>
-                    <th>Tip serviciu</th>
-                    <th>Descriere</th>
-                    <th nowrap>Anuntat la</th>
-                    <th nowrap>Rezolvat la</th>
-                    <th>Rezolvare</th>
-                    <th nowrap>Timp scurs</th>
+                    <th class="text-right" nowrap>Nr crt <br/>&nbsp;</th>
+                    <th class="text-center" >ID sesizare</th>
+                    <th nowrap>Anuntat de <br/>&nbsp;</th>
+                    <th nowrap>Locatia <br/>&nbsp;</th>
+                    <th nowrap>Unitatea <br/>&nbsp;</th>
+                    <th class="text-center">Tip serviciu</th>
+                    <th>Descriere <br/>&nbsp;</th>
+                    <th nowrap>Anuntat la <br/>&nbsp;</th>
+                    <th nowrap>Rezolvat la <br/>&nbsp;</th>
+                    <th>Rezolvare <br/>&nbsp;</th>
+                    <th class="text-right">Timp scurs</th>
+                    <th class="text-center">Afecteaza SLA</th>
                 </tr>
             </thead>
 
@@ -90,12 +91,12 @@
                 {% if tickets %}
                     {% for ticket in tickets %}
                         <tr>
-                            <td>{{ loop.index }}</td>
-                            <td>{{ ticket.id }}</td>
+                            <td class="text-right">{{ loop.index }}</td>
+                            <td class="text-right"><a href="{{ path('ticket_details', {'id': ticket.id}) }}">{{ ticket.id }}</a></td>
                             <td>{{ ticket.announcedBy }}</td>
                             <td>{{ ticket.equipment.zoneLocation.location.name }}</td>
                             <td>{{ ticket.equipment.zoneLocation.branch.name }}</td>
-                            <td>
+                            <td class="text-center">
                                 {% if ticket.equipment is defined and ticket.equipment is not null %}
                                     {% if ticket.equipment.service.department.id == "1" %}
                                         IP
@@ -112,7 +113,14 @@
                             <td>{{ ticket.announcedAt|date('d.m.Y H:i') }}</td>
                             <td>{{ ticket.fixedAt|date('d.m.Y H:i') }}</td>
                             <td>{{ ticket.fixedMode }}</td>
-                            <td>{{ ticket.fixedAt.diff(ticket.announcedAt)|date('%h:%i') }}</td>
+                            <td class="text-right">{{ ticket.fixedAt.diff(ticket.announcedAt)|date('%h:%i') }}</td>
+                            <td class="text-center">
+                                {% if ticket.isReal==1 and ticket.backupSolution.id==2 %}
+                                    <i class="fa fa-check text-danger"></i>
+                                {% else %}
+                                    <i class="fa fa-minus text-success"></i>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                 {% endif %}

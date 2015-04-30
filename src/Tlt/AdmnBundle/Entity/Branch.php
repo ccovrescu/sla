@@ -38,7 +38,6 @@ class Branch extends AbstractEntity
 
     /**
      * @ORM\OneToMany(targetEntity="ZoneLocation", mappedBy="branch")
-     * @ORM\OrderBy({"name"="ASC"})
      */
     private $zoneLocations;
 

@@ -23,7 +23,7 @@ class ZoneLocationController extends Controller
     {
 		$filter = new Filter();
 		$form = $this->createForm(
-			new FilterType($this->getUser()),
+			new FilterType($this->getDoctrine()->getManager(), $this->getUser()),
 			$filter,
 			array(
 				'zone'	=> true

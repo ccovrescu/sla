@@ -25,7 +25,8 @@ class ZoneLocation extends AbstractEntity
     /**
      * @ORM\ManyToOne(targetEntity="Branch", inversedBy="zoneLocations")
 	 * @ORM\JoinColumn(name="branch_id", referencedColumnName="id")
-     */	 
+     * @ORM\OrderBy({"name"="ASC"})
+     */
     private $branch;
 	
     /**
