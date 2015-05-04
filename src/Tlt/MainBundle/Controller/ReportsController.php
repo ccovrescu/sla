@@ -59,7 +59,7 @@ class ReportsController extends Controller
         $qb->setParameter('userBranches', $this->getUser()->getBranchesIds());
         $qb->andWhere('sv.department IN (:userDepartments)');
         $qb->setParameter('userDepartments', $allowedDepartments);
-        $qb->orderBy('t.id', 'ASC');
+        $qb->orderBy('t.announcedAt', 'ASC');
 
         return array(
             'form'      => $form->createView(),

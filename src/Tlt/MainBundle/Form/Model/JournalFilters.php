@@ -61,7 +61,7 @@ class JournalFilters
      */
     public function setEnd($end)
     {
-        $this->end = $end;
+        $this->end = $end->add( new \DateInterval('PT23H59M59S'));
     }
 
     /**

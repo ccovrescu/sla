@@ -290,7 +290,9 @@
     </div>
     </div><!-- /.row -->
 
-    {% include '::print_button.html.twig' with {'document':'fisa'} %}
+    {% if form.vars.valid %}
+        {% include '::print_button.html.twig' with {'document':'fisa'} %}
+    {% endif %}
 {% endblock  %}
 
 {% block javascripts %}
