@@ -171,6 +171,23 @@ class User implements UserInterface, \Serializable
         return $this->departments;
     }
 
+    /**
+     * Get departments
+     *
+     * @return array
+     */
+    public function getDepartmentsArray()
+    {
+        $departments = array();
+        foreach ($this->departments as $department)
+            $departments[$department->getId()] = $department->getName();
+
+        if (empty($departments))
+            return null;
+        else
+            return $departments;
+    }
+
     public function getBranchesIds()
     {
         $ids = array();

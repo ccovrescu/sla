@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Tlt\TicketBundle\Entity\Ticket;
+use Tlt\TicketBundle\Form\Type\Model\TicketFilters;
+use Tlt\TicketBundle\Form\Type\TicketFiltersType;
 use Tlt\TicketBundle\Form\Type\TicketType;
 use Tlt\TicketBundle\Entity\TicketAllocation;
 use Tlt\TicketBundle\Entity\TicketEquipment;
@@ -23,12 +25,16 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $form = $this->createFormBuilder(array())
-            ->add('search', 'text', array(
-                    'required' => false,
-                ))
-            ->setMethod('GET')
-            ->getForm();
+        $ticketFilters = new TicketFilters();
+        $ticketFilters->setServiceType(array(0));
+
+        $form = $this->createForm(
+            new TicketFiltersType($this->container->get('security.context')),
+            $ticketFilters,
+            array(
+                'method'		=>	'GET',
+            )
+        );
 
         $form->handleRequest($request);
 
@@ -53,16 +59,29 @@ class DefaultController extends Controller
             ->leftJoin('e.service', 'sv');
         $qb->andWhere('ta.branch IN (:userBranches)');
         $qb->setParameter('userBranches', $this->getUser()->getBranchesIds());
-        $qb->andWhere('sv.department IN (:userDepartments) OR sv.department IS NULL');
-        $qb->setParameter('userDepartments', $allowedDepartments);
 
-        if ($form->get('search')->getData() !== null)
+
+        if ($ticketFilters->getServiceType() !== null && count($ticketFilters->getServiceType()) > 0)
+        {
+            if (in_array('0', $ticketFilters->getServiceType())) {
+                $qb->andWhere('sv.department IN (:userDepartments) OR sv.department IS NULL');
+                $qb->setParameter('userDepartments', $ticketFilters->getServiceType());
+            } else {
+                $qb->andWhere('sv.department IN (:userDepartments)');
+                $qb->setParameter('userDepartments', $ticketFilters->getServiceType());
+            }
+        } else {
+            $qb->andWhere('sv.department=99999');
+        }
+
+
+        if ($ticketFilters->getSearch() !== null)
         {
             $qb->andWhere(
                 $qb->expr()->like('t.id', ':id') . ' OR ' . $qb->expr()->like('t.announcedBy', ':announcedBy')
             );
-            $qb->setParameter('id', $form->get('search')->getData());
-            $qb->setParameter('announcedBy', '%' . $form->get('search')->getData(). '%' );
+            $qb->setParameter('id', $ticketFilters->getSearch());
+            $qb->setParameter('announcedBy', '%' . $ticketFilters->getSearch() . '%' );
         }
 
         $qb->orderBy('t.id', 'DESC');
