@@ -40,7 +40,7 @@
 			{% elseif action == 'reallocate' %}
 				Actiunea de <strong>realocare</strong> s-a incheiat cu <strong>succes</strong>. Reveniti la lista tichetelor <a href="{{ path('tickets') }}" class="alert-link">[ tichetelor ]</a>.
 			{% elseif action == 'fix' %}
-				Actiunea de <strong>salvare</strong> s-a incheiat cu <strong>succes</strong>. Reveniti la <a href="{{ path('ticket_details', {'id' : ticket.id}) }}"  class="alert-link">[ tichet ]</a>.
+				Actiunea de <strong>salvare</strong> s-a incheiat cu <strong>succes</strong>. Reveniti la lista tichetelor <a href="{{ path('tickets') }}" class="alert-link">[ tichetelor ]</a>, sau vizualizati <a href="{{ path('ticket_details', {'id' : ticket.id}) }}"  class="alert-link">[ tichetul ]</a> salvat.
 			{% else %}
 				Reveniti la lista <a href="{{ path('tickets') }}"  class="alert-link">[ tichetelor ]</a>.
 			{% endif %}

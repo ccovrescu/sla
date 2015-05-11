@@ -25,8 +25,15 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $ticketFilters = new TicketFilters();
-        $ticketFilters->setServiceType(array(0));
+        $session = $this->get('session');
+
+        // Check if filter data already was submitted and validated for this page
+        if ($session->has('ticketsFilterData')) {
+            $ticketFilters = $session->get('ticketsFilterData');
+        } else {
+            $ticketFilters = new TicketFilters();
+            $ticketFilters->setServiceType(array(0));
+        }
 
         $form = $this->createForm(
             new TicketFiltersType($this->container->get('security.context')),
@@ -37,6 +44,13 @@ class DefaultController extends Controller
         );
 
         $form->handleRequest($request);
+        if ($form->isValid()) {
+            // Data is valid so save it in session for another request
+            $session->set('ticketsFilterData', $form->getData());
+
+            if ($request->query->get('limit') != null)
+                $session->set('limit', $request->query->get('limit', 10));
+        }
 
         $session = $this->get('session');
         if ($request->query->get('limit') != null)
