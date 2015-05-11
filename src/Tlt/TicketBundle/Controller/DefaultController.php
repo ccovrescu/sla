@@ -336,7 +336,15 @@ class DefaultController extends Controller
             }
 
             if (count($ticket->getTicketMapping())==0) {
+
+                $mappings = $this->getDoctrine()
+                    ->getRepository('TltAdmnBundle:Mapping')
+                    ->findOneByEquipment($ticket->getEquipment());
+
+                if (count($mappings)==0)
+                    $form->get('ticketMapping')->addError(new FormError('Nu a-ti facut nici o mapare pentru acest echipament. Mergeti la <a href="' . $this->generateUrl('admin_mappings_index', array('equipment_id' => $ticket->getEquipment()->getId())) . '">[ mapari ]</a> pentru a adauga cel putin o mapare!'));
                 $form->get('ticketMapping')->addError(new FormError('Trebuie sa selectati cel putin un sistem.'));
+
                 $templateOptions['form'] = $form->createView();
                 return $templateOptions;
             }
