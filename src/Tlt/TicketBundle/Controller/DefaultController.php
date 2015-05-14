@@ -336,7 +336,6 @@ class DefaultController extends Controller
             }
 
             if (count($ticket->getTicketMapping())==0) {
-
                 $mappings = $this->getDoctrine()
                     ->getRepository('TltAdmnBundle:Mapping')
                     ->findOneByEquipment($ticket->getEquipment());

@@ -333,4 +333,17 @@ class Equipment extends AbstractEntity
     {
         return $this->propertiesValues;
     }
+
+    public function getPropertiesString()
+    {
+        $properties = '';
+        foreach ($this->getPropertiesValues() as $property)
+        {
+            if (strlen($properties)>0)
+                $properties .= ', ' . $property->getValue();
+            else
+                $properties .= $property->getValue();
+        }
+		return $properties;
+    }
 }

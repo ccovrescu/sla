@@ -6,6 +6,7 @@
     {{ parent() }}
 
     <link href="{{ asset('css/icr.css' ) }}" rel="stylesheet">
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.css" rel="stylesheet" />
 {% endblock %}
 
 {% block page %}
@@ -299,4 +300,111 @@
 
 {% block javascripts %}
 	{{ parent() }}
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.js"></script>
+
+    <script type="text/javascript">
+        $("#ticket_equipment2").select2({
+            ajax: {
+                url: "{{ path('admin_ajax_equipments') }}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, page) {
+                    // parse the results into the format expected by Select2.
+                    // since we are using custom formatting functions we do not need to
+                    // alter the remote JSON data
+                    return {
+                        results: data.items
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            minimumInputLength: 3,
+            multiple: false,
+            allowClear: true,
+            placeholder: "Selectati un echipament",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+
+        function formatRepo (repo) {
+            if (repo.loading) return repo.text;
+
+            var markup = '<div class="clearfix">' +
+                    '<div clas="col-sm-12">' +
+                    '<div class="clearfix">' +
+                    '<div class="col-sm-6"><strong>' + repo.name + '</strong></div>' +
+                    '<div class="col-sm-3"><strong><em>' + repo.service + '</em></strong></div>' +
+                    '<div class="col-sm-3"><strong><em>' + repo.location + '</em></strong></div>' +
+                    '</div>';
+
+            if (repo.properties) {
+                markup += '<div class="col-sm-12"><small>' + repo.properties + '</small></div>';
+            }
+
+            markup += '</div></div>';
+
+            return markup;
+        }
+
+        function formatRepoSelection (repo) {
+            return repo.name || repo.text;
+        }
+
+
+
+        $("#ticket_equipment2").change(function(){
+            var data = {
+                equipment_id: $(this).val()
+            };
+
+            $('#ticket_equipment').val( $(this).val() );
+
+
+            $.ajax({
+                type: 'post',
+                url: '{{ path("get_allowed_systems") }}',
+                data: data,
+                success: function(data) {
+                    $('#div_ticket_affectedSystems').html('');
+                    var output = '';
+
+                    output = output + '<div class="form-group"><label class="control-label required">Sisteme afectate</label>';
+                    output = output + '<div id="ticket_ticketMapping">';
+
+                    for (var i=0, total = data.length; i < total; i++) {
+                        output = output + '' +
+                        '<div class="checkbox">' +
+                        '<label><input type="checkbox" id="ticket_ticketMapping_' + data[i].id + '" name="ticket[ticketMapping][]" class="affectedSystems" value="' + data[i].id + '" />' + data[i].name + '</label></div>';
+                    }
+
+                    output = output + '</div></div>';
+
+                    $('#div_ticket_affectedSystems').append(output);
+
+                    console.log($('#div_ticket_affectedSystems').html());
+                }
+            });
+
+            $.ajax({
+                type: 'post',
+                url: '{{ path("get_equipment_name") }}',
+                data: data,
+                success: function(data) {
+                    if (data[0].service != null)
+                        $(".help-block").html('<strong><em>' + data[0].service + ' \\ ' + data[0].location + '</em></strong><br>' + data[0].properties);
+                    else
+                        $(".help-block").html('Descriere: Nu ati selectat nici un echipament.');
+                }
+            });
+        });
+    </script>
+
 {% endblock %}

@@ -8,8 +8,62 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+use Doctrine\ORM\Query\ResultSetMapping;
+
 class AjaxController extends Controller
 {
+    /**
+     * @Route("/fhs7/equipments", name="admin_ajax_equipments")
+     */
+    public function eqAction(Request $request)
+    {
+        $query = str_replace(" ", "%", $request->get('q'));
+
+        $rsm = new ResultSetMapping();
+
+        $em = $this->getDoctrine()->getManager();
+        $sqlQuery =
+            "SELECT
+              eq.id AS id,
+              eq.name AS name,
+              sv.name AS service,
+              lo.name AS location,
+              ifnull(group_concat(pr.value),'') as properties
+            FROM
+              equipments eq
+            LEFT JOIN services sv
+              ON sv.id = eq.service
+            LEFT JOIN zones_locations zl
+              ON zl.id = eq.zoneLocation
+            LEFT JOIN locations lo
+              ON lo.id = zl.location_id
+            LEFT JOIN properties_values pr
+              ON pr.equipment_id = eq.id
+            WHERE
+                eq.is_active = 1
+                AND zl.branch_id IN (" . implode(',',$this->getUser()->getBranchesIds()) . ")
+                AND sv.department IN (" . implode(',',$this->getUser()->getDepartmentsIds()) .")
+            GROUP BY eq.id HAVING CONCAT(sv.name,lo.name,eq.name,properties) LIKE :query
+            ORDER BY
+              sv.name,
+              lo.name,
+              eq.name";
+
+        $params = array(
+            'query' => '%' . $query . '%'
+        );
+
+        $stmt = $em->getConnection()->prepare($sqlQuery);
+        $stmt->execute($params);
+
+        $results = [
+            'items' => $stmt->fetchAll()
+        ];
+
+        return new JsonResponse($results);
+    }
+
+
 	/**
      * @Route("/fhs7/locations/{branch_id}/{all}", defaults={"all" = 0}, name="admin_ajax_locations")
      * @Template("TltAdmnBundle:Branch:index.html.twig")
@@ -518,17 +572,46 @@ class AjaxController extends Controller
     {
         $equipment_id = $request->request->get('equipment_id');
 
+//        $em = $this->getDoctrine()->getManager();
+//        $qb = $em->getRepository('TltAdmnBundle:Equipment')
+//            ->createQueryBuilder('eq')
+//            ->select('eq.name')
+//            ->where('eq.id = :id')
+//            ->setParameter('id', $equipment_id);
+//
+//
+//        $equipment	= $qb->getQuery()->getResult();
+
+        $rsm = new ResultSetMapping();
+
         $em = $this->getDoctrine()->getManager();
-        $qb = $em->getRepository('TltAdmnBundle:Equipment')
-            ->createQueryBuilder('eq')
-            ->select('eq.name')
-            ->where('eq.id = :id')
-            ->setParameter('id', $equipment_id);
 
+       $sqlQuery = "
+          SELECT
+              eq.id AS id,
+              eq.name AS `name`,
+              sv.name AS service,
+              lo.name AS location,
+              IFNULL(GROUP_CONCAT(pr.value),'') AS properties FROM equipments eq
+          LEFT JOIN services sv
+              ON sv.id = eq.service
+          LEFT JOIN zones_locations zl
+              ON zl.id = eq.zoneLocation
+          LEFT JOIN locations lo
+              ON lo.id = zl.location_id
+          LEFT JOIN properties_values pr
+              ON pr.equipment_id = eq.id
+          WHERE
+              eq.id=:id";
 
-        $equipment	= $qb->getQuery()->getResult();
+        $params = array('id' => $equipment_id);
 
-        return new JsonResponse($equipment);
+        $stmt = $em->getConnection()->prepare($sqlQuery);
+        $stmt->execute($params);
+
+        $results = $stmt->fetchAll();
+
+        return new JsonResponse($results);
     }
 
     /**

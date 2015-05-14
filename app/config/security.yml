@@ -75,6 +75,7 @@ security:
         - { path: ^/admin/systems/index, roles: ROLE_USER }
         - { path: ^/admin/index, roles: ROLE_USER }
         - { path: ^/admin/ajax, roles: ROLE_USER }
+        - { path: ^/admin/fhs7, roles: ROLE_USER }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/tickets/add, roles: ROLE_TICKET_INSERT }
         - { path: ^/tickets/add3, roles: ROLE_TICKET_INSERT }

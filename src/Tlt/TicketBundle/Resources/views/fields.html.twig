@@ -34,3 +34,7 @@
         {% endif %}
     {% endspaceless %}
 {% endblock form_errors %}
+
+{%- block checkbox_widget -%}
+    <label><input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />{% if label is defined %} {{ label }}{% endif %}</label>
+{%- endblock checkbox_widget -%}

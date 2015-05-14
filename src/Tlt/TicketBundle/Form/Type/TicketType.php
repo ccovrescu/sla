@@ -30,7 +30,8 @@ class TicketType extends AbstractType {
         if ($this->securityContext->isGranted('ROLE_TICKET_INSERT')) {
             $userBranches = $this->securityContext->getToken()->getUser()->getBranchesIds();
 
-            $builder->add(
+            $builder
+                ->add(
                 'announcedAt', 'datetime', array(
                     'date_widget' => "choice",
                     'time_widget' => "choice",
@@ -54,15 +55,6 @@ class TicketType extends AbstractType {
                     'property' => 'name',
                     'empty_value' => '-- Selectati --',
                     'label' => 'Mod de transmitere sesizare:'
-//                'transmissionType', 'choice', array(
-//                    'label' => 'Mod de transmitere sesizare:',
-//                    'empty_value' => '-- Selectati --',
-//                    'choices' => array(
-//                        'telefon' => 'telefon',
-//                        'direct' => 'direct',
-//                        'autosesizare' => 'autosesizare',
-//                        'adresa' => 'adresa'
-//                    )
                 ));
             $builder->add(
                 'announcedBy', 'text', array(
@@ -185,10 +177,9 @@ class TicketType extends AbstractType {
             $builder
                 ->add(
                     $builder
-                        ->create('equipment', 'text', array(
-                            'label' => 'Echipament',
-                            'read_only' => true,
-                            'required' => false,
+                        ->create('equipment', 'hidden', array(
+                            'label' => 'Echipament:',
+                            'required' => true,
                         ))
                         ->addModelTransformer($transformer)
                 );
@@ -303,6 +294,8 @@ class TicketType extends AbstractType {
                         'validation_groups' => array('not-real')
                     ));
                 }
+
+//                var_dump($data['equipment']);die();
 
                 $equipment_id = array_key_exists('equipment', $data) ? $data['equipment'] : null;
                 $ticket_id = ($form->getData()->getId() != null ? $form->getData()->getId() : null);
