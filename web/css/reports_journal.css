@@ -20,10 +20,11 @@
         margin: 0px;
     }
 
-    #wrapper {
+    #wrapper, #page-wrapper {
+        margin: 0;
         padding: 0;
+        border: none;
     }
-
 }
 
 @page
