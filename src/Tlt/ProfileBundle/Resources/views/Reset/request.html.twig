@@ -1,0 +1,31 @@
+{% extends 'TltProfileBundle::layout.html.twig' %}
+
+{% block bodyClass %}login-page{% endblock %}
+{% block messages %}
+    {% set messagesContent = parent() %}
+{% endblock messages %}
+
+{% block content %}
+    <form action="{{ path('tlt_profile_reset_send_email') }}" method="post" class="form-signin">
+        <div class="title-box">
+            <h1 class="oro-title logo-image">
+                <img src="{{ asset('css/tlt.png') }}" width="100px">
+            </h1>
+            <span class="divider-vertical"></span>
+            <h2 class="title">{{ 'V-ati uitat parola' }}</h2>
+        </div>
+        <fieldset class="oro-forgot-password">
+            {% if invalid_username is defined %}
+                <div class="alert alert-error">
+                    {{ 'Utilizatorul sau adresa de email "%username%" nu exista.'|trans({ '%username%': invalid_username }) }}
+                </div>
+            {% endif %}
+            {{ messagesContent }}
+            <input type="text" id="prependedInput" name="username" required="required" placeholder="{{ 'Utilizator sau Email'|trans }}" autofocus/>
+            <div class="form-row">
+                <a href="{{ path('tlt_profile_security_login') }}" class="btn btn-link">&laquo; {{ 'Întoarceti-va la Autentificare' }}</a>
+                <button type="submit" class="btn extra-submit btn-large btn-primary">{{ 'Solicită'|trans }}</button>
+            </div>
+        </fieldset>
+    </form>
+{% endblock %}

@@ -27,7 +27,7 @@
 
           <div class="container">
 
-          <form action="{{ path('login_check') }}" method="post" class="form-signin">
+          <form action="{{ path('tlt_profile_security_check') }}" method="post" class="form-signin">
               <div class="title-box">
                   <h1 class="oro-title logo-image">
                       <img src="{{ asset('css/tlt.png') }}" width="100px">
@@ -57,7 +57,7 @@
                   </label>
                   -->
                   <div class="control-group form-row">
-                      <!--<a href="#">Ati uitat parola?</a>-->
+                      <a href="{{ path('tlt_profile_reset_request') }}">V-ati uitat parola?</a>
                       <button type="submit" class="btn btn-large  btn-primary pull-right" id="_submit" name="_submit">Autentificare</button>
                   </div>
               </fieldset>

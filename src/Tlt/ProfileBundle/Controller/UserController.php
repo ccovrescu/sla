@@ -21,7 +21,7 @@ use Tlt\ProfileBundle\Form\Type\UserType;
 class UserController extends Controller
 {
     /**
-     * @Route("/user/index", name="profile_user_index")
+     * @Route("/user/index", name="tlt_profile_user_index")
      * @Template("TltProfileBundle:User:index.html.twig")
      */
     public function indexAction(Request $request)
@@ -133,23 +133,45 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/user/add", name="profile_user_add")
+     * @Route("/user/add", name="tlt_profile_user_add")
      * @Template("TltProfileBundle:User:add.html.twig")
      */
     public function addAction(Request $request)
     {
         $user = new User();
         $user->setStatus(true);
-        $user->setPassword('123456');
+        $user->setPlainPassword('123456');
         $form = $this->createForm( new UserType(), $user);
 
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+
+            $factory = $this->get('security.encoder_factory');
+            $encoder = $factory->getEncoder($user);
+
+            $user->setPassword($encoder->encodePassword($user->getPlainPassword(), $user->getSalt()));
+
             // perform some action, such as saving the task to the database
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
+
+
+            $mailer = $this->get('mailer');
+            $message = $mailer->createMessage()
+                ->setSubject('Utilizator nou')
+                ->setFrom('no-reply@teletrans.ro', 'Aplicatie SLA')
+                ->setTo($user->getEmail())
+                ->setBody(
+                    $this->renderView('TltProfileBundle:Mail:invitation.html.twig', array(
+                            'user' => $user
+                        )
+                    ),
+                    'text/html'
+                );
+
+            $mailer->send($message);
 
             return $this->redirect($this->generateUrl('profile_user_success', array('action'=>'add')));
         }

@@ -9734,7 +9734,7 @@ span.validation-failed:before {
 }
 
 .btn, .btn-group a, #main label, .oro-subtitle, .title, .ui-dialog-title, .btn-group .dropdown-menu button, .breadcrumb li {
-    text-transform: capitalize
+    #text-transform: capitalize
 }
 
 .pull-left-extra {

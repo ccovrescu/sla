@@ -58,7 +58,6 @@ class User implements UserInterface, \Serializable
      */
     private $emailNotification;
 
-
     /**
      * @ORM\ManyToMany(targetEntity="Tlt\AdmnBundle\Entity\Branch")
      * @ORM\JoinTable(name="users_branches",
@@ -106,12 +105,33 @@ class User implements UserInterface, \Serializable
      **/
     private $roluri;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="password_requested", type="datetime", nullable=true)
+     */
+    protected $passwordRequestedAt;
+
+    /**
+     * Random string sent to the user email address in order to verify it
+     *
+     * @var string
+     *
+     * @ORM\Column(name="confirmation_token", type="string", nullable=true)
+     */
+    protected $confirmationToken;
+
+    /**
+     * Plain password. Used for model validation. Must not be persisted.
+     *
+     * @var string
+     */
+    protected $plainPassword;
 
     public function __construct()
     {
-        // TODO: de implementat salt.
-//        $this->salt = md5(uniqid(null, true));
-        $this->salt = '';
+        $this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
+
         $this->branches = new ArrayCollection();
         $this->departments = new ArrayCollection();
         $this->owners = new ArrayCollection();
@@ -239,7 +259,7 @@ class User implements UserInterface, \Serializable
      */
     public function setPassword($password)
     {
-        $this->password = sha1($password);
+        $this->password = $password;
 
         return $this;
     }
@@ -552,5 +572,97 @@ class User implements UserInterface, \Serializable
     public function removeRoluri(Role $roluri)
     {
         $this->roluri->removeElement($roluri);
+    }
+
+    /**
+     * Gets the timestamp that the user requested a password reset.
+     *
+     * @return null|\DateTime
+     */
+    public function getPasswordRequestedAt()
+    {
+        return $this->passwordRequestedAt;
+    }
+
+    /**
+     * @param  \DateTime $time [optional] New password request time. Null by default.
+     *
+     * @return User
+     */
+    public function setPasswordRequestedAt(\DateTime $time = null)
+    {
+        $this->passwordRequestedAt = $time;
+
+        return $this;
+    }
+    public function isPasswordRequestNonExpired($ttl)
+    {
+        return $this->getPasswordRequestedAt() instanceof \DateTime
+        && $this->getPasswordRequestedAt()->getTimestamp() + $ttl > time();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getConfirmationToken()
+    {
+        return $this->confirmationToken;
+    }
+
+    /**
+     * Generate unique confirmation token
+     *
+     * @return string Token value
+     */
+    public function generateToken()
+    {
+        return base_convert(bin2hex(hash('sha256', uniqid(mt_rand(), true), true)), 16, 36);
+    }
+
+    /**
+     * Set confirmation token.
+     *
+     * @param  string $token
+     *
+     * @return User
+     */
+    public function setConfirmationToken($token)
+    {
+        $this->confirmationToken = $token;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * @param  string $password New password as plain string
+     *
+     * @return User
+     */
+    public function setPlainPassword($password)
+    {
+        $this->plainPassword = $password;
+
+        return $this;
+    }
+
+    /**
+     * Updates a user password if a plain password is set
+     */
+    public function updatePassword()
+    {
+        if (0 !== strlen($password = $this->getPlainPassword())) {
+            $encoder = $this->getEncoder($user);
+
+            $user->setPassword($encoder->encodePassword($password, $user->getSalt()));
+            $user->eraseCredentials();
+        }
     }
 }

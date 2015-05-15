@@ -72,7 +72,7 @@ swiftmailer:
     # trimite doar la adresa asta.
     delivery_address: cbradescu@teletrans.ro
     # true: NU mai trimite
-    disable_delivery:  true
+    disable_delivery:  false
 services:
     twig.extension.text:
         class: Twig_Extensions_Extension_Text

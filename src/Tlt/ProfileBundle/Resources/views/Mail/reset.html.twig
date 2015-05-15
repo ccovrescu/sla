@@ -1,0 +1,9 @@
+{% extends 'TltProfileBundle:Mail:layout.html.twig' %}
+
+{% block content %}
+    <h1>Buna ziua, {{ user.username }}!</h1>
+
+    {% set url = url('tlt_profile_reset_reset', { token: user.confirmationToken }) %}
+
+    <p>Pentru a va reseta parola - va rog accesati <a href="{{ url }}">{{ url }}</a></p>
+{% endblock %}

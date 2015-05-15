@@ -9,10 +9,12 @@ tlt_admn:
 tlt_ticket:
     resource: "@TltTicketBundle/Controller/DefaultController.php"
     type:   annotation
+    prefix:   /tickets
 tlt_profile:
     resource: "@TltProfileBundle/Controller/"
-    type: annotation
-login_check:
-    pattern:   /login_check
-logout:
-    path:     /logout
+    type:     annotation
+    prefix:   /profile
+#login_check:
+#    pattern:   /login_check
+#logout:
+#    path:     /logout

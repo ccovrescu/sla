@@ -1,0 +1,24 @@
+{% extends 'TltProfileBundle::layout.html.twig' %}
+
+{% block bodyClass %}login-page{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <form action="{{ path('tlt_profile_reset_reset', { token: token }) }}" {{ form_enctype(form) }} method="post" class="form-signin">
+            <div class="title-box">
+                <h1 class="oro-title logo-image">
+                    <img src="{{ asset('css/tlt.png') }}" width="100px">
+                </h1>
+                <span class="divider-vertical"></span>
+                <h2 class="title">{{ 'Resetare parola'|trans }}</h2>
+            </div>
+            <fieldset>
+                {{ form_widget(form) }}
+                <div>
+                    <button class="btn btn-large extra-submit btn-primary" type="submit">{{ 'Reseteaza'|trans }}</button>
+                    <a href="{{ path('tlt_profile_security_login') }}" class="btn btn-large extra-btn-large">{{ 'Renunta'|trans }}</a>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+{% endblock %}

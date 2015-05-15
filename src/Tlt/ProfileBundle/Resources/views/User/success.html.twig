@@ -17,11 +17,11 @@
         <button type="button" class="close" data-dismiss="alert">&times;</button>
 
         {% if action == 'add' %}
-            Actiunea de <strong>salvare</strong> s-a incheiat cu <strong>succes</strong>. Reveniti la lista <a href="{{ path('profile_user_index') }}"  class="alert-link">[ utilizatorilor ]</a>.
+            Actiunea de <strong>salvare</strong> s-a incheiat cu <strong>succes</strong>. Reveniti la lista <a href="{{ path('tlt_profile_user_index') }}"  class="alert-link">[ utilizatorilor ]</a>.
         {% elseif action == 'edit' %}
-            Actiunea de <strong>editare</strong> s-a incheiat cu <strong>succes</strong>. Reveniti la lista <a href="{{ path('profile_user_index') }}"  class="alert-link">[ utilizatorilor ]</a>.
+            Actiunea de <strong>editare</strong> s-a incheiat cu <strong>succes</strong>. Reveniti la lista <a href="{{ path('tlt_profile_user_index') }}"  class="alert-link">[ utilizatorilor ]</a>.
         {% elseif action == 'delete' %}
-            Actiunea de <strong>stergere</strong> s-a incheiat cu <strong>succes</strong>. Reveniti la lista <a href="{{ path('profile_user_index') }}"  class="alert-link">[ utilizatorilor ]</a>.
+            Actiunea de <strong>stergere</strong> s-a incheiat cu <strong>succes</strong>. Reveniti la lista <a href="{{ path('tlt_profile_user_index') }}"  class="alert-link">[ utilizatorilor ]</a>.
         {% elseif action == 'chpwd' %}
                 Actiunea de <strong>schimbare a parolei</strong> s-a incheiat cu <strong>succes</strong>.
         {% endif %}

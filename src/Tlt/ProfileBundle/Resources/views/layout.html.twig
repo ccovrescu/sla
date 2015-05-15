@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+        <title>Teletrans - Aplicatie SLA</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- Bootstrap core CSS -->
+        <link href="{{ asset('bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+
+        <!-- Add custom CSS here -->
+        <link href="{{ asset('css/catalin.css' ) }}" rel="stylesheet">
+
+        <!-- Custom Fonts -->
+        <link href="{{ asset('bower_components/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+    {% endblock %}
+</head>
+<body class="desktop-version login-page">
+<div id="page">
+    <div id="top-page">
+        {% set messagesContent %}
+        {% if app.session.flashbag.peekAll|length > 0 %}
+            {% for type, messages in app.session.flashbag.all %}
+                {% for message in messages %}
+                    <div class="alert{{ type ? ' alert-'~type : '' }}">
+                        {{ message|trans|raw }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+        {% endset %}
+
+        {% block messages %}
+            {{ messagesContent }}
+        {% endblock %}
+
+        {% block header %}
+        {% endblock header %}
+
+        {% block main %}
+            {% block content %}
+            {% endblock content %}
+        {% endblock main %}
+    </div>
+</div>
+</body>
+</html>

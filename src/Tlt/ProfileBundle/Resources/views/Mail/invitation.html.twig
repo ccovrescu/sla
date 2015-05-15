@@ -1,0 +1,14 @@
+{% extends 'TltProfileBundle:Mail:layout.html.twig' %}
+
+{% block content %}
+    <h1>Buna ziua, {{ user.firstname ~ ' ' ~ user.lastname }}!</h1>
+    <p>Un utilizator nou a fost creat pentru dumneavoastra
+        in <a href="{{ url('homepage') }}">Aplicatie SLA - Teletrans</a>
+    </p>
+    <p>Va rugam folositi urmatoarele credentiale pentru autentificare:</p>
+    <p></p>
+    <p><strong>Utilizator:</strong> {{ user.username }}</p>
+    <p><strong>Parola:</strong> {{ user.plainPassword }}</p>
+    <p></p>
+    <p><strong>Va recomandam insistent sa schimbati parola dupa autentificare.</strong></p>
+{% endblock %}

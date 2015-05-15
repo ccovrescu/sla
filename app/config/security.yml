@@ -1,6 +1,7 @@
 security:
     encoders:
-        #Symfony\Component\Security\Core\User\User: plaintext
+#        Tlt\ProfileBundle\Entity\User: sha512
+#        Symfony\Component\Security\Core\User\User: plaintext
         Tlt\ProfileBundle\Entity\User:
             algorithm:        sha1
             encode_as_base64: false
@@ -30,32 +31,23 @@ security:
             security: false
 
         login:
-            pattern:  ^/demo/secured/login$
+            pattern:  ^/profile/(login|reset-request|send-email|check-email)$
             security: false
+
+        reset_password:
+            pattern:    ^/profile/reset/*
+            security:  false
 
         secured_area:
             pattern:    ^/
             anonymous: ~
             form_login:
-                login_path:  login
-                check_path:  login_check
+                login_path:  tlt_profile_security_login
+                check_path:  tlt_profile_security_check
             logout:
-                path:   /logout
+                path:   tlt_profile_security_logout
                 target: /
-        #secured_area:
-            #pattern:    ^/demo/secured/
-            #form_login:
-                #check_path: _security_check
-                #login_path: _demo_login
-            #logout:
-                #path:   _demo_logout
-                #target: _demo
-            #anonymous: ~
-            #http_basic:
-            #    realm: "Secured Demo Area"
-
     access_control:
-        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/owners/index, roles: ROLE_USER }
         - { path: ^/admin/branches/index, roles: ROLE_USER }
         - { path: ^/admin/locations/index, roles: ROLE_USER }
