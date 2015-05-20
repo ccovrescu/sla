@@ -10,6 +10,7 @@ use Tlt\AdmnBundle\Entity\System;
 use Tlt\AdmnBundle\Entity\Choose;
 use Tlt\AdmnBundle\Form\Type\ChooseType;
 use Tlt\AdmnBundle\Form\Type\SystemType;
+use Tlt\MainBundle\Model\TimeCalculation;
 
 class SystemController extends Controller
 {
@@ -135,10 +136,13 @@ class SystemController extends Controller
             ->getRepository('TltAdmnBundle:System')
             ->getIndisponibleTime('2015-01-01', '2015-06-30', $system);
 
+        $currentPeriodIndiponibleTime = TimeCalculation::getSystemTotalWorkingTime($system, new \DateTime('2015-01-01'), new \DateTime('2015-06-30'));
+
         return array(
             'system' => $system,
             'unitsNo' => $unitsNo,
-            'indisponibleTime' => $indisponibleTime
+            'indisponibleTime' => $indisponibleTime,
+            'currentPeriodIndiponibleTime' => $currentPeriodIndiponibleTime
         );
     }
 

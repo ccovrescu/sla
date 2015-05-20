@@ -113,7 +113,7 @@
                             <td>{{ ticket.announcedAt|date('d.m.Y H:i') }}</td>
                             <td>{{ ticket.fixedAt|date('d.m.Y H:i') }}</td>
                             <td>{{ ticket.fixedMode }}</td>
-                            <td class="text-right">{{ ticket.fixedAt.diff(ticket.announcedAt)|date('%h:%i') }}</td>
+                            <td class="text-right">{{ ticket.fixedAt.diff(ticket.announcedAt)|date('%h:%I') }}</td>
                             <td class="text-center">
                                 {% if ticket.isReal==1 and ticket.backupSolution.id==2 %}
                                     <i class="fa fa-check text-danger"></i>

@@ -3,6 +3,7 @@ namespace Tlt\AdmnBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
+use Tlt\MainBundle\Model\TimeCalculation;
 
 class SystemRepository extends EntityRepository
 {
@@ -149,6 +150,8 @@ class SystemRepository extends EntityRepository
 		$end	= new \DateTime($endMoment);
 		$interval	=	$start->diff($end);
         $periodMinutes = $interval->format("%a")*24*60 + $interval->format("%i");
+
+        $periodMinutes = TimeCalculation::getSystemTotalWorkingTime($system, $start, $end);
 
         $indisponibleTime = $this->getIndisponibleTime($startMoment, $endMoment, $system);
         $globalUnitsNo = $this->getGlobalUnitsNo($system);
