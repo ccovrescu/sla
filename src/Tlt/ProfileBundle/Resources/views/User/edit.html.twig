@@ -1,11 +1,13 @@
 {% extends '::base.html.twig' %}
 
+{% form_theme form 'TltTicketBundle::fields.html.twig' %}
+
 {% block page %}
     <div class="row">
         <div class="col-lg-12">
             <h1>Utilizatori <small>Editare</small></h1>
             <ol class="breadcrumb">
-                <li><a href="{{ path('profile_user_index') }}"><i class="icon-dashboard"></i> Utilizatori</a></li>
+                <li><a href="{{ path('tlt_profile_user_index') }}"><i class="icon-dashboard"></i> Utilizatori</a></li>
                 <li class="active"><i class="icon-file-alt"></i> Editare</li>
             </ol>
         </div>
@@ -48,8 +50,9 @@
             {{ form_label(form.emailNotification) }}
             {% for notif in form.emailNotification %}
                 <div class="radio">
-                    {{ form_label(notif) }}
-                    {{ form_widget(notif) }}
+                    {#{ form_label(notif) }#}
+                    {#{ form_widget(notif) }#}
+                    <label>{{ form_widget(notif) }} {{ notif.vars.label }} </label>
                 </div>
             {% endfor %}
         </div>
@@ -62,10 +65,10 @@
                 {% for dep in form.departments %}
                     <div class="checkbox">
                         {% if is_granted('ROLE_ADMIN') %}
-                            {{ form_label(dep) }}
+                            {#{ form_label(dep) }#}
                             {{ form_widget(dep) }}
                         {% else %}
-                            {{ form_label(dep) }}
+                            {#{ form_label(dep) }#}
                             {{ form_widget(dep, {'attr' : {'disabled':'disabled'} }) }}
                         {% endif %}
                     </div>
@@ -78,10 +81,10 @@
                 {% for branch in form.branches %}
                         <div class="checkbox">
                             {% if is_granted('ROLE_ADMIN') %}
-                                {{ form_label(branch) }}
+                                {#{ form_label(branch) }#}
                                 {{ form_widget(branch) }}
                             {% else %}
-                                {{ form_label(branch) }}
+                                {#{ form_label(branch) }#}
                                 {{ form_widget(branch, {'attr' : {'disabled':'disabled'} }) }}
                             {% endif %}
                         </div>
@@ -94,10 +97,10 @@
                 {% for role in form.roluri %}
                     <div class="checkbox">
                         {% if is_granted('ROLE_ADMIN') %}
-                            {{ form_label(role) }}
+                            {#{ form_label(role) }#}
                             {{ form_widget(role) }}
                         {% else %}
-                            {{ form_label(role) }}
+                            {#{ form_label(role) }#}
                             {{ form_widget(role, {'attr' : {'disabled':'disabled'} }) }}
                         {% endif %}
                     </div>
@@ -111,10 +114,10 @@
                 {% for owner in form.owners %}
                     <div class="checkbox">
                         {% if is_granted('ROLE_ADMIN') %}
-                            {{ form_label(owner) }}
+                            {#{ form_label(owner) }#}
                             {{ form_widget(owner) }}
                         {% else %}
-                            {{ form_label(owner) }}
+                            {#{ form_label(owner) }#}
                             {{ form_widget(owner, {'attr' : {'disabled':'disabled'} }) }}
                         {% endif %}
                     </div>

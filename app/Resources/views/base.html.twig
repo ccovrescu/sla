@@ -135,9 +135,11 @@
                             <li>
                                 <a href="{{ path('admin_sts_index') }}">Mapari sisteme - servicii</a>
                             </li>
-                            <li>
-                                <a href="{{ path('tlt_profile_user_index') }}">Utilizatori</a>
-                            </li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li>
+                                    <a href="{{ path('tlt_profile_user_index') }}">Utilizatori</a>
+                                </li>
+                            {% endif %}
                         </ul>
                         <!-- /.nav-second-level -->
                     </li>
@@ -149,6 +151,11 @@
                             <li>
                                 <a href="{{ path('reports_journal') }}">Jurnal tichete</a>
                             </li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li>
+                                    <a href="{{ path('reports_sla') }}">SLA</a>
+                                </li>
+                            {% endif %}
                         </ul>
                     </li>
                 {% endif %}

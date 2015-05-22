@@ -3,6 +3,7 @@ namespace Tlt\AdmnBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
+
 use Tlt\MainBundle\Model\TimeCalculation;
 
 class SystemRepository extends EntityRepository
@@ -162,4 +163,39 @@ class SystemRepository extends EntityRepository
 		
 		return $disponibility;
 	}
+
+    public function SLA() {
+        $qb	=	$this->getEntityManager()->createQueryBuilder();
+
+        $qb
+            ->select(
+                array(
+                    'sys.id AS system_id',
+                    'sys.name',
+                    'mp.id',
+                    'tm.id',
+                    'tk.id',
+                    'ta.id',
+                    'SUM(tm.resolvedIn)',
+                    'MAX(ta.insertedAt)'
+                )
+            )
+            ->from('TltAdmnBundle:System', 'sys')
+            ->leftJoin('sys.mappings', 'mp')
+            ->leftJoin('mp.ticketMapping', 'tm')
+            ->leftJoin('tm.ticket', 'tk')
+            ->leftJoin('tk.ticketAllocations', 'ta')
+            ->where('tk.isReal=1')
+            ->andWhere('tk.backupSolution=2')
+            ->groupBy('ta.ticket')
+            ->addGroupBy('sys.id');
+
+        var_dump($qb->getQuery()->getSQL());die();
+
+        try {
+            return $qb->getQuery()->getResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            return null;
+        }
+    }
 }

@@ -67,6 +67,31 @@ class ReportsController extends Controller
         );
     }
 
+
+    /**
+     * @Route("/sla", name="reports_sla")
+     * @Template()
+     */
+    public function slaAction(Request $request) {
+        ini_set('max_execution_time', 300);
+        $journalFilters = new JournalFilters();
+
+        $journalFilters->setStart($this->setStartDate());
+        $journalFilters->setEnd($this->setEndDate());
+
+        $form = $this->createForm(
+            new JournalFiltersType($this->get('security.context')),
+            $journalFilters
+        );
+
+        $form->handleRequest($request);
+
+        return array(
+            'form'      => $form->createView(),
+            'systems'   => array()
+        );
+    }
+
     private function setStartDate()
     {
         return new \DateTime(date( 'd.m.Y', mktime(0,0,0, (date('m'<=6) ? 1 : 7), 1, date('Y'))));
