@@ -132,10 +132,10 @@
                             <li>
                                 <a href="{{ path('admin_systems_index') }}">Sisteme</a>
                             </li>
-                            <li>
-                                <a href="{{ path('admin_sts_index') }}">Mapari sisteme - servicii</a>
-                            </li>
                             {% if is_granted('ROLE_ADMIN') %}
+                                <li>
+                                    <a href="{{ path('admin_sts_index') }}">Mapari sisteme - servicii</a>
+                                </li>
                                 <li>
                                     <a href="{{ path('tlt_profile_user_index') }}">Utilizatori</a>
                                 </li>
