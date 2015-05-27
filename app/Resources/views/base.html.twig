@@ -164,7 +164,9 @@
                         </ul>
                     </li>
                 {% endif %}
-                <li><a href="{{ path('main_bundle_systems_disponibility') }}"><i class="fa fa-bar-chart-o"></i> Disponibilitate sisteme</a></li>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li><a href="{{ path('main_bundle_systems_disponibility') }}"><i class="fa fa-bar-chart-o"></i> Disponibilitate sisteme</a></li>
+                {% endif %}
             </ul>
         </div>
         <!-- /.sidebar-collapse -->
