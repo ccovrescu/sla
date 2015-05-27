@@ -56,7 +56,7 @@ class SystemRepository extends EntityRepository
 	/**
 	 * Intoarce numarul total de unitati al unui sistem.
 	 */
-	public function getGlobalUnitsNo($system)
+	public function getGlobalUnitsNo($system_id, $owner_id = null)
 	{
 		$rsm = new ResultSetMapping();
 
@@ -71,12 +71,14 @@ class SystemRepository extends EntityRepository
 				equipments e
 				ON e.id=m.equipment
 			WHERE
-				m.system=?
+				m.system=$system_id" .
+
+            ($owner_id != null ? " AND e.owner=$owner_id " : "")
+
+            . "
 			GROUP BY
 				m.system", $rsm
 		);   
-
-		$query->setParameter(1, $system);
 
 		try {
 			return (int) current($query->getSingleResult());

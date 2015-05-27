@@ -92,8 +92,14 @@
                         </thead>
                         <tbody>
                         {% for system in systems %}
-                            {% set r_disp = (1-system.indisponible_time/system.total_time)*100 %}
-                            {% set ru_disp = (1-system.indisponible_time/system.total_time/system.units_no)*100 %}
+
+                            {% if system.units_no>0 %}
+                                {% set r_disp = (1-system.indisponible_time/system.total_time)*100 %}
+                                {% set ru_disp = (1-system.indisponible_time/system.total_time/system.units_no)*100 %}
+                            {% else %}
+                                {% set r_disp = 0 %}
+                                {% set ru_disp = 0 %}
+                            {% endif %}
 
                             <tr>
                                 <td>{{ loop.index }}</td>
@@ -102,7 +108,7 @@
                                 <td class="text-right text-primary">{{ system.total_time }}</td>
                                 <td class="text-right text-primary">{{ system.g_disp|number_format(2) }}</td>
                                 <td class="text-right text-warning">{{ system.indisponible_time }}</td>
-                                <td class="text-right text-warning">{{ system.units_no }}</td>
+                                <td class="text-right text-warning">{{ system.units_no|number_format(0,',','.') }}</td>
                                 <td class="text-right {{ (r_disp<system.g_disp ? 'text-danger text' : 'text-success') }}">{{ r_disp|number_format(2) }}</td>
                                 <td class="text-right {{ (ru_disp<system.g_disp ? 'text-danger' : 'text-success') }}">{{ ru_disp|number_format(2) }}</td>
                             </tr>

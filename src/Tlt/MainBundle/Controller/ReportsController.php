@@ -107,7 +107,7 @@ class ReportsController extends Controller
                 $system = $this->getDoctrine()->getRepository('TltAdmnBundle:System')->findOneById($sys['id']);
                 $workingTime = $system->getGuaranteedValues()->first()->getWorkingTime();
 
-                $units_no = $this->getDoctrine()->getRepository('TltAdmnBundle:System')->getGlobalUnitsNo($sys['id']);
+                $units_no = $this->getDoctrine()->getRepository('TltAdmnBundle:System')->getGlobalUnitsNo($sys['id'], $journalFilters->getOwner()->getId());
                 $sys['units_no'] = $units_no;
 
 
