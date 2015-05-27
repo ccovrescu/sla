@@ -136,7 +136,10 @@ class SystemController extends Controller
             ->getRepository('TltAdmnBundle:System')
             ->getIndisponibleTime('2015-01-01', '2015-06-30', $system);
 
-        $currentPeriodIndiponibleTime = TimeCalculation::getSystemTotalWorkingTime($system, new \DateTime('2015-01-01'), new \DateTime('2015-06-30'));
+        $workingTime = $system->getGuaranteedValues()->first()->getWorkingTime();
+
+//        $currentPeriodIndiponibleTime = TimeCalculation::getSystemTotalWorkingTime($system, new \DateTime('2015-01-01'), new \DateTime('2015-06-30'));
+        $currentPeriodIndiponibleTime = TimeCalculation::getSystemTotalWorkingTime($workingTime, new \DateTime('2015-01-01'), new \DateTime('2015-06-30'));
 
         return array(
             'system' => $system,

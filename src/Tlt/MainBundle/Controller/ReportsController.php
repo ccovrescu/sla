@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Tlt\MainBundle\Form\Model\JournalFilters;
 use Tlt\MainBundle\Form\Type\JournalFiltersType;
+use Tlt\MainBundle\Form\Model\SlaFilters;
+use Tlt\MainBundle\Form\Type\SlaFiltersType;
+use Tlt\MainBundle\Model\TimeCalculation;
 
 /**
  * @Route("/reports")
@@ -73,22 +76,131 @@ class ReportsController extends Controller
      * @Template()
      */
     public function slaAction(Request $request) {
-        ini_set('max_execution_time', 300);
-        $journalFilters = new JournalFilters();
+        $journalFilters = new SlaFilters();
 
         $journalFilters->setStart($this->setStartDate());
         $journalFilters->setEnd($this->setEndDate());
 
         $form = $this->createForm(
-            new JournalFiltersType($this->get('security.context')),
+            new SlaFiltersType($this->get('security.context')),
             $journalFilters
         );
 
         $form->handleRequest($request);
 
+        if ($form->isValid()) {
+            $systems = $this->getDoctrine()->getRepository('TltAdmnBundle:System')->SLA(
+                $journalFilters->getOwner()->getId(),
+                ($journalFilters->getDepartment() != null ? $journalFilters->getDepartment()->getId() : null),
+                $journalFilters->getStart()->format('Y-m-d'),
+                $journalFilters->getEnd()->format('Y-m-d'),
+                $journalFilters->getIsClosed()
+            );
+
+            $startDate = new \DateTime('2015-01-01');
+            $endDate = new \DateTime('2015-06-30');
+
+
+            $totalWorkingTimeInSemester = array();
+
+            foreach ($systems as &$sys) {
+                $system = $this->getDoctrine()->getRepository('TltAdmnBundle:System')->findOneById($sys['id']);
+                $workingTime = $system->getGuaranteedValues()->first()->getWorkingTime();
+
+                $units_no = $this->getDoctrine()->getRepository('TltAdmnBundle:System')->getGlobalUnitsNo($sys['id']);
+                $sys['units_no'] = $units_no;
+
+
+                if (array_key_exists(
+                    $workingTime->getId(),
+                    $totalWorkingTimeInSemester
+                )) {
+                    $sys['total_time'] = $totalWorkingTimeInSemester[$workingTime->getId()];
+                } else {
+                    $time = TimeCalculation::getSystemTotalWorkingTime($workingTime, $startDate, $endDate);
+
+                    $totalWorkingTimeInSemester[$workingTime->getId()] = $time;
+                    $sys['total_time'] = $time;
+                }
+            }
+
+        } else {
+            $systems = array();
+        }
+
         return array(
             'form'      => $form->createView(),
-            'systems'   => array()
+            'systems'   => $systems
+        );
+    }
+
+    /**
+     * @Route("/indisponibility", name="tlt_main_reports_indisponibility")
+     * @Template()
+     */
+    public function indisponibilityAction(Request $request) {
+        $filters = new SlaFilters();
+
+        $filters->setStart($this->setStartDate());
+        $filters->setEnd($this->setEndDate());
+
+        $form = $this->createForm(
+            new SlaFiltersType($this->get('security.context')),
+            $filters
+        );
+
+        $form->remove('owner');
+        $form->remove('is_closed');
+
+        $form->handleRequest($request);
+
+        $owners = $this->getDoctrine()
+            ->getRepository('TltAdmnBundle:Owner')
+            ->findAll();
+
+        $returnedSystems = array();
+
+        if ($form->isValid()) {
+
+            if ($filters->getDepartment() == null) {
+                $systems = $this->getDoctrine()
+                    ->getRepository('TltAdmnBundle:System')
+                    ->findAll();
+            } else {
+                $systems = $this->getDoctrine()
+                    ->getRepository('TltAdmnBundle:System')
+                    ->findBy(
+                        array(
+                            'department' => $filters->getDepartment()
+                        )
+                    );
+            }
+
+            foreach ($systems as $system)
+            {
+                $currentSystemReturnedValues = $this->getDoctrine()->getRepository('TltAdmnBundle:System')->getDisponibilitiesForSystem( $system->getId(), $filters->getStart(), $filters->getEnd() );
+                $currentSystemReturnedValuesFinal = $currentSystemAllValues = array();
+                foreach ($currentSystemReturnedValues as $currentSystemReturnedValue)
+                {
+                    $currentSystemReturnedValuesFinal[$currentSystemReturnedValue['owner']] = $currentSystemReturnedValue['indisponibility'];
+                }
+
+                foreach ($owners as $owner) {
+                    if ( array_key_exists($owner->getId(), $currentSystemReturnedValuesFinal)) {
+                        $currentSystemAllValues[$owner->getId()] = $currentSystemReturnedValuesFinal[$owner->getId()];
+                    } else {
+                        $currentSystemAllValues[$owner->getId()] = 0;
+                    }
+                }
+
+                $returnedSystems[$system->getName()] = $currentSystemAllValues;
+            }
+        }
+
+        return array(
+            'form'      => $form->createView(),
+            'owners'    => $owners,
+            'systems'   => $returnedSystems
         );
     }
 

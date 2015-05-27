@@ -151,9 +151,14 @@
                             <li>
                                 <a href="{{ path('reports_journal') }}">Jurnal tichete</a>
                             </li>
-                            {% if is_granted('ROLE_ADMIN') %}
+                            {% if is_granted('ROLE_SLA') %}
                                 <li>
                                     <a href="{{ path('reports_sla') }}">SLA</a>
+                                </li>
+                            {% endif %}
+                            {% if is_granted('ROLE_SUPER_SLA') %}
+                                <li>
+                                    <a href="{{ path('tlt_main_reports_indisponibility') }}">Indisponibilitate Entitati</a>
                                 </li>
                             {% endif %}
                         </ul>

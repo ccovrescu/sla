@@ -12,7 +12,8 @@ security:
         ROLE_TICKET_CLOSE: [ROLE_TICKET_SOLVE]
         ROLE_ALLOWED_TO_EDIT_EQUIPMENTS: [ROLE_USER]
         ROLE_ADMIN: [ROLE_ALLOWED_TO_EDIT_EQUIPMENTS, ROLE_TICKET_INSERT]
-        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN]
+        ROLE_SUPER_SLA: [ROLE_SLA]
 
     providers:
         #in_memory:
@@ -78,6 +79,8 @@ security:
         - { path: ^/profile/user/details, roles: ROLE_USER }
         - { path: ^/profile/user/chpwd, roles: ROLE_USER }
         - { path: ^/profile/user, roles: ROLE_ADMIN }
+        - { path: ^/reports/sla, roles: ROLE_SLA }
+        - { path: ^/reports/indisponibility, roles: ROLE_SUPER_SLA }
         - { path: ^/, roles: ROLE_USER }
         # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
     access_denied_url: /denied

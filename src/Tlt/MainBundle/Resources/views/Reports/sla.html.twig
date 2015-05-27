@@ -3,6 +3,12 @@
 {% form_theme form 'TltTicketBundle::fields.html.twig' %}
 
 {% block page %}
+    <style type="text/css">
+        .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
+            font-size: 11px;
+        }
+    </style>
+
     <div class="row no-print">
         <div class="col-lg-12">
             <h1>SLA</h1>
@@ -42,7 +48,13 @@
         </div>
     </div>
     <div class="row no-print">
-        <div class="col-lg-12">
+        <div class="col-lg-4">
+            <div class="form-group">
+                {#{ form_label(form.is_closed) }#}
+                {{ form_widget(form.is_closed) }}
+            </div>
+        </div>
+        <div class="col-lg-8">
             <div class="text-right">
                 <div class="form-group">
                     <br/>
@@ -55,10 +67,54 @@
     {{ form_rest(form) }}
     {{ form_end(form) }}
 
-    <table>
-    {% for system in systems %}
-        <tr>
-        </tr>
-    {% endfor %}
-    </table>
+    <div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Raport realizare SLA
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nr. Crt.<br/>&nbsp;</th>
+                                <th>Serviciu / echipament / aplicatie</th>
+                                <th class="text-center">Program orar<br/><br/>&nbsp;</th>
+                                <th class="text-right">Timp maxim de functionare</th>
+                                <th class="text-right">Disponibilitate contractata<br/>&nbsp;</th>
+                                <th class="text-right">Timp total de indisponibilitate<br/>&nbsp;</th>
+                                <th class="text-right">Unitati<br/>&nbsp;</th>
+                                <th>Disponibilitate realizata fara unitati</th>
+                                <th>Disponibilitate realizata cu unitati</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for system in systems %}
+                            {% set r_disp = (1-system.indisponible_time/system.total_time)*100 %}
+                            {% set ru_disp = (1-system.indisponible_time/system.total_time/system.units_no)*100 %}
+
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ system.name }}</td>
+                                <td nowrap>{{ system.min_hour }} - {{ system.max_hour }}</td>
+                                <td class="text-right text-primary">{{ system.total_time }}</td>
+                                <td class="text-right text-primary">{{ system.g_disp|number_format(2) }}</td>
+                                <td class="text-right text-warning">{{ system.indisponible_time }}</td>
+                                <td class="text-right text-warning">{{ system.units_no }}</td>
+                                <td class="text-right {{ (r_disp<system.g_disp ? 'text-danger text' : 'text-success') }}">{{ r_disp|number_format(2) }}</td>
+                                <td class="text-right {{ (ru_disp<system.g_disp ? 'text-danger' : 'text-success') }}">{{ ru_disp|number_format(2) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.table-responsive -->
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-6 -->
 {% endblock %}

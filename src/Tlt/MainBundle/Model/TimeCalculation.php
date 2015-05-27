@@ -13,10 +13,15 @@ class TimeCalculation {
      *
      * @return integer
      */
-    public static function getSystemTotalWorkingTime($system, $startDate, $endDate) {
-        $guaranteedValue = $system->getGuaranteedValues()->first();
-        $startWorkingTime = $guaranteedValue->getMinHour()->format('H:i:s');
-        $endWorkingTime = $guaranteedValue->getMaxHour()->format('H:i:s');
+    public static function getSystemTotalWorkingTime(/*$system,*/ $workingTime, $startDate, $endDate) {
+//        $guaranteedValue = $system->getGuaranteedValues()->first();
+//        $startWorkingTime = $guaranteedValue->getMinHour()->format('H:i:s');
+//        $endWorkingTime = $guaranteedValue->getMaxHour()->format('H:i:s');
+
+
+        $startWorkingTime = $workingTime->getMinHour()->format('H:i:s');
+        $endWorkingTime = $workingTime->getMaxHour()->format('H:i:s');
+
 
         if (!defined('ONEMINUTE'))
             define ('ONEMINUTE', 60);

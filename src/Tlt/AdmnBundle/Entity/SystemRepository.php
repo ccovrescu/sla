@@ -3,6 +3,7 @@ namespace Tlt\AdmnBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\ORM\NoResultException;
 
 use Tlt\MainBundle\Model\TimeCalculation;
 
@@ -79,7 +80,7 @@ class SystemRepository extends EntityRepository
 
 		try {
 			return (int) current($query->getSingleResult());
-		} catch (Doctrine\ORM\NoResultException $e) {
+		} catch (NoResultException $e) {
 			return null;
 		}
 	}
@@ -152,50 +153,127 @@ class SystemRepository extends EntityRepository
 		$interval	=	$start->diff($end);
         $periodMinutes = $interval->format("%a")*24*60 + $interval->format("%i");
 
-        $periodMinutes = TimeCalculation::getSystemTotalWorkingTime($system, $start, $end);
+        $periodMinutes = TimeCalculation::getSystemTotalWorkingTime($system->getGuaranteedValues()->first()->getWorkingTime(), $start, $end);
 
         $indisponibleTime = $this->getIndisponibleTime($startMoment, $endMoment, $system);
         $globalUnitsNo = $this->getGlobalUnitsNo($system);
 
         $disponibility = round((1 - $indisponibleTime/$periodMinutes/$globalUnitsNo)*100, 2);
 
-//        echo $system->getName() . ' ind:' . $indisponibleTime . ' minute:' . $periodMinutes . ' ' . $globalUnitsNo . ' ' .$disponibility . '<br>';
-		
 		return $disponibility;
 	}
 
-    public function SLA() {
-        $qb	=	$this->getEntityManager()->createQueryBuilder();
+    public function SLA($owner, $department, $start, $end, $isClosed) {
+        $rsm = new ResultSetMapping();
 
-        $qb
-            ->select(
-                array(
-                    'sys.id AS system_id',
-                    'sys.name',
-                    'mp.id',
-                    'tm.id',
-                    'tk.id',
-                    'ta.id',
-                    'SUM(tm.resolvedIn)',
-                    'MAX(ta.insertedAt)'
-                )
-            )
-            ->from('TltAdmnBundle:System', 'sys')
-            ->leftJoin('sys.mappings', 'mp')
-            ->leftJoin('mp.ticketMapping', 'tm')
-            ->leftJoin('tm.ticket', 'tk')
-            ->leftJoin('tk.ticketAllocations', 'ta')
-            ->where('tk.isReal=1')
-            ->andWhere('tk.backupSolution=2')
-            ->groupBy('ta.ticket')
-            ->addGroupBy('sys.id');
+        $rsm->addScalarResult('id', 'id');
+        $rsm->addScalarResult('name', 'name');
+        $rsm->addScalarResult('min_hour', 'min_hour');
+        $rsm->addScalarResult('max_hour', 'max_hour');
+        $rsm->addScalarResult('g_disp', 'g_disp');
+        $rsm->addScalarResult('indisponible_time', 'indisponible_time');
 
-        var_dump($qb->getQuery()->getSQL());die();
+        $query = $this->_em->createNativeQuery(
+            "
+                SELECT
+                  s.id,
+                  s.name,
+                  gv.min_hour,
+                  gv.max_hour,
+                  gv.value AS g_disp,
+                  IFNULL(times.indisponible_time,0) AS indisponible_time
+                FROM
+                  systems s
+                  LEFT JOIN
+                    (SELECT
+                      mp.system AS system_id,
+                      SUM(ttm.resolved_in) AS indisponible_time
+                    FROM
+                      tickets_ticket_mapping ttm
+                      LEFT JOIN tickets t
+                        ON t.id = ttm.ticket_id
+                      LEFT JOIN mappings mp
+                        ON mp.id = ttm.mapping_id
+                      LEFT JOIN equipments eq
+                        ON eq.id=t.equipment_id
+                    WHERE t.is_real = 1
+                      AND t.backup_solution = 2
+                      AND t.fixed_at BETWEEN '$start' AND '$end'
+                      " .
+                        ($isClosed == 1 ? ' AND t.is_closed = 1 ' : ' ')
+                        . "
+                      AND eq.owner = $owner
+                    GROUP BY mp.system) times
+                    ON times.system_id = s.id
+                    LEFT JOIN
+                    guaranteed_values gv
+                    ON gv.system=s.id
+                    " .
+                    ((!is_null($department) and !empty($department)) ? " WHERE s.department=$department" : " ")
+                    . "
+                ORDER BY s.department,
+                  s.name
+              ",
+            $rsm
+        );
+
+
 
         try {
-            return $qb->getQuery()->getResult();
+            return $query->getResult();
         } catch (\Doctrine\ORM\NoResultException $e) {
             return null;
         }
+    }
+
+    /**
+     * Intoarce indisponibilitatile dintr-un sistem anume, pentru toate entitatile care au date.
+     *
+     * @param null $system_id
+     * @param null $start
+     * @param null $end
+     * @return array|null
+     */
+    public function getDisponibilitiesForSystem($system_id = null, $start = null, $end = null)
+    {
+        if ($system_id != null && $start != null && $end != null) {
+            $start = $start->format('Y-m-d');
+            $end = $end->format('Y-m-d');
+
+            $rsm = new ResultSetMapping();
+
+            $rsm->addScalarResult('owner', 'owner');
+            $rsm->addScalarResult('indisponibility', 'indisponibility');
+
+            $query = $this->_em->createNativeQuery(
+                "
+                SELECT
+                  eq.owner,
+                  SUM(ttm.resolved_in) AS indisponibility
+                FROM
+                  tickets_ticket_mapping ttm
+                  LEFT JOIN mappings mp
+                    ON mp.id = ttm.mapping_id
+                  LEFT JOIN tickets t
+                    ON t.id = ttm.ticket_id
+                  LEFT JOIN equipments eq
+                    ON eq.id = t.equipment_id
+                WHERE
+                  mp.system = $system_id
+                  AND t.is_real=1
+                  AND t.backup_solution=2
+                  AND t.fixed_at BETWEEN '$start' AND '$end'
+                GROUP BY eq.owner
+                ",
+                $rsm);
+
+            try {
+                return $query->getScalarResult();
+            } catch (NoResultException $e) {
+                return null;
+            }
+        }
+
+        return null;
     }
 }

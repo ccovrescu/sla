@@ -32,7 +32,13 @@ class GuaranteedValue
      * @ORM\ManyToOne(targetEntity="System", inversedBy="guaranteedValues")
 	 * @ORM\JoinColumn(name="system", referencedColumnName="id")
      */	 
-    private $system;	
+    private $system;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="WorkingTime", inversedBy="guaranteedValues")
+     * @ORM\JoinColumn(name="workingTime", referencedColumnName="id")
+     */
+    private $workingTime;
 	
 	/**
 	 * @var \time
@@ -88,11 +94,35 @@ class GuaranteedValue
     /**
      * Get system
      *
-     * @return System 
+     * @return System
      */
     public function getSystem()
     {
         return $this->system;
+    }
+
+
+    /**
+     * Get workingTime
+     *
+     * @return System 
+     */
+    public function getWorkingTime()
+    {
+        return $this->workingTime;
+    }
+
+    /**
+     * Set workingTime
+     *
+     * @param WorkingTime $workingTime
+     * @return GuaranteedValue
+     */
+    public function setWorkingTime($workingTime)
+    {
+        $this->workingTime = $workingTime;
+
+        return $this;
     }
 
     /**

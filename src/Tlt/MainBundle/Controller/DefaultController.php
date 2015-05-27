@@ -210,8 +210,8 @@ class DefaultController extends Controller
 									
 				$indisponibleTime	=	$this->getDoctrine()
 												->getRepository('TltAdmnBundle:System')
-												->getIndisponibleTime($startPeriod, $endPeriod, $system);
-												
+                                                ->getIndisponibleTime(new \DateTime($startPeriod), new \Datetime($endPeriod), $system);
+
 				$guaranteedDisponibility	=	$this->getDoctrine()
 														->getRepository('TltAdmnBundle:System')
 														->getGuaranteedDisponibility($system);
