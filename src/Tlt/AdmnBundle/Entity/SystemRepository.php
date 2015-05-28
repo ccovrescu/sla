@@ -180,8 +180,8 @@ class SystemRepository extends EntityRepository
                 SELECT
                   s.id,
                   s.name,
-                  gv.min_hour,
-                  gv.max_hour,
+                  wt.min_hour,
+                  wt.max_hour,
                   gv.value AS g_disp,
                   IFNULL(times.indisponible_time,0) AS indisponible_time
                 FROM
@@ -202,14 +202,17 @@ class SystemRepository extends EntityRepository
                       AND t.backup_solution = 2
                       AND t.fixed_at BETWEEN '$start' AND '$end'
                       " .
-                        ($isClosed == 1 ? ' AND t.is_closed = 1 ' : ' ')
+//                        ($isClosed == 1 ? ' AND t.is_closed = 1 ' : ' ')
+                        ($isClosed == 1 ? ' ' : ' AND t.is_closed = 1 ')
                         . "
                       AND eq.owner = $owner
                     GROUP BY mp.system) times
                     ON times.system_id = s.id
                     LEFT JOIN
-                    guaranteed_values gv
-                    ON gv.system=s.id
+                        guaranteed_values gv
+                        ON gv.system=s.id
+                    LEFT JOIN working_time wt
+                        ON wt.id=gv.workingTime
                     " .
                     ((!is_null($department) and !empty($department)) ? " WHERE s.department=$department" : " ")
                     . "
@@ -219,7 +222,7 @@ class SystemRepository extends EntityRepository
             $rsm
         );
 
-
+//        var_dump($query->getSQL());
 
         try {
             return $query->getResult();
