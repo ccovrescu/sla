@@ -82,7 +82,7 @@
                     <th nowrap>Anuntat la <br/>&nbsp;</th>
                     <th nowrap>Rezolvat la <br/>&nbsp;</th>
                     <th>Rezolvare <br/>&nbsp;</th>
-                    <th class="text-right">Timp scurs</th>
+                    <th class="text-right">Timp scurs <small>(calendaristic)</small> </th>
                     <th class="text-center">Afecteaza SLA</th>
                 </tr>
             </thead>
@@ -113,7 +113,13 @@
                             <td>{{ ticket.announcedAt|date('d.m.Y H:i') }}</td>
                             <td>{{ ticket.fixedAt|date('d.m.Y H:i') }}</td>
                             <td>{{ ticket.fixedMode }}</td>
-                            <td class="text-right">{{ ticket.fixedAt.diff(ticket.announcedAt)|date('%h:%I') }}</td>
+                            <td class="text-right">
+                                {% set dateDiff = ticket.fixedAt.diff(ticket.announcedAt) %}
+                                {% if dateDiff.days > 0  %}
+                                    {{ "%d"|format(dateDiff.days) ~ (dateDiff.days==1 ? " zi" : " zile") }}
+                                {% endif %}
+                                {{ "%02d"|format(dateDiff|date('%h')) ~ ":%02d"|format(dateDiff|date('%I')) }}
+                            </td>
                             <td class="text-center">
                                 {% if ticket.isReal==1 and ticket.backupSolution.id==2 %}
                                     <i class="fa fa-check text-danger"></i>
