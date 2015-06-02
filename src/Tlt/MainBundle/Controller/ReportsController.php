@@ -91,15 +91,11 @@ class ReportsController extends Controller
         if ($form->isValid()) {
             $systems = $this->getDoctrine()->getRepository('TltAdmnBundle:System')->SLA(
                 $journalFilters->getOwner()->getId(),
-                ($journalFilters->getDepartment() != null ? $journalFilters->getDepartment()->getId() : null),
+                ($journalFilters->getDepartment() != null ? array($journalFilters->getDepartment()->getId()) : $this->getUser()->getDepartmentsIds()),
                 $journalFilters->getStart()->format('Y-m-d'),
                 $journalFilters->getEnd()->format('Y-m-d'),
                 $journalFilters->getIsClosed()
             );
-
-            $startDate = new \DateTime('2015-01-01');
-            $endDate = new \DateTime('2015-06-30');
-
 
             $totalWorkingTimeInSemester = array();
 
@@ -117,7 +113,7 @@ class ReportsController extends Controller
                 )) {
                     $sys['total_time'] = $totalWorkingTimeInSemester[$workingTime->getId()];
                 } else {
-                    $time = TimeCalculation::getSystemTotalWorkingTime($workingTime, $startDate, $endDate);
+                    $time = TimeCalculation::getSystemTotalWorkingTime($workingTime, $journalFilters->getStart(), $journalFilters->getEnd());
 
                     $totalWorkingTimeInSemester[$workingTime->getId()] = $time;
                     $sys['total_time'] = $time;

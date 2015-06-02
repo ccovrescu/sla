@@ -165,7 +165,10 @@ class SystemRepository extends EntityRepository
 		return $disponibility;
 	}
 
-    public function SLA($owner, $department, $start, $end, $isClosed) {
+    public function SLA($owner, $departments, $start, $end, $isClosed) {
+
+        $departments = implode(',', $departments);
+
         $rsm = new ResultSetMapping();
 
         $rsm->addScalarResult('id', 'id');
@@ -213,9 +216,7 @@ class SystemRepository extends EntityRepository
                         ON gv.system=s.id
                     LEFT JOIN working_time wt
                         ON wt.id=gv.workingTime
-                    " .
-                    ((!is_null($department) and !empty($department)) ? " WHERE s.department=$department" : " ")
-                    . "
+                WHERE s.department IN ($departments)
                 ORDER BY s.department,
                   s.name
               ",
@@ -226,7 +227,7 @@ class SystemRepository extends EntityRepository
 
         try {
             return $query->getResult();
-        } catch (\Doctrine\ORM\NoResultException $e) {
+        } catch (NoResultException $e) {
             return null;
         }
     }
