@@ -213,4 +213,25 @@ class ReportsController extends Controller
     {
         return new \DateTime(date( 'd.m.Y', mktime(0,0,0, (date('m'<=6) ? 6 : 12),(date('m'<=6) ? 30 : 31) , date('Y'))));
     }
+
+    /**
+     * @Route("/tickets/{systemID}/{owner}/{from}/{to}", name="tlt_main_reports_tickets")
+     * @Template()
+     */
+    public function ticketsAction(Request $request, $systemID, $owner, $from, $to) {
+        $tickets = $this->getDoctrine()->getRepository('TltTicketBundle:Ticket')
+            ->getSlaTickets(
+                $systemID,
+                $owner,
+                $from,
+                $to
+            );
+
+        $system = $this->getDoctrine()->getRepository('TltAdmnBundle:System')->findOneById($systemID);
+
+        return array(
+            'system' => $system,
+            'tickets' => $tickets
+        );
+    }
 }

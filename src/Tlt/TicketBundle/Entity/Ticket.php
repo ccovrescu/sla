@@ -11,6 +11,7 @@ use Tlt\AdmnBundle\Entity\AbstractEntity;
 use Tlt\AdmnBundle\Entity\Branch;
 use Tlt\AdmnBundle\Entity\Equipment;
 use Tlt\AdmnBundle\Entity\GuaranteedValue;
+use Tlt\AdmnBundle\Entity\System;
 
 /**
  * Ticket
@@ -998,5 +999,24 @@ class Ticket extends AbstractEntity
     public function getTicketMapping()
     {
         return $this->ticketMapping;
+    }
+
+    /**
+     * Intoarce timpul indisponibil pentru un sistem anume.
+     *
+     * @param System $system
+     * @return int
+     */
+    public function getIndiponibleTimeForSystem(System $system) {
+        $indisponibleTime = 0;
+
+        $ticketMappings = $this->getTicketMapping();
+        foreach ($ticketMappings as $ticketMapping) {
+            if ($ticketMapping->getMapping()->getSystem() == $system)
+                $indisponibleTime += $ticketMapping->getResolvedIn();
+        }
+
+
+        return $indisponibleTime;
     }
 }

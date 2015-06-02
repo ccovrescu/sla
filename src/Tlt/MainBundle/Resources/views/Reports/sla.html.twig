@@ -107,7 +107,15 @@
                                 <td nowrap>{{ system.min_hour }} - {{ system.max_hour }}</td>
                                 <td class="text-right text-primary">{{ system.total_time }}</td>
                                 <td class="text-right text-primary">{{ system.g_disp|number_format(2) }}</td>
-                                <td class="text-right text-warning">{{ system.indisponible_time }}</td>
+                                <td class="text-right text-warning">
+                                    {% if system.indisponible_time > 0 %}
+                                        <a href="{{ path('tlt_main_reports_tickets', {'systemID' : system.id, 'owner' : form.owner.vars.value, 'from' : form.start.vars.value.year ~ '-' ~ form.start.vars.value.month ~ '-' ~ form.start.vars.value.day, 'to' : form.end.vars.value.year ~ '-' ~ form.end.vars.value.month ~ '-' ~ form.end.vars.value.day }) }}">
+                                            {{ system.indisponible_time }}
+                                        </a>
+                                    {% else %}
+                                        {{ system.indisponible_time }}
+                                    {% endif %}
+                                </td>
                                 <td class="text-right text-warning">{{ system.units_no|number_format(0,',','.') }}</td>
                                 <td class="text-right {{ (r_disp<system.g_disp ? 'text-danger text' : 'text-success') }}">{{ r_disp|number_format(2) }}</td>
                                 <td class="text-right {{ (ru_disp<system.g_disp ? 'text-danger' : 'text-success') }}">{{ ru_disp|number_format(2) }}</td>
