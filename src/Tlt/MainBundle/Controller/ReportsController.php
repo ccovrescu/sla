@@ -161,7 +161,8 @@ class ReportsController extends Controller
             if ($filters->getDepartment() == null) {
                 $systems = $this->getDoctrine()
                     ->getRepository('TltAdmnBundle:System')
-                    ->findAll();
+                    ->findByDepartmentIn($this->getUser()->getDepartmentsIds());
+//                    ->findAll();
             } else {
                 $systems = $this->getDoctrine()
                     ->getRepository('TltAdmnBundle:System')

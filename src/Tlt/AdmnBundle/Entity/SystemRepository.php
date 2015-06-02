@@ -283,4 +283,14 @@ class SystemRepository extends EntityRepository
         return null;
     }
 
+    public function findByDepartmentIn($departments)
+    {
+        $qb = $this->createQueryBuilder('s')
+                ->select('s')
+                ->where('s.department IN (:departments)')
+                ->setParameter('departments', $departments)
+            ;
+
+        return $qb->getQuery()->getResult();
+    }
 }
