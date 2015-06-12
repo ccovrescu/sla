@@ -66,8 +66,9 @@ class DefaultController extends Controller
         $allowedDepartments[] = null;
 
         $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
-        $qb = $qb->select('t.id', 't.announcedBy', 't.announcedAt', 'IDENTITY(sv.department) as department', 't.fixedAt', 't.description', 't.isReal', 't.isClosed')
+        $qb = $qb->select('t.id', 'CONCAT(an.firstname, \' \', an.lastname) as announcedBy', 't.announcedAt', 'IDENTITY(sv.department) as department', 't.fixedAt', 't.description', 't.isReal', 't.isClosed')
             ->from('TltTicketBundle:Ticket', 't')
+            ->leftJoin('t.announcedBy', 'an')
             ->innerJoin('t.ticketAllocations', 'ta', 'WITH', $qb->expr()->eq('ta.insertedAt', '(' . $subQueryDQL . ')') )
             ->leftJoin('t.equipment', 'e')
             ->leftJoin('e.service', 'sv');
@@ -92,7 +93,7 @@ class DefaultController extends Controller
         if ($ticketFilters->getSearch() !== null)
         {
             $qb->andWhere(
-                $qb->expr()->like('t.id', ':id') . ' OR ' . $qb->expr()->like('t.announcedBy', ':announcedBy')
+                $qb->expr()->like('t.id', ':id') . ' OR ' . $qb->expr()->like('CONCAT(an.firstname, \' \', an.lastname)', ':announcedBy')
             );
             $qb->setParameter('id', $ticketFilters->getSearch());
             $qb->setParameter('announcedBy', '%' . $ticketFilters->getSearch() . '%' );
@@ -195,9 +196,11 @@ class DefaultController extends Controller
             );
         }
 
-        return $this->render('TltTicketBundle:Default:add.html.twig', array(
-            'form' => $form->createView(),
-        ));
+        return
+            $this->render('TltTicketBundle:Default:add.html.twig', array(
+                'ticket' => $ticket,
+                'form' => $form->createView(),
+            ));
     }
 
      /**

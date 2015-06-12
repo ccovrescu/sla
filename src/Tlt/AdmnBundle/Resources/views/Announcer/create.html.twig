@@ -1,0 +1,37 @@
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">Adaugare sesizant</h4>
+        </div>
+        <div class="modal-body">
+            {% include 'TltAdmnBundle:Announcer:add_form_fields.html.twig' with { 'nobuttons' : true} %}
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Renunta</button>
+            <button type="button" class="btn btn-primary" id="salveaza">Salveaza</button>
+        </div>
+
+        <script type="text/javascript">
+            $("#salveaza").click(function() {
+
+                $.ajax({
+                    type: $("#announcer-popup").attr('method'),
+                    url: $("#announcer-popup").attr('action'),
+                    data: $("#announcer-popup").serialize()
+                })
+                .done(function (data) {
+                        $("#notifications").html("<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>" + data.message + "</div>");
+                        $('#announcer-popup')[0].reset();
+                        $('#myModal').modal('hide');
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (typeof jqXHR.responseJSON !== 'undefined') {
+                        if (jqXHR.responseJSON.hasOwnProperty('form')) {
+                            $(".modal-content").html(jqXHR.responseJSON.form);
+                        }
+                    } else {
+                        alert(errorThrown);
+                    }
+
+                });
+            });
+        </script>

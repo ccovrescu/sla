@@ -1,0 +1,59 @@
+{{ form_start(form, {'attr': {'class':'breadcrumb', 'id':'announcer-popup'}}) }}
+{{ form_errors(form) }}
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="form-group{% if form.firstname.vars.valid==0 %} has-error {% endif %}">
+            {{ form_label(form.firstname, form.firstname.vars.label, {'label_attr':{'class':'control-label'} }) }}
+            {{ form_widget(form.firstname, {'attr': {'class': 'form-control', 'placeholder':'Prenume sesizantului'}}) }}
+            {{ form_errors(form.firstname, {'attr': {'class':'has-error'} }) }}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="form-group{% if form.lastname.vars.errors|length>0 %} has-error {% endif %}">
+            {{ form_label(form.lastname) }}
+            {{ form_widget(form.lastname, {'attr': {'class': 'form-control', 'placeholder':'Numele sesizantului'}}) }}
+            {{ form_errors(form.lastname, {'attr': {'class':'has-error'} }) }}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="form-group">
+            {{ form_label(form.branch) }}
+            {{ form_widget(form.branch, {'attr': {'class': 'form-control'}}) }}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="form-group{% if form.compartment.vars.errors|length>0 %} has-error {% endif %}">
+            {{ form_label(form.compartment) }}
+            {{ form_widget(form.compartment, {'attr': {'class': 'form-control', 'placeholder':'Compartimentul sesizantului'}}) }}
+            {{ form_errors(form.compartment) }}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="form-group">
+            {{ form_label(form.active) }}
+            {{ form_widget(form.active, {'attr': {'class': 'form-control'}}) }}
+        </div>
+    </div>
+</div>
+
+{% if nobuttons is defined and nobuttons %}
+    {% do form.reseteaza.setRendered(true) %}
+    {% do form.salveaza.setRendered(true) %}
+{% else %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="form-group text-right">
+                {{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}
+                {{ form_widget(form.reseteaza, {'attr': {'class': 'btn btn-default'}}) }}
+            </div>
+        </div>
+    </div><!-- /.row -->
+{% endif %}
+
+{{ form_rest(form) }}
+{{ form_end(form) }}

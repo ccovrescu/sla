@@ -6,7 +6,7 @@
     {{ parent() }}
 
     <link href="{{ asset('css/icr.css' ) }}" rel="stylesheet">
-    <link href="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.css" rel="stylesheet" />
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
 {% endblock %}
 
 {% block page %}
@@ -301,7 +301,8 @@
 {% block javascripts %}
 	{{ parent() }}
 
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/i18n/ro.js"></script>
 
     <script type="text/javascript">
         $("#ticket_equipment2").select2({
@@ -338,7 +339,7 @@
             if (repo.loading) return repo.text;
 
             var markup = '<div class="clearfix">' +
-                    '<div clas="col-sm-12">' +
+                    '<div class="col-sm-12">' +
                     '<div class="clearfix">' +
                     '<div class="col-sm-6"><strong>' + repo.name + '</strong></div>' +
                     '<div class="col-sm-3"><strong><em>' + repo.service + '</em></strong></div>' +

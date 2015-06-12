@@ -102,11 +102,11 @@
                 <div class="form-group {% if form.equipment.vars.errors|length>0 %} has-error {% endif %}">
                     {{ form_label(form.equipment, form.equipment.vars.label, {'label_attr':{'class':'control-label'} }) }}
 
-                    <select id="ticket_equipment2" class="form-control">
+                    <select id="ticket_equipment2" class="form-control" lang="ro">
                         {% if (ticket.equipment is not null) %}
                             <option value="{{ ticket.equipment.id }}">{{ ticket.equipment.name }}</option>
                         {% endif %}
-                    <select>
+                    </select>
                         <p class="help-block">
                         {% if (ticket.equipment is not null and ticket.equipment.getPropertiesString|length>0) %}
                             <strong><em>{{ ticket.equipment.service.name }} \ {{ ticket.equipment.zoneLocation.location.name }}</em></strong><br>

@@ -2,6 +2,13 @@
 
 {% form_theme form 'TltTicketBundle::fields.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
+
 {% block page %}
     <div class="row">
         <div class="col-lg-12">
@@ -12,6 +19,13 @@
             </ol>
         </div>
     </div><!-- /.row -->
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="notifications"></div>
+        </div>
+    </div>
+
 
     {{ form_start(form, {'attr': {'class':'breadcrumb'}}) }}
     {{ form_errors(form) }}
@@ -30,27 +44,52 @@
             </div>
         </div>
         <div class="col-lg-6">
-            <div class="form-group {% if form.announcedBy.vars.errors|length>0 %} has-error {% endif %}">
-                {{ form_label(form.announcedBy, form.announcedBy.vars.label, {'label_attr':{'class':'control-label'} }) }}
-                {{ form_widget(form.announcedBy, {'attr': {'class': 'form-control', 'placeholder':'Numele si compartimentul persoanei care a facut sesizarea'}}) }}
-                <p class="help-block">ex.: Popescu Gheorghe - Serviciul Exploatare</p>
-                {{ form_errors(form.announcedBy, {'attr': {'class':'has-error'} }) }}
+            <div class="form-group">
+                {{ form_label(form.ticketAllocations) }}
+                {{ form_widget(form.ticketAllocations, {'attr': {'class': 'form-control'}}) }}
             </div>
         </div>
     </div><!-- row -->
 
     <div class="row">
+        <div class="col-lg-5">
+            <div class="form-group {% if form.announcedBy.vars.errors|length>0 %} has-error {% endif %}">
+                {{ form_label(form.announcedBy, form.announcedBy.vars.label, {'label_attr':{'class':'control-label'} }) }}
+
+                <select id="ticket_announcedBy2" class="form-control" lang="ro">
+                    {% if (ticket.announcedBy is not null) %}
+                        <option value="{{ ticket.announcedBy.id }}">{{ ticket.announcedBy.firstname ~ ' ' ~ ticket.announcedBy.lastname }}</option>
+                    {% endif %}
+                </select>
+
+                {{ form_widget(form.announcedBy, {'attr': {'class': 'form-control hidden'} }) }}
+                {{ form_errors(form.announcedBy) }}
+            </div>
+        </div>
+        <div class="col-lg-1">
+            <div class="form-group {% if form.announcedBy.vars.errors|length>0 %} has-error {% endif %}">
+                <label>&nbsp;</label>
+                <div>
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal" data-remote="{{ path('tlt_admin_announcers_new') }}" data-backdrop="static"><i class="fa fa-plus"></i></button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                </div>
+            </div>
+        </div>
         <div class="col-lg-6">
             <div class="form-group {% if form.contactInfo.vars.errors|length>0 %} has-error {% endif %}">
                 {{ form_label(form.contactInfo, form.contactInfo.vars.label, {'label_attr':{'class':'control-label'} }) }}
                 {{ form_widget(form.contactInfo, {'attr': {'class': 'form-control', 'placeholder':'Numar de telefon sau email'}}) }}
                 {{ form_errors(form.contactInfo) }}
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="form-group">
-                {{ form_label(form.ticketAllocations) }}
-                {{ form_widget(form.ticketAllocations, {'attr': {'class': 'form-control'}}) }}
             </div>
         </div>
     </div><!-- row -->
@@ -97,4 +136,68 @@
     {{ form_rest(form) }}
     {{ form_end(form) }}
 
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/i18n/ro.js"></script>
+
+
+
+    <script type="text/javascript">
+        $("#ticket_announcedBy2").select2({
+            ajax: {
+                url: "{{ path('admin_ajax_announcers') }}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page,
+                        branch: $("#ticket_ticketAllocations option:selected").val()
+                    };
+                },
+                processResults: function (data, page) {
+                    // parse the results into the format expected by Select2.
+                    // since we are using custom formatting functions we do not need to
+                    // alter the remote JSON data
+                    return {
+                        results: data.items
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            minimumInputLength: 3,
+            multiple: false,
+            allowClear: true,
+            placeholder: "Selectati un sesizant sau adaugati unul",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+
+        function formatRepo (repo) {
+            if (repo.loading) return repo.text;
+
+            var markup = '<div class="clearfix">' + '<div class="col-sm-12"><strong>' + repo.fullname + '</strong></div>';
+            markup += '<div class="col-sm-12"><small>' + repo.name;
+
+            if (repo.compartment)
+                markup += ' - ' + repo.compartment + '</small></div>';
+
+            markup += '</div>';
+
+            return markup;
+        }
+
+        function formatRepoSelection (repo) {
+            return repo.fullname || repo.text;
+        }
+
+        $("#ticket_announcedBy2").change(function(){
+            $('#ticket_announcedBy').val( $(this).val() );
+        });
+    </script>
 {% endblock %}

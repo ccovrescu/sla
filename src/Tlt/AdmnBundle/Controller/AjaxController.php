@@ -13,6 +13,45 @@ use Doctrine\ORM\Query\ResultSetMapping;
 class AjaxController extends Controller
 {
     /**
+     * @Route("/fhs7/announcers", name="admin_ajax_announcers")
+     */
+    public function announcersAction(Request $request)
+    {
+        $words = explode(" ", $request->get('q'));
+        $branch = $request->get('branch');
+
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->getRepository('TltAdmnBundle:Announcer')
+                    ->createQueryBuilder('a')
+                    ->select(array('a.id, a.firstname, a.lastname, a.compartment, b.name, CONCAT (a.firstname,\' \', a.lastname) as fullname'))
+                    ->leftJoin('a.branch', 'b')
+                    ->orderBy('a.firstname, a.lastname, b.name, a.compartment');
+
+
+
+        foreach ($words as $word) {
+            $qb = $qb->orWhere(
+                $qb->expr()->andX(
+                    $qb->expr()->like('a.firstname', $qb->expr()->literal('%' . $word . '%'))
+                )
+            );
+
+            $qb = $qb->orWhere(
+                $qb->expr()->like('a.lastname', $qb->expr()->literal('%' . $word . '%'))
+            );
+        }
+
+        $qb = $qb->andWhere('a.branch=:branch')
+                    ->setParameter('branch', $branch);
+
+        $results = [
+            'items' => $qb->getQuery()->getResult()
+        ];
+
+        return new JsonResponse($results);
+    }
+
+    /**
      * @Route("/fhs7/equipments", name="admin_ajax_equipments")
      */
     public function eqAction(Request $request)

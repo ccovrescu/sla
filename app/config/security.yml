@@ -50,6 +50,7 @@ security:
                 target: /
     access_control:
         - { path: ^/admin/owners/index, roles: ROLE_USER }
+        - { path: ^/admin/announcers, roles: ROLE_USER }
         - { path: ^/admin/branches/index, roles: ROLE_USER }
         - { path: ^/admin/locations/index, roles: ROLE_USER }
         - { path: ^/admin/zone-locations/index, roles: ROLE_USER }

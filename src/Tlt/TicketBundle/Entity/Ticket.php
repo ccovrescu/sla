@@ -12,6 +12,7 @@ use Tlt\AdmnBundle\Entity\Branch;
 use Tlt\AdmnBundle\Entity\Equipment;
 use Tlt\AdmnBundle\Entity\GuaranteedValue;
 use Tlt\AdmnBundle\Entity\System;
+use Tlt\AdmnBundle\Entity\Announcer;
 
 /**
  * Ticket
@@ -35,24 +36,11 @@ class Ticket extends AbstractEntity
     protected $announcedAt;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="announced_by", type="string", length=128)
+     * @ORM\ManyToOne(targetEntity="Tlt\AdmnBundle\Entity\Announcer")
+     * @ORM\JoinColumn(name="announced_by", referencedColumnName="id", onDelete="SET NULL")
      *
      * @Assert\NotBlank(
-     *     message = "Trebuie sa completati o valoare. Campul este obligatoriu.",
-     *     groups={"insert"}
-     * ),
-     * @Assert\Length(
-     *     min = 3,
-     *     max = 128,
-     *     minMessage = "Numele sesizantului si compartimentul trebuie sa contina cel putin 3 caractere.",
-     *     maxMessage = "Numele sesizantului si compartimentul trebuie sa contina cel mult 128 caractere.",
-     *     groups={"insert"}
-     * ),
-     * @Assert\Regex(
-     *     pattern = "/^[a-zA-z0-9\-\s]+$/",
-     *     message = "Valoarea {{ value }} contine caractere nepermise.",
+     *     message = "Selectati o persoana din lista sau adaugati una noua.",
      *     groups={"insert"}
      * )
      */
@@ -374,7 +362,7 @@ class Ticket extends AbstractEntity
     /**
      * Set announcedBy
      *
-     * @param string $announcedBy
+     * @param Announcer $announcedBy
      * @return Ticket
      */
     public function setAnnouncedBy($announcedBy)
@@ -387,7 +375,7 @@ class Ticket extends AbstractEntity
     /**
      * Get announcedBy
      *
-     * @return string
+     * @return Announcer
      */
     public function getAnnouncedBy()
     {

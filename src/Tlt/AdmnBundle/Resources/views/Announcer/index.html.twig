@@ -1,0 +1,87 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>Sesizanti <small>Index</small></h1>
+            <ol class="breadcrumb">
+                <li><a href="{{ path('admin_index') }}"><i class="icon-dashboard"></i> Administrare</a></li>
+                <li class="active"><i class="icon-file-alt"></i> Sesizanti</li>
+            </ol>
+        </div>
+    </div><!-- /.row -->
+
+
+    {{ form_start(form, {'attr': {'class':'breadcrumb'}}) }}
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group">
+                {{ form_label(form.branch) }}
+                {{ form_widget(form.branch, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group text-right">
+                <label>&nbsp;</label><br/>
+                {{ form_widget(form.Arata, {'attr': {'class': 'btn btn-primary'}}) }}
+            </div>
+        </div>
+    </div><!-- /.row -->
+
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+
+    <div class="row">
+        <div class="col-lg-8 text-left">
+            <h2>Lista sesizanti</h2>
+        </div>
+        <div class="col-lg-4 text-right">
+            <div class="panel-body">
+                <button type="submit" class="btn btn-primary" onclick="location.href='{{ path('tlt_admin_announcers_add') }}'">Adauga sesizant</button>
+            </div>
+        </div>
+    </div><!-- /.row -->
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped tablesorter">
+            <thead>
+                <tr>
+                    <th>Prenume <i class="fa fa-sort"></i></th>
+                    <th>Nume <i class="fa fa-sort"></i></th>
+                    <th>Compartiment <i class="fa fa-sort"></i></th>
+                    <th>Agentie/Centru <i class="fa fa-sort"></i></th>
+                    <th class="text-right">Optiuni</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if announcers %}
+                {% for announcer in announcers %}
+                    <tr>
+                        <td>{{ announcer.firstName }}</td>
+                        <td>{{ announcer.lastName }}</td>
+                        <td>{{ announcer.compartment }}</td>
+                        <td>{{ announcer.branch.name }}</td>
+                        <td class="text-right"><a href="{{ path('tlt_admin_announcers_edit', {'id' : announcer.id}) }}">modifica</a></td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <th colspan="5" class="text-center">Total {{ announcers|length }} sesizanti.</th>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+{% endblock  %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <!-- Page Specific Plugins -->
+    <script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
+    <script src="{{ asset('js/tablesorter/tables.js') }}"></script>
+{% endblock %}

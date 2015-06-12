@@ -7,3 +7,25 @@ Tlt\AdmnBundle\Entity\Department:
                    max: 64
                    minMessage: "Denumirea departamentului trebuie sa contina cel putin {{ limit }} caractere."
                    maxMessage: "Denumirea departamentului trebuie sa contina cel mult {{ limit }} caractere."
+Tlt\AdmnBundle\Entity\Announcer:
+    properties:
+        firstname:
+            - NotBlank: ~
+            - Length:
+                min: 3
+                max: 128
+                minMessage: "Prenumele trebuie sa contina cel putin {{ limit }} caractere."
+                maxMessage: "Prenumele trebuie sa contina cel mult {{ limit }} caractere."
+        lastname:
+            - NotBlank: ~
+            - Length:
+                min: 3
+                max: 64
+                minMessage: "Numele trebuie sa contina cel putin {{ limit }} caractere."
+                maxMessage: "Numele trebuie sa contina cel mult {{ limit }} caractere."
+        compartment:
+            - Length:
+                min: 3
+                max: 128
+                minMessage: "Compartimentul trebuie sa contina cel putin {{ limit }} caractere."
+                maxMessage: "Compartimentul trebuie sa contina cel mult {{ limit }} caractere."

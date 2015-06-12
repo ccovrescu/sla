@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormEvents;
 use Doctrine\ORM\EntityRepository;
 
 use Tlt\TicketBundle\Form\DataTransformer\EquipmentToNumberTransformer;
+use Tlt\TicketBundle\Form\DataTransformer\AnnouncerToNumberTransformer;
 
 class TicketType extends AbstractType {
 
@@ -27,6 +28,9 @@ class TicketType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        // this assumes that the entity manager was passed in as an option
+        $entityManager = $options['em'];
+
         if ($this->securityContext->isGranted('ROLE_TICKET_INSERT')) {
             $userBranches = $this->securityContext->getToken()->getUser()->getBranchesIds();
 
@@ -56,12 +60,18 @@ class TicketType extends AbstractType {
                     'empty_value' => '-- Selectati --',
                     'label' => 'Mod de transmitere sesizare:'
                 ));
-            $builder->add(
-                'announcedBy', 'text', array(
-                    'max_length' => 128,
-                    'label' => 'Nume sesizant:',
-                    'required' => false
-                ));
+
+            $anTransformer = new AnnouncerToNumberTransformer($entityManager);
+            $builder
+                ->add(
+                    $builder
+                        ->create('announcedBy', 'text', array(
+                                'label' => 'Nume sesizant:',
+                                'required' => false,
+                            ))
+                        ->addModelTransformer($anTransformer)
+                );
+
             $builder->add(
                 'contactInfo', 'text', array(
                     'max_length' => 128,
@@ -170,10 +180,7 @@ class TicketType extends AbstractType {
                 ));
 
 
-            // this assumes that the entity manager was passed in as an option
-            $entityManager = $options['em'];
-            $transformer = new EquipmentToNumberTransformer($entityManager);
-
+            $eqTransformer = new EquipmentToNumberTransformer($entityManager);
             $builder
                 ->add(
                     $builder
@@ -181,7 +188,7 @@ class TicketType extends AbstractType {
                             'label' => 'Echipament:',
                             'required' => true,
                         ))
-                        ->addModelTransformer($transformer)
+                        ->addModelTransformer($eqTransformer)
                 );
 
             $builder->add(
