@@ -24,10 +24,21 @@ class AnnouncerController extends Controller
      */
     public function indexAction(Request $request)
     {
-        $filter = new AnnouncerFilter();
+        $session = $this->get('session');
+
+        // Check if data already was submitted and validated
+        if ($session->has('announcerFilters')) {
+            $filter = $session->get('announcerFilters');
+        } else {
+            $filter = new AnnouncerFilter();
+        }
+
         $form = $this->createForm(
             new AnnouncerFilterType($this->getDoctrine()->getManager(), $this->get('security.context')),
-            $filter
+            $filter,
+            array(
+                'method' => 'GET'
+            )
         );
 
         $form->handleRequest($request);
@@ -36,6 +47,9 @@ class AnnouncerController extends Controller
 
         if ($form->isValid())
         {
+            // Data is valid so save it in session for another request
+            $session->set('announcerFilters', $form->getData());
+
             if ($filter->getBranch() != null)
             {
                 $announcers = $this->getDoctrine()
