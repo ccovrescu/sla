@@ -11,7 +11,6 @@
         </div>
     </div><!-- /.row -->
 
-
     {{ form_start(form, {'attr': {'class':'breadcrumb'}}) }}
 
     <div class="row">
@@ -43,37 +42,40 @@
         </div>
     </div><!-- /.row -->
 
-
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover table-striped tablesorter">
+    <div class="row">
+        <div class="col-lg-12">
+        <table id="announcers-table" class="table table-striped table-bordered table-hover">
             <thead>
                 <tr>
-                    <th>Prenume <i class="fa fa-sort"></i></th>
-                    <th>Nume <i class="fa fa-sort"></i></th>
-                    <th>Compartiment <i class="fa fa-sort"></i></th>
-                    <th>Agentie/Centru <i class="fa fa-sort"></i></th>
-                    <th class="text-right">Optiuni</th>
+                    <th>Prenume</th>
+                    <th>Nume</th>
+                    <th>Compartiment</th>
+                    <th>Agentie/Centru</th>
+                    <th>Status</th>
+                    <th>Optiuni</th>
                 </tr>
             </thead>
             <tbody>
-            {% if announcers %}
-                {% for announcer in announcers %}
-                    <tr>
-                        <td>{{ announcer.firstName }}</td>
-                        <td>{{ announcer.lastName }}</td>
-                        <td>{{ announcer.compartment }}</td>
-                        <td>{{ announcer.branch.name }}</td>
-                        <td class="text-right"><a href="{{ path('tlt_admin_announcers_edit', {'id' : announcer.id}) }}">modifica</a></td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
+                {% if announcers %}
+                    {% for announcer in announcers %}
+                        <tr {{ announcer.active==0 ? 'class="danger"': '' }}>
+                            <td>{{ announcer.firstName }}</td>
+                            <td>{{ announcer.lastName }}</td>
+                            <td>{{ announcer.compartment }}</td>
+                            <td>{{ announcer.branch.name }}</td>
+                            <td>{{ announcer.active==1 ? 'Activ' : 'Inactiv' }}</td>
+                            <td><a href="{{ path('tlt_admin_announcers_edit', {'id' : announcer.id}) }}">modifica</a></td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
             </tbody>
             <tfoot>
             <tr>
-                <th colspan="5" class="text-center">Total {{ announcers|length }} sesizanti.</th>
+                <th colspan="6" class="text-center">Total {{ announcers|length }} sesizanti.</th>
             </tr>
             </tfoot>
         </table>
+        </div>
     </div>
 
 {% endblock  %}
@@ -81,7 +83,30 @@
 {% block javascripts %}
     {{ parent() }}
 
-    <!-- Page Specific Plugins -->
-    <script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
-    <script src="{{ asset('js/tablesorter/tables.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#announcers-table').DataTable({
+                "columnDefs": [
+                    { "width": "40%", "targets": 0 }
+                ],
+                "language": {
+                    "sProcessing":   "Proceseaza...",
+                        "sLengthMenu":   "Afiseaza _MENU_ inregistrari pe pagina",
+                        "sZeroRecords":  "Nu am gasit nimic - ne pare rau",
+                        "sInfo":         "Afisate de la _START_ la _END_ din _TOTAL_ inregistrari",
+                        "sInfoEmpty":    "Afisate de la 0 la 0 din 0 inregistrari",
+                        "sInfoFiltered": "(filtrate dintr-un total de _MAX_ inregistrari)",
+                        "sInfoPostFix":  "",
+                        "sSearch":       "Cauta:",
+                        "sUrl":          "",
+                        "oPaginate": {
+                            "sFirst":    "Prima",
+                            "sPrevious": "Precedenta",
+                            "sNext":     "Urmatoarea",
+                            "sLast":     "Ultima"
+                        }
+                }
+            });
+        });
+    </script>
 {% endblock %}

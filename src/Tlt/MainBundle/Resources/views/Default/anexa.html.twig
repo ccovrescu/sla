@@ -102,11 +102,3 @@
         </div>
     {% endfor %}
 {% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
-    <!-- Page Specific Plugins -->
-    <script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
-    <script src="{{ asset('js/tablesorter/tables.js') }}"></script>
-{% endblock %}
