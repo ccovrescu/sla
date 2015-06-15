@@ -54,6 +54,7 @@ class AnnouncerType extends AbstractType
                 array(
                     'max_length' => 128,
                     'label' => 'Compartiment',
+                    'required' => false
                 )
             )
             ->add('active', 'choice', array(
