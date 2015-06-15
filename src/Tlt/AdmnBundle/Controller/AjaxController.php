@@ -44,6 +44,8 @@ class AjaxController extends Controller
         $qb = $qb->andWhere('a.branch=:branch')
                     ->setParameter('branch', $branch);
 
+        $qb = $qb->andWhere('a.active=1');
+
         $results = [
             'items' => $qb->getQuery()->getResult()
         ];
