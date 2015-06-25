@@ -3,17 +3,17 @@
 
 <div class="row">
     <div class="col-lg-6">
-        <div class="form-group{% if form.firstname.vars.valid==0 %} has-error {% endif %}">
-            {{ form_label(form.firstname, form.firstname.vars.label, {'label_attr':{'class':'control-label'} }) }}
-            {{ form_widget(form.firstname, {'attr': {'class': 'form-control', 'placeholder':'Prenume sesizantului'}}) }}
-            {{ form_errors(form.firstname, {'attr': {'class':'has-error'} }) }}
-        </div>
-    </div>
-    <div class="col-lg-6">
         <div class="form-group{% if form.lastname.vars.errors|length>0 %} has-error {% endif %}">
             {{ form_label(form.lastname) }}
             {{ form_widget(form.lastname, {'attr': {'class': 'form-control', 'placeholder':'Numele sesizantului'}}) }}
             {{ form_errors(form.lastname, {'attr': {'class':'has-error'} }) }}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="form-group{% if form.firstname.vars.valid==0 %} has-error {% endif %}">
+            {{ form_label(form.firstname, form.firstname.vars.label, {'label_attr':{'class':'control-label'} }) }}
+            {{ form_widget(form.firstname, {'attr': {'class': 'form-control', 'placeholder':'Prenume sesizantului'}}) }}
+            {{ form_errors(form.firstname, {'attr': {'class':'has-error'} }) }}
         </div>
     </div>
 </div>

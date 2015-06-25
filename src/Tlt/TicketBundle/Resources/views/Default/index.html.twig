@@ -42,7 +42,7 @@
             <div class="text-right">
                 <div class="form-group">
                     <br/>
-                    {{ form_widget(form.Arata, { 'label': 'Filtreaza', 'attr': {'class': 'btn btn-success' }}) }}
+                    {{ form_widget(form.Arata, { 'label': 'Filtreaza', 'attr': {'class': 'btn btn-primary' }}) }}
                 </div>
             </div>
         </div>
@@ -57,7 +57,7 @@
         </div>
         <div class="col-lg-4 text-right">
             <div class="panel-body">
-                <button type="submit" class="btn btn-primary" onclick="location.href='{{ path('add_ticket') }}'" {% if not is_granted('ROLE_TICKET_INSERT') %} disabled {% endif %}>Adauga tichet</button>
+                <button type="submit" class="btn btn-success" onclick="location.href='{{ path('add_ticket') }}'" {% if not is_granted('ROLE_TICKET_INSERT') %} disabled {% endif %}>Adauga tichet</button>
             </div>
         </div>
     </div><!-- /.row -->

@@ -47,8 +47,8 @@
         <table id="announcers-table" class="table table-striped table-bordered table-hover">
             <thead>
                 <tr>
-                    <th>Prenume</th>
                     <th>Nume</th>
+                    <th>Prenume</th>
                     <th>Compartiment</th>
                     <th>Agentie/Centru</th>
                     <th>Status</th>
@@ -59,8 +59,8 @@
                 {% if announcers %}
                     {% for announcer in announcers %}
                         <tr {{ announcer.active==0 ? 'class="danger"': '' }}>
-                            <td>{{ announcer.firstName }}</td>
                             <td>{{ announcer.lastName }}</td>
+                            <td>{{ announcer.firstName }}</td>
                             <td>{{ announcer.compartment }}</td>
                             <td>{{ announcer.branch.name }}</td>
                             <td>{{ announcer.active==1 ? 'Activ' : 'Inactiv' }}</td>

@@ -23,7 +23,7 @@ class AjaxController extends Controller
         $em = $this->getDoctrine()->getManager();
         $qb = $em->getRepository('TltAdmnBundle:Announcer')
                     ->createQueryBuilder('a')
-                    ->select(array('a.id, a.firstname, a.lastname, a.compartment, b.name, CONCAT (a.firstname,\' \', a.lastname) as fullname'))
+                    ->select(array('a.id, a.firstname, a.lastname, a.compartment, b.name, CONCAT (a.lastname,\' \', a.firstname) as fullname'))
                     ->leftJoin('a.branch', 'b')
                     ->orderBy('a.firstname, a.lastname, b.name, a.compartment');
 

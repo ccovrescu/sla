@@ -66,7 +66,7 @@ class DefaultController extends Controller
         $allowedDepartments[] = null;
 
         $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
-        $qb = $qb->select('t.id', 'CONCAT(an.firstname, \' \', an.lastname) as announcedBy', 't.announcedAt', 'IDENTITY(sv.department) as department', 't.fixedAt', 't.description', 't.isReal', 't.isClosed')
+        $qb = $qb->select('t.id', 'TRIM(CONCAT(an.lastname, \' \', an.firstname)) as announcedBy', 't.announcedAt', 'IDENTITY(sv.department) as department', 't.fixedAt', 't.description', 't.isReal', 't.isClosed')
             ->from('TltTicketBundle:Ticket', 't')
             ->leftJoin('t.announcedBy', 'an')
             ->innerJoin('t.ticketAllocations', 'ta', 'WITH', $qb->expr()->eq('ta.insertedAt', '(' . $subQueryDQL . ')') )
