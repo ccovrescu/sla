@@ -44,7 +44,6 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
 </head>
 
 <body>
@@ -188,6 +187,22 @@
         {% endblock %}
     </div>
     <!-- /#page-wrapper -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="loader" tabindex="-1" role="dialog" aria-labelledby="loader" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <h3>Proceseaza...</h3>
+                    <img src="{{ asset('css/Preloader_2.gif') }}" />
+                    <p>Va rugam asteptati!</p>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
 
 </div>
 <!-- /#wrapper -->

@@ -19,7 +19,7 @@
         </div>
     </div><!-- /.row -->
 
-    {{ form_start(form, {'attr': {'class':'breadcrumb'} }) }}
+    {{ form_start(form, {'attr': {'class':'breadcrumb', 'id':'filter-form'} }) }}
 
     <div class="row no-print">
         <div class="col-lg-3">
@@ -131,4 +131,23 @@
         <!-- /.panel -->
     </div>
     <!-- /.col-lg-6 -->
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+
+        $('#filter-form').submit(
+            function() {
+                $('#loader').modal({
+                            backdrop : 'static'
+                        }
+                );
+
+                return true;
+            }
+        );
+    </script>
 {% endblock %}

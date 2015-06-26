@@ -12,7 +12,7 @@
           </div>
         </div><!-- /.row -->
 		
-		{{ form_start(form, {'attr': {'class':'breadcrumb'}}) }}
+		{{ form_start(form, {'attr': {'class':'breadcrumb', 'id':'filter-form'}}) }}
 			 {{ form_errors(form) }} 
 
 		  <div class="row">
@@ -143,185 +143,186 @@
 
     <script type="text/javascript">
 
-$("#loading").dialog({
-        maxWidth:200,
-        maxHeight: 85,
-        width: 200,
-        height: 85,
-		modal: true,
-    autoOpen: false
-});
-$("#loading").siblings('div.ui-dialog-titlebar').remove();
+    $("#filter_branch").change(function(){
+        var data = {
+            department_id: $('#filter_department').val(),
+            service_id: $('#filter_service').val(),
+            branch_id: $(this).val(),
+            location_id: $('#filter_location').val()
+        };
 
-$("#filter_branch").change(function(){
-    var data = {
-		department_id: $('#filter_department').val(),
-		service_id: $('#filter_service').val(),
-        branch_id: $(this).val(),
-		location_id: $('#filter_location').val()
-    };
-	
-    $.ajax({
-        type: 'post',
-        url: '{{ path("filter_select_locations") }}',
-        data: data,
-		beforeSend: function(){
-		   $("#loading").dialog('open').html("<p style=\"font-size: 14pt\"><img src=\"{{ asset('css/loader.gif') }}\" /> Loading...</p>");
-		},
-        success: function(data) {
-            $('#filter_zoneLocation').html('<option value="">-- Toate --</option>');
+        $.ajax({
+            type: 'post',
+            url: '{{ path("filter_select_locations") }}',
+            data: data,
+            beforeSend: function(){
+                $('#loader').modal({show:true,backdrop:'static'});
+            },
+            success: function(data) {
+                $('#filter_zoneLocation').html('<option value="">-- Toate --</option>');
 
-            for (var i=0, total = data.length; i < total; i++) {
-                $('#filter_zoneLocation').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#filter_zoneLocation').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
             }
+        });
+
+        $.ajax({
+            type: 'post',
+            url: '{{ path("filter_select_owners") }}',
+            data: data,
+            success: function(data) {
+                $('#filter_owner').html('<option value="">-- Toate --</option>');
+
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#filter_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
+
+                $('#loader').modal('hide');
+            }
+        });
+    });
+
+
+    $("#filter_zoneLocation").change(function(){
+        var data = {
+            department_id: $('#filter_department').val(),
+            service_id: $('#filter_service').val(),
+            branch_id: $('#filter_branch').val(),
+            location_id: $(this).val()
+        };
+
+        $.ajax({
+            type: 'post',
+            url: '{{ path("filter_select_owners") }}',
+            data: data,
+            beforeSend: function(){
+                $('#loader').modal({show:true,backdrop:'static'});
+            },
+            success: function(data) {
+                $('#filter_owner').html('<option value="">-- Toate --</option>');
+
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#filter_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
+
+                $('#loader').modal('hide');
+            }
+        });
+    });
+
+
+    $("#filter_department").change(function(){
+        var data = {
+            department_id: $(this).val(),
+            service_id: $('#filter_service').val(),
+            branch_id: $('#filter_branch').val(),
+            location_id: $('#filter_zoneLocation').val()
+        };
+
+        $.ajax({
+            type: 'post',
+            url: '{{ path("filter_select_services") }}',
+            data: data,
+            beforeSend: function(){
+                $('#loader').modal({show:true,backdrop:'static'});
+            },
+            success: function(data) {
+                $('#filter_service').html('<option value="">-- Toate --</option>');
+
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#filter_service').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'post',
+            url: '{{ path("filter_select_branches") }}',
+            data: data,
+            success: function(data) {
+                $('#filter_branch').html('<option value="">-- Toate --</option>');
+                $('#filter_zoneLocation').html('<option value="">-- Toate --</option>');
+
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#filter_branch').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'post',
+            url: '{{ path("filter_select_owners") }}',
+            data: data,
+            success: function(data) {
+                $('#filter_owner').html('<option value="">-- Toate --</option>');
+
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#filter_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
+
+                $('#loader').modal('hide');
+            }
+        });
+    });
+
+    $("#filter_service").change(function(){
+        var data = {
+            department_id: $('#filter_department').val(),
+            service_id: $(this).val(),
+            branch_id: $('#filter_branch').val(),
+            location_id: $('#filter_zoneLocation').val()
+        };
+
+        if ($(this).val() > 0)
+        {
+            $.ajax({
+                type: 'post',
+                url: '{{ path("filter_select_branches") }}',
+                data: data,
+                beforeSend: function(){
+                    $('#loader').modal({show:true,backdrop:'static'});
+                },
+                success: function(data) {
+                    $('#filter_branch').html('<option value="">-- Toate --</option>');
+                    $('#filter_zoneLocation').html('<option value="">-- Toate --</option>');
+
+                    for (var i=0, total = data.length; i < total; i++) {
+                        $('#filter_branch').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                    }
+                }
+            });
+
+            $.ajax({
+                type: 'post',
+                url: '{{ path("filter_select_owners") }}',
+                data: data,
+                success: function(data) {
+                    $('#filter_owner').html('<option value="">-- Toate --</option>');
+
+                    for (var i=0, total = data.length; i < total; i++) {
+                        $('#filter_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                    }
+
+                    $('#loader').modal('hide');
+                }
+            });
+        }
+        else
+        {
+            $('#filter_department').change();
         }
     });
-	
-    $.ajax({
-        type: 'post',
-        url: '{{ path("filter_select_owners") }}',
-        data: data,
-        success: function(data) {
-            $('#filter_owner').html('<option value="">-- Toate --</option>');
 
-            for (var i=0, total = data.length; i < total; i++) {
-                $('#filter_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+    $('#filter-form').submit(
+            function() {
+                $('#loader').modal({
+                            backdrop : 'static'
+                        }
+                );
+
+                return true;
             }
-			
-			$('#loading').dialog("close");
-        }
-    });
-});
-
-
-$("#filter_zoneLocation").change(function(){
-    var data = {
-		department_id: $('#filter_department').val(),
-		service_id: $('#filter_service').val(),
-		branch_id: $('#filter_branch').val(),
-        location_id: $(this).val()		
-    };
-	
-    $.ajax({
-        type: 'post',
-        url: '{{ path("filter_select_owners") }}',
-        data: data,
-		beforeSend: function(){
-		   $("#loading").dialog('open').html("<p style=\"font-size: 14pt\"><img src=\"{{ asset('css/loader.gif') }}\" /> Loading...</p>");
-		},
-        success: function(data) {
-            $('#filter_owner').html('<option value="">-- Toate --</option>');
- 
-            for (var i=0, total = data.length; i < total; i++) {
-                $('#filter_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
-            }
-			
-			$('#loading').dialog("close");
-        }
-    });
-});
-
-
-$("#filter_department").change(function(){
-    var data = {
-        department_id: $(this).val(),
-		service_id: $('#filter_service').val(),
-		branch_id: $('#filter_branch').val(),
-        location_id: $('#filter_zoneLocation').val()		
-    };
-	
-    $.ajax({
-        type: 'post',
-        url: '{{ path("filter_select_services") }}',
-        data: data,
-        beforeSend: function(){
-           $("#loading").dialog('open').html("<p style=\"font-size: 14pt\"><img src=\"{{ asset('css/loader.gif') }}\" /> Loading...</p>");
-        },
-        success: function(data) {
-            $('#filter_service').html('<option value="">-- Toate --</option>');
- 
-            for (var i=0, total = data.length; i < total; i++) {
-                $('#filter_service').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
-            }
-        }
-    });
-	
-    $.ajax({
-        type: 'post',
-        url: '{{ path("filter_select_branches") }}',
-        data: data,
-        success: function(data) {
-            $('#filter_branch').html('<option value="">-- Toate --</option>');
-			$('#filter_zoneLocation').html('<option value="">-- Toate --</option>');
- 
-            for (var i=0, total = data.length; i < total; i++) {
-                $('#filter_branch').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
-            }
-        }
-    });
-	
-    $.ajax({
-        type: 'post',
-        url: '{{ path("filter_select_owners") }}',
-        data: data,
-        success: function(data) {
-			$('#filter_owner').html('<option value="">-- Toate --</option>');
- 
-            for (var i=0, total = data.length; i < total; i++) {
-                $('#filter_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
-            }
-			
-			$('#loading').dialog("close");
-        }
-    });
-});
-
-$("#filter_service").change(function(){
-    var data = {
-        department_id: $('#filter_department').val(),
-        service_id: $(this).val(),
-		branch_id: $('#filter_branch').val(),
-        location_id: $('#filter_zoneLocation').val()		
-    };
-	
-	if ($(this).val() > 0)
-	{
-		$.ajax({
-			type: 'post',
-			url: '{{ path("filter_select_branches") }}',
-			data: data,
-			beforeSend: function(){
-			   $("#loading").dialog('open').html("<p style=\"font-size: 14pt\"><img src=\"{{ asset('css/loader.gif') }}\" /> Loading...</p>");
-			},
-			success: function(data) {
-				$('#filter_branch').html('<option value="">-- Toate --</option>');
-				$('#filter_zoneLocation').html('<option value="">-- Toate --</option>');
-	 
-				for (var i=0, total = data.length; i < total; i++) {
-					$('#filter_branch').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
-				}
-			}
-		});
-		
-		$.ajax({
-			type: 'post',
-			url: '{{ path("filter_select_owners") }}',
-			data: data,
-			success: function(data) {
-				$('#filter_owner').html('<option value="">-- Toate --</option>');
-
-				for (var i=0, total = data.length; i < total; i++) {
-					$('#filter_owner').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
-				}
-				
-				$('#loading').dialog("close");
-			}
-		});
-	}
-	else
-	{
-		$('#filter_department').change();
-	}
-});
+    );
 </script>
 {% endblock %}
