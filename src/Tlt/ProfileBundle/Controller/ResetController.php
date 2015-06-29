@@ -96,7 +96,7 @@ class ResetController extends Controller
                 'text/html'
             );
 
-        $user->setPasswordRequestedAt(new \DateTime('now', new \DateTimeZone('UTC')));
+        $user->setPasswordRequestedAt(new \DateTime('now', new \DateTimeZone('Europe/Bucharest')));
 
         $mailer->send($message);
 
