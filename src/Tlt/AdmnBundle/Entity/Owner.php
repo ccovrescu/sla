@@ -33,8 +33,15 @@ class Owner extends AbstractEntity
      * @ORM\OneToMany(targetEntity="Equipment", mappedBy="owner")
      */
     private $equipments;
-    
-	
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="reports_owner", type="string", length=64)
+     */
+    private $reportsOwner;
+
+
 	/**
      * Constructor
      */
@@ -125,8 +132,23 @@ class Owner extends AbstractEntity
     {
         return $this->equipments;
     }
-	
-	
+
+    /**
+     * @return string
+     */
+    public function getReportsOwner()
+    {
+        return $this->reportsOwner;
+    }
+
+    /**
+     * @param string $reportsOwner
+     */
+    public function setReportsOwner($reportsOwner)
+    {
+        $this->reportsOwner = $reportsOwner;
+    }
+
 	public function __toString()
 	{
 		return $this->getName();

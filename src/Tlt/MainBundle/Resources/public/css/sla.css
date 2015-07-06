@@ -1,0 +1,64 @@
+@media screen {
+    h3, .signatures {
+        display: none;
+    }
+}
+
+@media print {
+    .no-print {
+        display: none;
+    }
+
+    a[href]:after {
+        content: none !important;
+    }
+
+
+    * {
+        font-family: times;
+        font-size: 10pt;
+    }
+
+    body
+    {
+        /* this affects the margin on the content before sending to printer */
+        margin: 0px;
+    }
+
+    #wrapper, #page-wrapper {
+        margin: 0;
+        padding: 0;
+        border: none;
+    }
+
+    h3 {
+        font-family: times;
+        font-size: 10pt;
+        font-style: normal;
+        font-weight: bold;
+        line-height: 2;
+        margin: 0;
+        padding: 0;
+    }
+
+    .signatures {
+        width: 100%;
+    }
+
+    .signatures tr td, .signatures tr td strong {
+        font-style: normal;
+    }
+
+    .length-limit {
+        width: 40%;
+    }
+}
+
+@page
+{
+    /* A4 */
+    size:297mm 210mm;
+
+    /* this affects the margin in the printer settings */
+    margin: 5mm 5mm 5mm 5mm;
+}

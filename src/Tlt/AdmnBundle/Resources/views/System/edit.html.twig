@@ -16,6 +16,10 @@
 				{{ form_label(form.name) }}
 				{{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder':'introduceti denumirea'}}) }}
 			</div>
+            <div class="form-group">
+                {{ form_label(form.criticality) }}
+                {{ form_widget(form.criticality, {'attr': {'class': 'form-control', 'placeholder':'introduceti criticalitatea sistemului'}}) }}
+            </div>
 			<div class="form-group">
 				{{ form_label(form.department) }}
 				{{ form_widget(form.department, {'attr': {'class': 'form-control'}}) }}

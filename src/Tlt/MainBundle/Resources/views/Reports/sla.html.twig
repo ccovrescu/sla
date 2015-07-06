@@ -2,6 +2,12 @@
 
 {% form_theme form 'TltTicketBundle::fields.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('bundles/tltmain/css/sla.css' ) }}" rel="stylesheet">
+{% endblock %}
+
 {% block page %}
     <style type="text/css">
         .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {
@@ -67,71 +73,105 @@
     {{ form_rest(form) }}
     {{ form_end(form) }}
 
-    <div class="row">
-    <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                Raport realizare SLA
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>Nr. Crt.<br/>&nbsp;</th>
-                                <th>Serviciu / echipament / aplicatie</th>
-                                <th class="text-center">Program orar<br/><br/>&nbsp;</th>
-                                <th class="text-right">Timp maxim de functionare</th>
-                                <th class="text-right">Disponibilitate contractata<br/>&nbsp;</th>
-                                <th class="text-right">Timp total de indisponibilitate<br/>&nbsp;</th>
-                                <th class="text-right">Unitati<br/>&nbsp;</th>
-                                <th>Disponibilitate realizata fara unitati</th>
-                                <th>Disponibilitate realizata cu unitati</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for system in systems %}
-
-                            {% if system.units_no>0 %}
-                                {% set r_disp = (1-system.indisponible_time/system.total_time)*100 %}
-                                {% set ru_disp = (1-system.indisponible_time/system.total_time/system.units_no)*100 %}
-                            {% else %}
-                                {% set r_disp = 0 %}
-                                {% set ru_disp = 0 %}
-                            {% endif %}
-
-                            <tr>
-                                <td>{{ loop.index }}</td>
-                                <td>{{ system.name }}</td>
-                                <td nowrap>{{ system.min_hour }} - {{ system.max_hour }}</td>
-                                <td class="text-right text-primary">{{ system.total_time }}</td>
-                                <td class="text-right text-primary">{{ system.g_disp|number_format(2) }}</td>
-                                <td class="text-right text-warning">
-                                    {% if system.indisponible_time > 0 %}
-                                        <a href="{{ path('tlt_main_reports_tickets', {'systemID' : system.id, 'owner' : form.owner.vars.value, 'from' : form.start.vars.value.year ~ '-' ~ form.start.vars.value.month ~ '-' ~ form.start.vars.value.day, 'to' : form.end.vars.value.year ~ '-' ~ form.end.vars.value.month ~ '-' ~ form.end.vars.value.day }) }}">
-                                            {{ system.indisponible_time }}
-                                        </a>
-                                    {% else %}
-                                        {{ system.indisponible_time }}
-                                    {% endif %}
-                                </td>
-                                <td class="text-right text-warning">{{ system.units_no|number_format(0,',','.') }}</td>
-                                <td class="text-right {{ (r_disp<system.g_disp ? 'text-danger text' : 'text-success') }}">{{ r_disp|number_format(2) }}</td>
-                                <td class="text-right {{ (ru_disp<system.g_disp ? 'text-danger' : 'text-success') }}">{{ ru_disp|number_format(2) }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.table-responsive -->
-            </div>
-            <!-- /.panel-body -->
+    <div class="row text-center">
+        <div class="col-lg-12">
+            <h3>RAPORT DE DISPONIBILITATE A SERVICIILOR DE {{ form.vars.value.department|upper }}</h3>
+            <h3>EFECTUATE DE {{ form.vars.value.owner.reportsOwner|default('n/a') }} ÎN PERIOADA {{ form.vars.value.start|date('d.m.Y') }} - {{ form.vars.value.end|date('d.m.Y') }}</h3>
+            <h3>PENTRU CNTEE TRANSELECTRICA SA - {{ form.vars.value.owner|default('n/a') }}</h3>
         </div>
-        <!-- /.panel -->
     </div>
-    <!-- /.col-lg-6 -->
 
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nr. Crt.<br/>&nbsp;</th>
+                            <th class="length-limit">Serviciu/echipament/aplicatie<br/>&nbsp;</th>
+                            <th nowrap>Criticitate<br/>&nbsp;</th>
+                            <th class="text-center">Program orar<br/>&nbsp;</th>
+                            <th class="text-right no-print">Timp maxim de functionare</th>
+                            <th class="text-right">Disponibilitate<br/>contractata (%)</th>
+                            <th class="text-right">Timp total real<br>indisponibilitate (ore)</th>
+                            <th class="text-right no-print">Unitati</th>
+                            <th class="no-print">Disponibilitate realizata fara unitati</th>
+                            <th class="text-right">Disponibilitate<br/>realizata (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for system in systems %}
+
+                        {% if system.units_no>0 %}
+                            {% set r_disp = (1-system.indisponible_time/system.total_time)*100 %}
+                            {% set ru_disp = (1-system.indisponible_time/system.total_time/system.units_no)*100 %}
+                        {% else %}
+                            {% set r_disp = 0 %}
+                            {% set ru_disp = 0 %}
+                        {% endif %}
+
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td class="length-limit">{{ system.name }}</td>
+                            <td nowrap>{{ system.criticality|default('Critic: 1 ora') }}</td>
+                            <td class="text-center" nowrap>{{ system.min_hour }} - {{ system.max_hour }}</td>
+                            <td class="text-right text-primary no-print">{{ system.total_time }}</td>
+                            <td class="text-right text-primary">{{ system.g_disp|number_format(2) }}</td>
+                            <td class="text-right text-warning">
+                                {% if system.indisponible_time > 0 %}
+                                    <a href="{{ path('tlt_main_reports_tickets', {'systemID' : system.id, 'owner' : form.owner.vars.value, 'from' : form.start.vars.value.year ~ '-' ~ form.start.vars.value.month ~ '-' ~ form.start.vars.value.day, 'to' : form.end.vars.value.year ~ '-' ~ form.end.vars.value.month ~ '-' ~ form.end.vars.value.day }) }}">
+                                        {{ "%02d"|format(system.indisponible_time//60) }}:{{ "%02d"|format(system.indisponible_time%60) }}
+                                    </a>
+                                {% else %}
+                                    {{ "%02d"|format(system.indisponible_time//60) }}:{{ "%02d"|format(system.indisponible_time%60) }}
+                                {% endif %}
+                            </td>
+                            <td class="text-right text-warning no-print">{{ system.units_no|number_format(0,',','.') }}</td>
+                            <td class="text-right no-print {{ (r_disp<system.g_disp and system.indisponible_time>0 ? 'text-danger text' : 'text-success') }}">
+                                {% if system.indisponible_time>0 %}
+                                    {{ r_disp|number_format(2) }}%
+                                {% else %}
+                                    100.00%
+                                {% endif %}
+                            </td>
+                            <td class="text-right {{ (ru_disp<system.g_disp and system.indisponible_time>0 ? 'text-danger' : 'text-success') }}">
+                                {% if system.indisponible_time>0 %}
+                                    {{ ru_disp|number_format(2) }}%
+                                {% else %}
+                                    100.00%
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.table-responsive -->
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="signatures">
+                <tr>
+                    <td class="text-center"><strong>Avizat,</strong></td>
+                    <td class="text-center"><strong>PRESTATOR,</strong></td>
+                    <td class="text-center"><strong>Întocmit,</strong></td>
+                </tr>
+                <tr>
+                    <td class="text-center">&nbsp;</td>
+                    <td class="text-center">{{ form.vars.value.owner.reportsOwner|default('n/a') }}</td>
+                    <td class="text-center">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td class="text-center">&nbsp;</td>
+                    <td class="text-center">&nbsp;</td>
+                    <td class="text-center">&nbsp;</td>
+                </tr>
+            </table>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}

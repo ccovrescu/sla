@@ -50,6 +50,12 @@ class System extends AbstractEntity
  	 */
 	private $guaranteedValues;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="criticality", type="string", length=255)
+     */
+    private $criticality;
 
 	
    /**
@@ -158,5 +164,21 @@ class System extends AbstractEntity
     public function getGuaranteedValues()
     {
         return $this->guaranteedValues;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCriticality()
+    {
+        return $this->criticality;
+    }
+
+    /**
+     * @param string $criticality
+     */
+    public function setCriticality($criticality)
+    {
+        $this->criticality = $criticality;
     }
 }

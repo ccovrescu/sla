@@ -15,6 +15,10 @@ class SystemType extends AbstractType
 				'max_length' => 255,
 				'label' => 'Denumire:'
 				))
+            ->add('criticality','text',array(
+                    'max_length' => 64,
+                    'label' => 'Criticalitate:'
+                ))
 			->add('department','entity',array(
 				'class' => 'Tlt\AdmnBundle\Entity\Department',
 				'property' => 'name',

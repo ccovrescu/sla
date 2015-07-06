@@ -173,6 +173,7 @@ class SystemRepository extends EntityRepository
 
         $rsm->addScalarResult('id', 'id');
         $rsm->addScalarResult('name', 'name');
+        $rsm->addScalarResult('criticality', 'criticality');
         $rsm->addScalarResult('min_hour', 'min_hour');
         $rsm->addScalarResult('max_hour', 'max_hour');
         $rsm->addScalarResult('g_disp', 'g_disp');
@@ -183,6 +184,7 @@ class SystemRepository extends EntityRepository
                 SELECT
                   s.id,
                   s.name,
+                  s.criticality,
                   wt.min_hour,
                   wt.max_hour,
                   gv.value AS g_disp,

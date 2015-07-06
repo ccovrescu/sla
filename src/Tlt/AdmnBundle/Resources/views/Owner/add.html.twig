@@ -16,7 +16,11 @@
 				{{ form_label(form.name) }}
 				{{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder':'introduceti denumirea'}}) }}
 			</div>
-			
+            <div class="form-group">
+                {{ form_label(form.reportsOwner) }}
+                {{ form_widget(form.reportsOwner, {'attr': {'class': 'form-control', 'placeholder':'introduceti denumirea care apare in rapoarte'}}) }}
+            </div>
+
 			{{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}
 			{{ form_widget(form.reseteaza, {'attr': {'class': 'btn btn-default'}}) }}
 			

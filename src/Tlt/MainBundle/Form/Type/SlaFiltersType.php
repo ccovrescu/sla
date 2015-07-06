@@ -39,8 +39,8 @@ class SlaFiltersType extends AbstractType
             ->add('department', 'entity', array(
                     'class'			=>	'Tlt\AdmnBundle\Entity\Department',
                     'label'			=>	'Tip Serviciu',
-                    'empty_value'   => '-- Toate --',
-                    'empty_data'    => null,
+//                    'empty_value'   => '-- Toate --',
+//                    'empty_data'    => null,
                     'query_builder' => function (EntityRepository $repository) use ($userDepartments) {
                         $qb = $repository->createQueryBuilder('dp')
                             ->andWhere('dp.id IN (:userDepartments)')
@@ -49,7 +49,7 @@ class SlaFiltersType extends AbstractType
 
                         return $qb;
                     },
-                    'required'      => false
+                    'required'      => true
                 )
             )
             ->add('start', 'date', array(

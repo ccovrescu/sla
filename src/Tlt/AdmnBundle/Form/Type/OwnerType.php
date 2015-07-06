@@ -15,6 +15,10 @@ class OwnerType extends AbstractType
 				'max_length' => 32,
 				'label' => 'Denumirea entitatii'
 				))
+            ->add('reportsOwner','text',array(
+                    'max_length' => 32,
+                    'label' => 'Denumirea din rapoarte'
+                ))
 			->add('salveaza', 'submit')
 			->add('reseteaza', 'reset', array());
 	}
