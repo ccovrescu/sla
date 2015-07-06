@@ -134,5 +134,7 @@
         </table>
     </div>
 
-    {% include '::print_button.html.twig' with {'document':'jurnalul'} %}
+    {% if form.vars.value.owner is not null %}
+        {% include '::print_button.html.twig' with {'document':'jurnalul'} %}
+    {% endif %}
 {% endblock %}

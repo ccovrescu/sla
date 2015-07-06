@@ -172,6 +172,10 @@
             </table>
         </div>
     </div>
+
+    {% if form.vars.value.owner is not null %}
+        {% include '::print_button.html.twig' with {'document':'raportul'} %}
+    {% endif %}
 {% endblock %}
 
 {% block javascripts %}

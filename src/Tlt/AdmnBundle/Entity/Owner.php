@@ -37,7 +37,7 @@ class Owner extends AbstractEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="reports_owner", type="string", length=64)
+     * @ORM\Column(name="reports_owner", type="string", length=128)
      */
     private $reportsOwner;
 
