@@ -129,14 +129,14 @@
                             <td class="text-right text-warning no-print">{{ system.units_no|number_format(0,',','.') }}</td>
                             <td class="text-right no-print {{ (r_disp<system.g_disp and system.indisponible_time>0 ? 'text-danger text' : 'text-success') }}">
                                 {% if system.indisponible_time>0 %}
-                                    {{ r_disp|number_format(2) }}%
+                                    {{ r_disp|round(2,'floor')|number_format(2) }}%
                                 {% else %}
                                     100.00%
                                 {% endif %}
                             </td>
                             <td class="text-right {{ (ru_disp<system.g_disp and system.indisponible_time>0 ? 'text-danger' : 'text-success') }}">
                                 {% if system.indisponible_time>0 %}
-                                    {{ ru_disp|number_format(2) }}%
+                                    {{ ru_disp|round(2,'floor')|number_format(2) }}%
                                 {% else %}
                                     100.00%
                                 {% endif %}
