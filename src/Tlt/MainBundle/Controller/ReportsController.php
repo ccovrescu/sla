@@ -203,12 +203,12 @@ class ReportsController extends Controller
 
     private function setStartDate()
     {
-        return new \DateTime(date( 'd.m.Y', mktime(0,0,0, (date('m'<=6) ? 1 : 7), 1, date('Y'))));
+        return new \DateTime(date( 'd.m.Y', mktime(0,0,0, (date('m')<=6 ? 1 : 7), 1, date('Y'))));
     }
 
     private function setEndDate()
     {
-        return new \DateTime(date( 'd.m.Y', mktime(0,0,0, (date('m'<=6) ? 6 : 12),(date('m'<=6) ? 30 : 31) , date('Y'))));
+        return new \DateTime(date( 'd.m.Y', mktime(0,0,0, (date('m')<=6 ? 6 : 12),(date('m')<=6 ? 30 : 31) , date('Y'))));
     }
 
     /**
