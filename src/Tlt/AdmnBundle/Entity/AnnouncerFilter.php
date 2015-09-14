@@ -13,6 +13,12 @@ class AnnouncerFilter
     private $branch;
 
     /**
+     * @var boolean
+     */
+    private $status = true;
+
+
+    /**
      * Get branch
      *
      * @return Branch
@@ -33,5 +39,21 @@ class AnnouncerFilter
         $this->branch	=	$branch;
 
         return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param boolean $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
     }
 }

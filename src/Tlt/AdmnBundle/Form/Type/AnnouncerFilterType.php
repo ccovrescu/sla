@@ -30,6 +30,11 @@ class AnnouncerFilterType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->add('status', 'choice', array(
+                'choices'  => array('1' => 'Activ', '0' => 'Inactiv'),
+                'required' => true,
+            ));
+
 //        $builder
 //            ->add('branch','entity',array(
 //                    'class' => 'Tlt\AdmnBundle\Entity\Branch',

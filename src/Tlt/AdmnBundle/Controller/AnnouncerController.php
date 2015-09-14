@@ -55,7 +55,7 @@ class AnnouncerController extends Controller
                 $announcers = $this->getDoctrine()
                     ->getRepository('TltAdmnBundle:Announcer')
                     ->findBy(
-                        array('branch' => $filter->getBranch()),
+                        array('branch' => $filter->getBranch(), 'active' => $filter->getStatus()),
                         array(
                             'firstname' => 'ASC',
                             'lastname' => 'ASC',
@@ -66,7 +66,7 @@ class AnnouncerController extends Controller
                 $announcers = $this->getDoctrine()
                     ->getRepository('TltAdmnBundle:Announcer')
                     ->findBy(
-                        array('branch' => $this->getUser()->getBranchesIds()),
+                        array('branch' => $this->getUser()->getBranchesIds(), 'active' => $filter->getStatus()),
                         array(
                             'firstname' => 'ASC',
                             'lastname' => 'ASC',

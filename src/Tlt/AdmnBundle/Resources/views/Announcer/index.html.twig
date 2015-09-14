@@ -14,13 +14,19 @@
     {{ form_start(form, {'attr': {'class':'breadcrumb'}}) }}
 
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-4">
             <div class="form-group">
                 {{ form_label(form.branch) }}
                 {{ form_widget(form.branch, {'attr': {'class': 'form-control'}}) }}
             </div>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-4">
+            <div class="form-group">
+                {{ form_label(form.status) }}
+                {{ form_widget(form.status, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        <div class="col-lg-4">
             <div class="form-group text-right">
                 <label>&nbsp;</label><br/>
                 {{ form_widget(form.Arata, {'attr': {'class': 'btn btn-primary'}}) }}
