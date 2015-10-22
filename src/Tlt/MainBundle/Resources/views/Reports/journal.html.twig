@@ -67,6 +67,18 @@
         <h2>Lista sesizarilor in intervalul {{ form.start.vars.value.day }}.{{ form.start.vars.value.month }}.{{ form.start.vars.value.year }} - {{ form.end.vars.value.day }}.{{ form.end.vars.value.month }}.{{ form.end.vars.value.year }}</h2>
     </div>
 
+    <style type="text/css">
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+
+        .table-responsive {
+            font-size: 11px;
+        }
+    </style>
+
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
@@ -75,13 +87,15 @@
                     <th class="text-right" nowrap>Nr crt <br/>&nbsp;</th>
                     <th class="text-center" >ID sesizare</th>
                     <th nowrap>Anuntat de <br/>&nbsp;</th>
+                    <th nowrap>Preluat de <br/>&nbsp;</th>
                     <th nowrap>Locatia <br/>&nbsp;</th>
                     <th nowrap>Unitatea <br/>&nbsp;</th>
                     <th class="text-center">Tip serviciu</th>
                     <th>Descriere <br/>&nbsp;</th>
                     <th nowrap>Anuntat la <br/>&nbsp;</th>
+                    <th nowrap>Rezolvat de <br/>&nbsp;</th>
                     <th nowrap>Rezolvat la <br/>&nbsp;</th>
-                    <th>Rezolvare <br/>&nbsp;</th>
+                    <th class="no-print">Rezolvare <br/>&nbsp;</th>
                     <th class="text-right">Timp scurs <small>(calendaristic)</small> </th>
                     <th class="text-center">Afecteaza SLA</th>
                 </tr>
@@ -94,6 +108,7 @@
                             <td class="text-right">{{ loop.index }}</td>
                             <td class="text-right"><a href="{{ path('ticket_details', {'id': ticket.id}) }}">{{ ticket.id }}</a></td>
                             <td>{{ ticket.announcedBy }}</td>
+                            <td>{{ ticket.takenBy }}</td>
                             <td>{{ ticket.equipment.zoneLocation.location.name }}</td>
                             <td>{{ ticket.equipment.zoneLocation.branch.name }}</td>
                             <td class="text-center">
@@ -111,8 +126,9 @@
                             </td>
                             <td>{{ ticket.description }}</td>
                             <td>{{ ticket.announcedAt|date('d.m.Y H:i') }}</td>
+                            <td>{{ ticket.fixedBy }}</td>
                             <td>{{ ticket.fixedAt|date('d.m.Y H:i') }}</td>
-                            <td>{{ ticket.fixedMode }}</td>
+                            <td class="no-print">{{ ticket.fixedMode }}</td>
                             <td class="text-right">
                                 {% set dateDiff = ticket.fixedAt.diff(ticket.announcedAt) %}
                                 {% if dateDiff.days > 0  %}
