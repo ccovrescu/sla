@@ -1,0 +1,112 @@
+{% extends '::base.html.twig' %}
+
+{% form_theme form 'TltTicketBundle::fields.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/reports_journal.css' ) }}" rel="stylesheet">
+{% endblock %}
+
+{% block page %}
+    <div class="row no-print">
+        <div class="col-lg-12">
+            <h1>PAM
+                <small>Lista echipamente</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="{{ path('homepage') }}"><i class="icon-dashboard"></i> Prima pagina</a></li>
+                <li class="active"><i class="icon-file-alt"></i>Rapoarte</li>
+            </ol>
+        </div>
+    </div><!-- /.row -->
+
+    {{ form_start(form, {'attr': {'class':'breadcrumb'} }) }}
+
+    <div class="row no-print">
+        <div class="col-lg-3">
+            <div class="form-group">
+                {{ form_label(form.owner) }}
+                {{ form_widget(form.owner, {'attr': {'class': 'form-control'} }) }}
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="form-group">
+                {{ form_label(form.department) }}
+                {{ form_widget(form.department, {'attr': {'class': 'form-control'} }) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="row no-print">
+        <div class="col-lg-12">
+            <div class="text-right">
+                <div class="form-group">
+                    <br/>
+                    {{ form_widget(form.Arata, {'attr': {'class': 'btn btn-primary' }}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+        {{ form_rest(form) }}
+    {{ form_end(form) }}
+
+    <div class="row text-center">
+        <h2>Lista echipamentelor din PAM </h2>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>Denumire</th>
+                <th>Cantitate</th>
+                <th>Producator</th>
+                <th>Model</th>
+                <th>Serie</th>
+                <th>Compartiment</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% if pagination %}
+                {% for equipment in pagination %}
+                    {% set vendor, model, series, compartment = '', '', '', '' %}
+
+                    {% if equipment.propertiesValues %}
+                        {% for pv in equipment.propertiesValues %}
+                            {% if pv.property.name == 'model' %}
+                                {% set model = pv.value %}
+                            {% elseif pv.property.name == 'producator' %}
+                                {% set vendor = pv.value %}
+                            {% elseif pv.property.name == 'serie' %}
+                                {% set series = pv.value %}
+                            {% elseif pv.property.name == 'compartiment' %}
+                                {% set compartment = pv.value %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                    <tr>
+                        <td><a href="{{ path('admin_equipments_details', {'id' : equipment.id}) }}">{{ equipment.name }}</a></td>
+                        <td>{{ equipment.total }}</td>
+                        <td>{{ vendor }}</td>
+                        <td>{{ model }}</td>
+                        <td>{{ series }}</td>
+                        <td>{{ compartment }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    {# display navigation #}
+    {#{% do pagination.setTemplate('::pagination.html.twig') %}#}
+    {#{{ knp_pagination_render(pagination) }}#}
+
+    {% if form.vars.value and form.vars.value.owner is not null %}
+        {% include '::print_button.html.twig' with {'document':'PAM'} %}
+    {% endif %}
+{% endblock %}

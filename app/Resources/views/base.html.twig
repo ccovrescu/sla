@@ -159,6 +159,9 @@
                             <li>
                                 <a href="{{ path('reports_journal') }}">Jurnal tichete</a>
                             </li>
+                            <li>
+                                <a href="{{ path('pam_list') }}">Lista echipamente in PAM</a>
+                            </li>
                             {% if is_granted('ROLE_SLA') %}
                                 <li>
                                     <a href="{{ path('reports_sla') }}">SLA</a>

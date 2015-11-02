@@ -11,6 +11,8 @@ use Tlt\MainBundle\Form\Model\JournalFilters;
 use Tlt\MainBundle\Form\Type\JournalFiltersType;
 use Tlt\MainBundle\Form\Model\SlaFilters;
 use Tlt\MainBundle\Form\Type\SlaFiltersType;
+use Tlt\MainBundle\Form\Model\PamListFilters;
+use Tlt\MainBundle\Form\Type\PamListFiltersType;
 use Tlt\MainBundle\Model\TimeCalculation;
 
 /**
@@ -69,7 +71,6 @@ class ReportsController extends Controller
             'tickets'   => $qb->getQuery()->getResult()
         );
     }
-
 
     /**
      * @Route("/sla", name="reports_sla")
@@ -229,6 +230,68 @@ class ReportsController extends Controller
         return array(
             'system' => $system,
             'tickets' => $tickets
+        );
+    }
+
+    /**
+     * @Route("/pam_list", name="pam_list")
+     * @Template()
+     */
+    public function pamListAction(Request $request)
+    {
+//        $session = $this->get('session');
+        $pamListFilters = new PamListFilters();
+
+        $form = $this->createForm(
+            new PamListFiltersType(
+                $this->get('security.context')
+            ),
+            $pamListFilters
+        );
+
+        $form->handleRequest($request);
+
+        $equipments = array();
+        if ($form->isValid()) {
+            // Data is valid so save it in session for another request
+//            $session->set('pamListData', $form->getData());
+
+//            if ($request->query->get('limit') != null)
+//                $session->set('limit', $request->query->get('limit', 10));
+
+            if ($pamListFilters->getDepartment() !== null) {
+                $allowedDepartments = $pamListFilters->getDepartment();
+            } else {
+                $allowedDepartments = $this->getUser()->getDepartmentsIds();
+            }
+
+            $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
+            $qb = $qb->select('e')
+                ->from('TltAdmnBundle:Equipment', 'e')
+                ->leftJoin('e.service', 's');
+            $qb->andWhere('e.service NOT IN (25,26)');
+            $qb->andWhere('e.inPam = true');
+            $qb->andWhere('e.owner = (:owner)');
+            $qb->setParameter('owner', $pamListFilters->getOwner());
+            $qb->andWhere('s.department IN (:userDepartments)');
+            $qb->setParameter('userDepartments', $allowedDepartments);
+            $qb->orderBy('e.name', 'ASC');
+
+            $equipments = $qb->getQuery()->getResult();
+        }
+
+//        $paginator  = $this->get('knp_paginator');
+//        $paginator->setDefaultPaginatorOptions(array('limit' => $session->get('limit', $request->query->get('limit', 10))));
+//        $pagination = $paginator->paginate(
+//            $equipments,
+//            $request->query->get('page', 1),
+//            $session->get('limit', $request->query->get('limit', 10))
+//        );
+
+        return array(
+            'form'          => $form->createView(),
+//            'pagination'    => $pagination
+            'pagination'    => $equipments
         );
     }
 }
