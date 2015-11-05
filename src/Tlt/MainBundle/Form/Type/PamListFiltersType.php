@@ -21,9 +21,15 @@ class PamListFiltersType extends AbstractType
      */
     private $securityContext;
 
-    public function __construct(SecurityContext $securityContext)
+    /**
+     * @param ObjectManager $objectManager
+     */
+    protected $objectManager;
+
+    public function __construct(SecurityContext $securityContext, ObjectManager $objectManager)
     {
         $this->securityContext = $securityContext;
+        $this->objectManager = $objectManager;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -38,7 +44,7 @@ class PamListFiltersType extends AbstractType
                     'query_builder' => function (EntityRepository $repository) use ($userOwners) {
                         $qb = $repository->createQueryBuilder('ow')
                             ->andWhere('ow.id IN (:userOwners)')
-                            ->setParameter('userOwners', $userOwners->toArray())
+                            ->setParameter('userOwners', $this->getEquipmentsOwnerIds())
                             ->orderby('ow.name', 'ASC');
 
                         return $qb;
@@ -72,5 +78,25 @@ class PamListFiltersType extends AbstractType
     public function getName()
     {
         return 'pam_list_filters';
+    }
+
+    /**
+     *
+     */
+    protected function getEquipmentsOwnerIds()
+    {
+        $owners = $this->objectManager->getRepository('TltAdmnBundle:Equipment')->createQueryBuilder('e')
+            ->select('distinct o.id')
+            ->leftJoin('e.zoneLocation', 'z')
+            ->leftJoin('z.branch', 'b')
+            ->leftJoin('e.service', 's')
+            ->leftJoin('s.department', 'd')
+            ->leftJoin('e.owner', 'o')
+            ->where('b.id IN (:branches)')
+            ->andWhere('d.id IN (:departments)')
+            ->setParameter('branches',$this->securityContext->getToken()->getUser()->getBranches()->toArray())
+            ->setParameter('departments',$this->securityContext->getToken()->getUser()->getDepartments()->toArray());
+
+        return $owners->getQuery()->getResult();
     }
 }

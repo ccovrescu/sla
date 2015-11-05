@@ -244,7 +244,8 @@ class ReportsController extends Controller
 
         $form = $this->createForm(
             new PamListFiltersType(
-                $this->get('security.context')
+                $this->get('security.context'),
+                $this->get('doctrine.orm.entity_manager')
             ),
             $pamListFilters
         );
@@ -268,12 +269,16 @@ class ReportsController extends Controller
             $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
             $qb = $qb->select('e')
                 ->from('TltAdmnBundle:Equipment', 'e')
-                ->leftJoin('e.service', 's');
+                ->leftJoin('e.service', 's')
+                ->leftJoin('e.zoneLocation', 'z')
+            ;
+            $qb->andWhere('e.owner = (:owner)');
+            $qb->andWhere('z.branch IN (:userBranches)');
+            $qb->andWhere('s.department IN (:userDepartments)');
             $qb->andWhere('e.service NOT IN (25,26)');
             $qb->andWhere('e.inPam = true');
-            $qb->andWhere('e.owner = (:owner)');
             $qb->setParameter('owner', $pamListFilters->getOwner());
-            $qb->andWhere('s.department IN (:userDepartments)');
+            $qb->setParameter('userBranches', $this->getUser()->getBranchesIds());
             $qb->setParameter('userDepartments', $allowedDepartments);
             $qb->orderBy('e.name', 'ASC');
 
