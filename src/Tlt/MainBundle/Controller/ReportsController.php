@@ -277,6 +277,7 @@ class ReportsController extends Controller
             $qb->andWhere('s.department IN (:userDepartments)');
             $qb->andWhere('e.service NOT IN (25,26)');
             $qb->andWhere('e.inPam = true');
+            $qb->andWhere('e.isActive = true');
             $qb->setParameter('owner', $pamListFilters->getOwner());
             $qb->setParameter('userBranches', $this->getUser()->getBranchesIds());
             $qb->setParameter('userDepartments', $allowedDepartments);
