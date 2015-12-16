@@ -32,7 +32,10 @@ class ReportsController extends Controller
         $journalFilters->setEnd($this->setEndDate());
 
         $form = $this->createForm(
-            new JournalFiltersType($this->get('security.context')),
+            new JournalFiltersType(
+                $this->get('security.context'),
+                $this->get('doctrine.orm.entity_manager')
+            ),
             $journalFilters
         );
 
