@@ -276,7 +276,7 @@ class Ticket extends AbstractEntity
     /**
      * @var string
      *
-     * @ORM\Column(name="fixed_mode", type="string", length=256, nullable=true)
+     * @ORM\Column(name="fixed_mode", type="text", nullable=true)
      *
      * @Assert\NotBlank(
      *     message = "Trebuie sa completati o valoare. Campul este obligatoriu.",
