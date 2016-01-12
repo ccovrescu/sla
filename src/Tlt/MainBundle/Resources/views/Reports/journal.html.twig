@@ -104,7 +104,7 @@
             <tbody>
                 {% if tickets %}
                     {% for ticket in tickets %}
-                        <tr>
+                        <tr {% if ticket.isReal==1 and ticket.backupSolution.id==2 %} class="danger" {% endif %}>
                             <td class="text-right">{{ loop.index }}</td>
                             <td class="text-right"><a href="{{ path('ticket_details', {'id': ticket.id}) }}">{{ ticket.id }}</a></td>
                             <td>{{ ticket.announcedBy }}</td>
@@ -138,9 +138,11 @@
                             </td>
                             <td class="text-center">
                                 {% if ticket.isReal==1 and ticket.backupSolution.id==2 %}
-                                    <i class="fa fa-check text-danger"></i>
+                                    {#<i class="fa fa-check text-danger"></i>#}
+                                    <i>DA</i>
                                 {% else %}
-                                    <i class="fa fa-minus text-success"></i>
+                                    {#<i class="fa fa-minus text-success"></i>#}
+                                    <i>NU</i>
                                 {% endif %}
                             </td>
                         </tr>
