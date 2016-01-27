@@ -186,7 +186,7 @@ class TicketType extends AbstractType {
                     $builder
                         ->create('equipment', 'hidden', array(
                             'label' => 'Echipament:',
-                            'required' => true,
+                            'required' => false,
                         ))
                         ->addModelTransformer($eqTransformer)
                 );

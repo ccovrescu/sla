@@ -266,10 +266,6 @@ class Ticket extends AbstractEntity
     /**
      * @ORM\ManyToOne(targetEntity="Tlt\AdmnBundle\Entity\Equipment")
      * @ORM\JoinColumn(name="equipment_id", referencedColumnName="id", nullable=true)
-     * @Assert\NotNull(
-     *     message = "Trebuie sa alegeti un echipament.",
-     *     groups={"not-real", "solve"}
-     * )
      */
     protected $equipment;
 
