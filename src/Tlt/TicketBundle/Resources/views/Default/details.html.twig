@@ -305,6 +305,11 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/i18n/ro.js"></script>
 
     <script type="text/javascript">
+
+        $('#print-button').on('click', function(e) {
+            window.open($(e.currentTarget).data('url'), '_blank');
+        });
+
         $("#ticket_equipment2").select2({
             ajax: {
                 url: "{{ path('admin_ajax_equipments') }}",

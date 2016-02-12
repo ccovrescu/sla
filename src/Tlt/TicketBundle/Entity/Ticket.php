@@ -13,6 +13,8 @@ use Tlt\AdmnBundle\Entity\Equipment;
 use Tlt\AdmnBundle\Entity\GuaranteedValue;
 use Tlt\AdmnBundle\Entity\System;
 use Tlt\AdmnBundle\Entity\Announcer;
+use Tlt\TicketBundle\Entity\Emergency;
+use Tlt\TicketBundle\Entity\Oldness;
 
 /**
  * Ticket
@@ -798,7 +800,7 @@ class Ticket extends AbstractEntity
     /**
      * Set oldness
      *
-     * @param integer $oldness
+     * @param Oldness $oldness
      * @return Ticket
      */
     public function setOldness($oldness)
@@ -811,7 +813,7 @@ class Ticket extends AbstractEntity
     /**
      * Get oldness
      *
-     * @return integer
+     * @return Oldness
      */
     public function getOldness()
     {
@@ -834,7 +836,7 @@ class Ticket extends AbstractEntity
     /**
      * Get emergency
      *
-     * @return integer
+     * @return Emergency
      */
     public function getEmergency()
     {
@@ -1002,5 +1004,10 @@ class Ticket extends AbstractEntity
 
 
         return $indisponibleTime;
+    }
+
+    public function __toString()
+    {
+        return (string)$this->getId();
     }
 }
