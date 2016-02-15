@@ -108,27 +108,18 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/user/details", name="profile_user_details")
+     * @Route("/user/details/{id}", name="profile_user_details")
      * @Template("TltProfileBundle:User:details.html.twig")
      */
-    public function detailsAction(Request $request)
+    public function detailsAction($id=null )
     {
-        $user = $this->getUser();
-
-        $form = $this->createForm( new UserType(), $user);
-
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('profile_user_success', array('action'=>'edit')));
-        }
+        if ($id == null)
+            $user = $this->getUser();
+        else
+            $user = $this->getDoctrine()->getRepository('TltProfileBundle:User')->findOneBy(['id'=>$id]);
 
         return $this->render('TltProfileBundle:User:details.html.twig', array(
-            'form' => $form->createView(),
+            'user' => $user,
         ));
     }
 

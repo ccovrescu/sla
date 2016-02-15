@@ -5,7 +5,7 @@
         <div class="col-lg-12">
             <h1>Profil utilizator <small>Detalii</small></h1>
             <ol class="breadcrumb">
-                <li><a href="{{ path('homepage') }}"><i class="icon-dashboard"></i> Prima pagina</a></li>
+                <li><a href="{{ path('tlt_profile_user_index') }}"><i class="icon-dashboard"></i> Administrare utilizatori</a></li>
                 <li class="active"><i class="icon-file-alt"></i> Profil utilizator</li>
             </ol>
         </div>
@@ -20,30 +20,30 @@
             <tbody>
                 <tr>
                     <td>Nume de utilizator:</td>
-                    <td>{{ app.user.username }}</td>
+                    <td>{{ user.username }}</td>
                 </tr>
                 <tr>
                     <td>Status:</td>
-                    <td>{{ app.user.status ? 'Activ' : 'Inactiv' }}</td>
+                    <td>{{ user.status ? 'Activ' : 'Inactiv' }}</td>
                 </tr>
                 <tr>
                     <td>Nume:</td>
-                    <td>{{ app.user.lastname }}</td>
+                    <td>{{ user.lastname }}</td>
                 </tr>
                 <tr>
                     <td>Prenume:</td>
-                    <td>{{ app.user.firstname }}</td>
+                    <td>{{ user.firstname }}</td>
                 </tr>
                 <tr>
                     <td>Adresa de e-mail:</td>
-                    <td>{{ app.user.email }}</td>
+                    <td>{{ user.email }}</td>
                 </tr>
 
-                {% if app.user.branches|length>1 %}
+                {% if user.branches|length>1 %}
                     <tr>
-                        <td rowspan="{{ app.user.branches|length + 1}}">Agentia/Centrul:</td>
+                        <td rowspan="{{ user.branches|length + 1}}">Agentia/Centrul:</td>
                     </tr>
-                        {% for branch in app.user.branches %}
+                        {% for branch in user.branches %}
                             <tr>
                                 <td>{{ branch.name }}</td>
                             </tr>
@@ -51,15 +51,15 @@
                 {% else %}
                     <tr>
                         <td>Agentia/Centrul:</td>
-                        <td>{{ app.user.branches.first.name }}</td>
+                        <td>{{ user.branches.first.name }}</td>
                     </tr>
                 {% endif %}
 
-                {% if app.user.owners|length>1 %}
+                {% if user.owners|length>1 %}
                     <tr>
-                        <td rowspan="{{ app.user.owners|length + 1}}">Entitatea:</td>
+                        <td rowspan="{{ user.owners|length + 1}}">Entitatea:</td>
                     </tr>
-                    {% for owner in app.user.owners %}
+                    {% for owner in user.owners %}
                         <tr>
                             <td>{{ owner.name }}</td>
                         </tr>
@@ -67,15 +67,15 @@
                 {% else %}
                     <tr>
                         <td>Entitatea:</td>
-                        <td>{{ app.user.owners.first.name }}</td>
+                        <td>{{ user.owners.first.name }}</td>
                     </tr>
                 {% endif %}
 
-                {% if app.user.departments|length>1 %}
+                {% if user.departments|length>1 %}
                     <tr>
-                        <td rowspan="{{ app.user.departments|length+1}}">Tip serviciu:</td>
+                        <td rowspan="{{ user.departments|length+1}}">Tip serviciu:</td>
                     </tr>
-                    {% for department in app.user.departments %}
+                    {% for department in user.departments %}
                         <tr>
                             <td>{{ department.name }}</td>
                         </tr>
@@ -83,13 +83,13 @@
                 {% else %}
                     <tr>
                         <td>Tip serviciu:</td>
-                        <td>{{ app.user.departments.first.name }}</td>
+                        <td>{{ user.departments.first.name }}</td>
                     </tr>
 
                 {% endif %}
                 <tr>
                     <td>Notificare pe email:</td>
-                    <td>{{ app.user.emailNotification ? 'da' : 'nu' }}</td>
+                    <td>{{ user.emailNotification ? 'da' : 'nu' }}</td>
                 </tr>
             </tbody>
             <tfoot>
