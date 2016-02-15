@@ -607,7 +607,7 @@ class Ticket extends AbstractEntity
     /**
      * Set ticketType
      *
-     * @param integer $ticketType
+     * @param TicketType $ticketType
      * @return Ticket
      */
     public function setTicketType($ticketType)
@@ -620,7 +620,7 @@ class Ticket extends AbstractEntity
     /**
      * Get ticketType
      *
-     * @return integer
+     * @return TicketType
      */
     public function getTicketType()
     {
