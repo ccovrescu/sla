@@ -1039,7 +1039,7 @@ class DefaultController extends Controller
             $pdf->SetX($pdf->GetX()+4);
             $pdf->SetY($pdf->GetY()+4.5, false);
             $pdf->setCellMargins(0.25, 0.25, 0.25, 0.25);
-            $pdf->MultiCell(55, 6, $ticket->getAnnouncedAt()->format('d.m.Y H:m'), 0, 'C',false,0,'','',true,0,false,true,6,'T');
+            $pdf->MultiCell(55, 6, $ticket->getAnnouncedAt()->format('d.m.Y H:i'), 0, 'C',false,0,'','',true,0,false,true,6,'T');
 
             $lastX = $pdf->GetX();
             $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
@@ -1102,7 +1102,7 @@ class DefaultController extends Controller
 
             $pdf->SetX($pdf->GetX()+30);
             $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
-            $pdf->MultiCell(48, 6, $ticket->getFixedAt() ? $ticket->getFixedAt()->format('d.m.Y H:m') : '', 0, 'L',false,1,'','',true,0,false,true,6,'T');
+            $pdf->MultiCell(48, 6, $ticket->getFixedAt() ? $ticket->getFixedAt()->format('d.m.Y H:i') : '', 0, 'L',false,1,'','',true,0,false,true,6,'T');
 
             $pdf->SetFont('times', 'BI', 10, '', true);
             $pdf->SetY($pdf->GetY()+5, false);
