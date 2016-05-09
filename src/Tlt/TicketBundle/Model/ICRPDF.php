@@ -6,7 +6,7 @@ class ICRPDF extends TCPDF {
     //Page header
     public function Header() {
         // Logo
-        $image_file = 'http://www.teletrans.ro/img/logo_old.png';
+        $image_file = 'https://www.teletrans.ro/img/logo_old.png';
         $this->Image($image_file, 10, 10, 50, '', 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
 
     }
