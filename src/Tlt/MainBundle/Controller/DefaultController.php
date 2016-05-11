@@ -14,6 +14,7 @@ use Tlt\MainBundle\Model\SQL;
 
 use Tlt\MainBundle\Form\Model\AnexaFilters;
 use Tlt\MainBundle\Form\Type\AnexaFiltersType;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class DefaultController extends Controller
 {
@@ -242,6 +243,10 @@ class DefaultController extends Controller
      */
 	public function anexaAction(Request $request)
 	{
+        if (!$this->get('security.context')->isGranted('ROLE_SLA')) {
+            throw new AccessDeniedException();
+        }
+
         $anexaFilters = new AnexaFilters();
 
         $anexaFilters->setYear(date('Y'));

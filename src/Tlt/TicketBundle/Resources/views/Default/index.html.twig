@@ -125,7 +125,7 @@
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                                 <ul class="dropdown-menu">
                                     <li><a href="{{ path('ticket_details', {'id' : ticket.id}) }}">Detalii</a></li>
-                                    {% if ticket.isReal is null %}
+                                    {% if ticket.isReal is null and is_granted('ROLE_TICKET_INSERT') %}
                                         <li class="divider"></li>
                                         <li><a href="{{ path('reallocate_ticket', {'id' : ticket.id}) }}">Realocare</a></li>
                                     {% endif %}

@@ -42,7 +42,7 @@ class JournalFiltersType extends AbstractType
                             ->andWhere('ow.id IN (:userOwners)')
 //                            ->setParameter('userOwners', $userOwners->toArray())
                             ->setParameter('userOwners', $this->getEquipmentsOwnerIds())
-                            ->orderby('ow.name', 'ASC');
+                            ->orderBy('ow.name', 'ASC');
 
                         return $qb;
                     },

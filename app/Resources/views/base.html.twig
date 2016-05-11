@@ -103,9 +103,11 @@
                 <li>
                     <a href="{{ path('tickets') }}"><i class="fa fa-desktop fa-fw"></i> Tichete</a>
                 </li>
-                <li>
-                    <a href="{{ path('anexa') }}"><i class="fa fa-table fa-fw"></i> Anexa A</a>
-                </li>
+                {% if is_granted('ROLE_SLA') %}
+                    <li>
+                        <a href="{{ path('anexa') }}"><i class="fa fa-table fa-fw"></i> Anexa A</a>
+                    </li>
+                {% endif %}
                 {% if is_granted('ROLE_ALLOWED_TO_EDIT_EQUIPMENTS') %}
                     <li>
                         <a href="#"><i class="fa fa-wrench fa-fw"></i> Administrare<span class="fa arrow"></span></a>

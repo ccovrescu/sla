@@ -229,6 +229,10 @@ class DefaultController extends Controller
      */
     public function reallocateTicket(Request $request, $id)
     {
+        if (!$this->get('security.context')->isGranted('ROLE_TICKET_INSERT')) {
+            throw new AccessDeniedException();
+        }
+
         $ticket = $this->getDoctrine()
             ->getRepository('TltTicketBundle:Ticket')
             ->findOneById($id);
