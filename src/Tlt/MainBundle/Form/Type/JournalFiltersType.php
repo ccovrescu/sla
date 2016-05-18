@@ -39,10 +39,16 @@ class JournalFiltersType extends AbstractType
                     'label'			=>	'Entitatea',
                     'query_builder' => function (EntityRepository $repository) use ($userOwners) {
                         $qb = $repository->createQueryBuilder('ow')
-                            ->andWhere('ow.id IN (:userOwners)')
+                            ->andWhere('ow.id IN (:userOwners)');
 //                            ->setParameter('userOwners', $userOwners->toArray())
-                            ->setParameter('userOwners', $this->getEquipmentsOwnerIds())
-                            ->orderBy('ow.name', 'ASC');
+
+                        if (substr($this->securityContext->getToken()->getUser()->getCompartment(), 0, strlen('TEL'))=='TEL') {
+                            $qb = $qb->setParameter('userOwners', $userOwners->toArray());
+                        } else {
+                            $qb->setParameter('userOwners', $this->getEquipmentsOwnerIds());
+                        }
+
+                        $qb->orderBy('ow.name', 'ASC');
 
                         return $qb;
                     },
