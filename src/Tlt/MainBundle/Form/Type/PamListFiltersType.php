@@ -43,9 +43,15 @@ class PamListFiltersType extends AbstractType
                     'label'			=>	'Entitatea',
                     'query_builder' => function (EntityRepository $repository) use ($userOwners) {
                         $qb = $repository->createQueryBuilder('ow')
-                            ->andWhere('ow.id IN (:userOwners)')
-                            ->setParameter('userOwners', $this->getEquipmentsOwnerIds())
-                            ->orderby('ow.name', 'ASC');
+                            ->andWhere('ow.id IN (:userOwners)');
+
+                        if (substr($this->securityContext->getToken()->getUser()->getCompartment(), 0, strlen('TEL'))=='TEL') {
+                            $qb = $qb->setParameter('userOwners', $userOwners->toArray());
+                        } else {
+                            $qb->setParameter('userOwners', $this->getEquipmentsOwnerIds());
+                        }
+
+                        $qb->orderby('ow.name', 'ASC');
 
                         return $qb;
                     },
