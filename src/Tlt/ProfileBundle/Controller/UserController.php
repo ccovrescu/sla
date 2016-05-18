@@ -85,7 +85,11 @@ class UserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $user->setPassword($changePasswordModel->getNewPassword());
+            $factory = $this->get('security.encoder_factory');
+            $encoder = $factory->getEncoder($user);
+
+            $user->setPassword($encoder->encodePassword($changePasswordModel->getNewPassword(), $user->getSalt()));
+//            $user->setPassword($changePasswordModel->getNewPassword());
 
             // perform some action, such as saving the task to the database
             $em = $this->getDoctrine()->getManager();
