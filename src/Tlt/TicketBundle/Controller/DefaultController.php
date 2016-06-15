@@ -103,6 +103,13 @@ class DefaultController extends Controller
         }
 
 
+        /**
+         * La solicitarea Timisoarei (D.Mihalescu) s-a renuntat la afisarea tichetelor care nu sunt reale.
+         */
+        if ($ticketFilters->getIsReal() == null ||(count($ticketFilters->getServiceType()) > 0 && !in_array('1', $ticketFilters->getIsReal()))) {
+                $qb->andWhere('t.isReal IS NULL OR t.isReal=1');
+        }
+
         if ($ticketFilters->getSearch() !== null) {
             $qb->andWhere(
                 $qb->expr()->like('t.id', ':id') . ' OR ' . $qb->expr()->like(

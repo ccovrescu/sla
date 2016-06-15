@@ -21,6 +21,11 @@ class TicketFilters
     protected $search;
 
     /**
+     * @var bool
+     */
+    protected $isReal;
+
+    /**
      * @return array
      */
     public function getServiceType()
@@ -50,5 +55,21 @@ class TicketFilters
     public function setSearch($search)
     {
         $this->search = $search;
+    }
+
+    /**
+     * @return array
+     */
+    public function getIsReal()
+    {
+        return $this->isReal;
+    }
+
+    /**
+     * @param array $isReal
+     */
+    public function setIsReal($isReal)
+    {
+        $this->isReal = $isReal;
     }
 }

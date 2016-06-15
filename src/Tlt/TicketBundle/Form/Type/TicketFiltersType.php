@@ -42,6 +42,18 @@ class TicketFiltersType extends AbstractType
                 )
             )
             ->add(
+                'isReal',
+                'choice',
+                array(
+                    'label' => 'Status',
+                    'choices' => array(
+                        '1' => 'NU este real'
+                    ),
+                    'multiple' => true,
+                    'expanded' => true
+                )
+            )
+            ->add(
                 'Arata',
                 'submit'
             )

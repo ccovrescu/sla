@@ -38,6 +38,17 @@
                 {{ form_widget(form.search, {'attr': {'class': 'form-control', 'placeholder':'Numar / Anuntat de'}}) }}
             </div>
         </div>
+        <div class="col-lg-3">
+            <div class="form-group">
+                {{ form_label(form.isReal) }}
+
+                {% for option in form.isReal %}
+                    <div class="checkbox">
+                        <label>{{ form_widget(option) }} {{ option.vars.label }} </label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
         <div class="col-lg-6">
             <div class="text-right">
                 <div class="form-group">
