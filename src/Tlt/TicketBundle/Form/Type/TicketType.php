@@ -42,7 +42,8 @@ class TicketType extends AbstractType {
                     'date_format'=> 'dd.MM.yyyy',
                     'years' => array(
                         '2015',
-                        '2016'
+                        '2016',
+                        '2017'
                     ),
 //                    'label' => 'Anuntat la:',
 //                    'data' => new \DateTime(),
@@ -150,7 +151,8 @@ class TicketType extends AbstractType {
                     'date_format' => 'dd.MM.yyyy',
                     'years' => array(
                         '2015',
-                        '2016'
+                        '2016',
+                        '2017'
                     ),
 //                    'label' => 'Data si ora rezolvarii:',
                 ));
