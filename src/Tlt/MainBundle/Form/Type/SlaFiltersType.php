@@ -57,8 +57,8 @@ class SlaFiltersType extends AbstractType
                     'format'=> 'dd.MM.yyyy',
                     'years' => array(
                         '2015',
-                        '2017',
-                        '2016'
+                        '2016',
+                        '2017'
                     ),
                     'label' => 'De la:'
                 )
