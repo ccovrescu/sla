@@ -331,7 +331,9 @@ class DefaultController extends Controller
 
                     $statement->execute();
 
-                    $results[$department->getName()][] = $statement->fetchAll()[0];
+                    $res = $statement->fetchAll();
+                    if ($res)
+                        $results[$department->getName()][] = $res[0];
                 } else {
                     $query = "
                             SELECT
