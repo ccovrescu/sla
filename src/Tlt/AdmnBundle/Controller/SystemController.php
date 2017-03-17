@@ -130,7 +130,7 @@ class SystemController extends Controller
 
         $unitsNo = $this->getDoctrine()
             ->getRepository('TltAdmnBundle:System')
-            ->getGlobalUnitsNo($system);
+            ->getGlobalUnitsNo($system->getId());
 
         $indisponibleTime = $this->getDoctrine()
             ->getRepository('TltAdmnBundle:System')
