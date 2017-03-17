@@ -168,4 +168,33 @@ class PropertyValueController extends Controller
 			)
 		);
 	}
+
+    /**
+     * @Route("/sav/delete/{id}", name="admin_sav_delete")
+     */
+    public function deleteAction(Request $request, $id)
+    {
+        $propertyValue = $this->getDoctrine()
+            ->getRepository('TltAdmnBundle:PropertyValue')
+            ->find($id);
+
+        $equipment = $propertyValue->getEquipment();
+
+        if (in_array($propertyValue->getEquipment()->getZoneLocation()->getBranch()->getId(), $this->getUser()->getBranchesIds()))
+        {
+            // remove object
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($propertyValue);
+            $em->flush();
+
+            return $this->redirect(
+                $this->generateUrl(
+                    'admin_sav_index',
+                    ['equipment_id' => $equipment->getId()]
+                )
+            );
+        }
+        else
+            return $this->redirect($this->generateUrl('denied'));
+    }
 }
