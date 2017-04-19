@@ -303,4 +303,80 @@ class ReportsController extends Controller
             'pagination'    => $equipments
         );
     }
+
+    /**
+     * @Route("/report1", name="report1")
+     * @Template()
+     */
+    public function report1Action(Request $request)
+    {
+        $journalFilters = new JournalFilters();
+
+        $journalFilters->setStart($this->setStartDate());
+        $journalFilters->setEnd($this->setEndDate());
+
+        $form = $this->createForm(
+            new JournalFiltersType(
+                $this->get('security.context'),
+                $this->get('doctrine.orm.entity_manager')
+            ),
+            $journalFilters
+        );
+
+        $form->handleRequest($request);
+
+        $subQueryDQL = $this->getDoctrine()->getManager()->createQueryBuilder();
+        $subQueryDQL = $subQueryDQL->select($subQueryDQL->expr()->max('ta2.insertedAt'))
+            ->from('TltTicketBundle:TicketAllocation', 'ta2')
+            ->where($subQueryDQL->expr()->eq('ta2.ticket', 't.id'))
+            ->getDQL();
+
+        if ($journalFilters->getDepartment() !== null)
+            $allowedDepartments = $journalFilters->getDepartment();
+        else
+            $allowedDepartments = $this->getUser()->getDepartmentsIds();
+
+        $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
+        $qb->select('IDENTITY(t.transmissionType) as transmission')
+            ->from('TltTicketBundle:Ticket', 't')
+            ->innerJoin('t.ticketAllocations', 'ta', 'WITH', $qb->expr()->eq('ta.insertedAt', '(' . $subQueryDQL . ')') )
+            ->leftJoin('t.equipment', 'e')
+            ->leftJoin('e.service', 'sv');
+        $qb->andWhere($qb->expr()->between('t.announcedAt', ':start', ':end'));
+        $qb->setParameter('start', $journalFilters->getStart());
+        $qb->setParameter('end', $journalFilters->getEnd());
+        $qb->andWhere('e.owner = (:owner)');
+        $qb->setParameter('owner', $journalFilters->getOwner());
+        $qb->andWhere('ta.branch IN (:userBranches)');
+        $qb->setParameter('userBranches', $this->getUser()->getBranchesIds());
+        $qb->andWhere('sv.department IN (:userDepartments)');
+        $qb->setParameter('userDepartments', $allowedDepartments);
+        $qb->groupBy('t.transmissionType');
+        $qb->orderBy('t.announcedAt', 'ASC');
+
+        $qbTotal = $qb;
+        $qbDone = clone $qb;
+
+        $qbTotal->addSelect('COUNT(t.id) as total');
+        $totalResults = $qbTotal->getQuery()->getResult();
+
+        $qbDone->addSelect('COUNT(t.id) as done');
+        $qbDone->andWhere('t.isClosed=1');
+        $doneResults = $qbDone->getQuery()->getResult();
+
+        $results = [];
+        $arr = array_merge_recursive($totalResults, $doneResults);
+        foreach ($arr as $item) {
+            if ($item['transmission'] == 1) {
+                $results['call_center'][array_keys($item)[1]] = $item[array_keys($item)[1]];
+            } elseif ($item['transmission'] == 2) {
+                $results['auto'][array_keys($item)[1]] = $item[array_keys($item)[1]];
+            }
+        }
+
+        return array(
+            'form'      => $form->createView(),
+            'results'   => $results
+        );
+    }
 }
