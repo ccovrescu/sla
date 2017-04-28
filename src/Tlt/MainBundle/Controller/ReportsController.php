@@ -368,9 +368,11 @@ class ReportsController extends Controller
         $arr = array_merge_recursive($totalResults, $doneResults);
         foreach ($arr as $item) {
             if ($item['transmission'] != 3) {
-                $results['call_center'][array_keys($item)[1]] = $item[array_keys($item)[1]];
+                $results['call_center'][array_keys($item)[1]] = (isset($results['call_center']) && isset($results['call_center'][array_keys($item)[1]]) ? $results['call_center'][array_keys($item)[1]] + $item[array_keys($item)[1]] : $item[array_keys($item)[1]]);
+//                $results['call_center'][array_keys($item)[1]] = $item[array_keys($item)[1]];
             } else {
-                $results['auto'][array_keys($item)[1]] = $item[array_keys($item)[1]];
+                $results['auto'][array_keys($item)[1]] = (isset($results['auto']) && isset($results['auto'][array_keys($item)[1]]) ? $results['auto'][array_keys($item)[1]] + $item[array_keys($item)[1]] : $item[array_keys($item)[1]]);
+//                $results['auto'][array_keys($item)[1]] = $item[array_keys($item)[1]];
             }
         }
 
