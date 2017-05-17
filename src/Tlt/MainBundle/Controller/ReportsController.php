@@ -381,4 +381,128 @@ class ReportsController extends Controller
             'results'   => $results
         );
     }
+
+    /**
+     * @Route("/report2", name="report2")
+     * @Template()
+     */
+    public function report2Action(Request $request)
+    {
+        $journalFilters = new JournalFilters();
+
+        $journalFilters->setStart($this->setStartDate());
+        $journalFilters->setEnd($this->setEndDate());
+
+        $form = $this->createForm(
+            new JournalFiltersType(
+                $this->get('security.context'),
+                $this->get('doctrine.orm.entity_manager')
+            ),
+            $journalFilters
+        );
+
+        $form->handleRequest($request);
+
+        $subQueryDQL = $this->getDoctrine()->getManager()->createQueryBuilder();
+        $subQueryDQL = $subQueryDQL->select($subQueryDQL->expr()->max('ta2.insertedAt'))
+            ->from('TltTicketBundle:TicketAllocation', 'ta2')
+            ->where($subQueryDQL->expr()->eq('ta2.ticket', 't.id'))
+            ->getDQL();
+
+        $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
+        $qb->select('t.announcedAt, t.fixedAt, d.name as department')
+            ->from('TltTicketBundle:Ticket', 't')
+            ->innerJoin('t.ticketAllocations', 'ta', 'WITH', $qb->expr()->eq('ta.insertedAt', '(' . $subQueryDQL . ')') )
+            ->leftJoin('t.equipment', 'e')
+            ->leftJoin('e.service', 'sv')
+            ->leftJoin('sv.department', 'd');
+        $qb->andWhere($qb->expr()->between('t.announcedAt', ':start', ':end'));
+        $qb->setParameter('start', $journalFilters->getStart());
+        $qb->setParameter('end', $journalFilters->getEnd());
+        $qb->andWhere('e.owner = (:owner)');
+        $qb->setParameter('owner', $journalFilters->getOwner());
+        $qb->andWhere('ta.branch IN (:userBranches)');
+        $qb->setParameter('userBranches', $this->getUser()->getBranchesIds());
+        $qb->andWhere('t.isClosed=1');
+        $qb->orderBy('sv.department', 'ASC');
+
+
+        $rows = $qb->getQuery()->getResult();
+
+        $nr = 0;
+        $current = '';
+
+        $results = [];
+        $final = [];
+        $offset = new \DateTime('@0');
+
+        foreach($rows as $row)
+        {
+            if ($row['department'] != $current) {
+                if ($current != '') {
+                    $avTimestamp = round($offset->getTimestamp() / $nr);
+                    $results[] = [
+                        'department' => $current,
+                        'total' => $nr,
+                        'time' => new \DateInterval('PT' . $avTimestamp .'S')
+                    ];
+                    $offset = new \DateTime('@0');
+                }
+
+                $current = $row['department'];
+                $nr = 1;
+
+                $interval = $row['announcedAt']->diff($row['fixedAt']);
+                $offset->add($interval);
+            }
+
+            $nr++;
+
+            $interval = $row['announcedAt']->diff($row['fixedAt']);
+            $offset->add($interval);
+        }
+
+        if ($nr>0) {
+
+            $avTimestamp = round($offset->getTimestamp() / $nr);
+            $results[] = [
+                'department' => $current,
+                'total' => $nr,
+                'time' => new \DateInterval('PT' . $avTimestamp . 'S')
+            ];
+
+
+            $totalTime = new \DateTime('@0');
+            foreach ($results as $row) {
+
+                $from = new \DateTime('@0');
+                $to = clone $from;
+                $to = $to->add($row['time']);
+                $diff = $from->diff($to);
+
+                $totalTime = $totalTime->add($row['time']);
+
+                $final[] = [
+                    'department' => $row['department'],
+                    'interval' => $diff
+                ];
+            }
+
+            $interval = new \DateInterval('PT' . round($totalTime->getTimestamp() / count($results)) . 'S');
+            $from = new \DateTime('@0');
+            $to = clone $from;
+            $to = $to->add($interval);
+            $diff = $from->diff($to);
+
+            $final[] = [
+                'department' => 'TOTAL',
+                'interval' => $diff
+            ];
+        }
+
+        return array(
+            'form'      => $form->createView(),
+            'results'   => $final
+        );
+    }
 }

@@ -1,0 +1,118 @@
+{% extends '::base.html.twig' %}
+
+{% form_theme form 'TltTicketBundle::fields.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/reports_journal.css' ) }}" rel="stylesheet">
+{% endblock %}
+
+{% block page %}
+<div class="row no-print">
+    <div class="col-lg-12">
+        <h1>Timp mediu de rezolvare
+            <small>Raport</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="{{ path('homepage') }}"><i class="icon-dashboard"></i> Prima pagina</a></li>
+            <li class="active"><i class="icon-file-alt"></i>Rapoarte</li>
+        </ol>
+    </div>
+</div><!-- /.row -->
+
+{{ form_start(form, {'attr': {'class':'breadcrumb'} }) }}
+
+<div class="row no-print">
+    <div class="col-lg-3">
+        <div class="form-group">
+            {{ form_label(form.owner) }}
+            {{ form_widget(form.owner, {'attr': {'class': 'form-control'} }) }}
+        </div>
+    </div>
+    {#<div class="col-lg-3">#}
+        {#<div class="form-group">#}
+            {#{{ form_label(form.department) }}#}
+            {#{{ form_widget(form.department, {'attr': {'class': 'form-control'} }) }}#}
+        {#</div>#}
+    {#</div>#}
+    <div class="col-lg-3">
+        <div class="form-group">
+            {{ form_label(form.start) }}
+            {{ form_widget(form.start) }}
+        </div>
+    </div>
+    <div class="col-lg-3">
+        <div class="form-group">
+            {{ form_label(form.end) }}
+            {{ form_widget(form.end) }}
+        </div>
+    </div>
+</div>
+<div class="row no-print">
+    <div class="col-lg-12">
+        <div class="text-right">
+            <div class="form-group">
+                <br/>
+                {{ form_widget(form.Arata, {'attr': {'class': 'btn btn-primary' }}) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+    {%  do form.department.setRendered %}
+{{ form_rest(form) }}
+{{ form_end(form) }}
+
+<div class="row text-center">
+    <h2>Timpul mediu de rezolvare în intervalul {{ form.start.vars.value.day }}.{{ form.start.vars.value.month }}.{{ form.start.vars.value.year }} - {{ form.end.vars.value.day }}.{{ form.end.vars.value.month }}.{{ form.end.vars.value.year }}</h2>
+</div>
+
+<style type="text/css">
+    @media print {
+        .no-print {
+            display: none;
+        }
+    }
+
+    .table-responsive {
+        font-size: 11px;
+    }
+</style>
+
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th nowrap>Tip servicii</th>
+                <th nowrap class="text-right">Timp mediu de rezolvare</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if results %}
+                {% for row in results %}
+                    <tr>
+                        <td>{{ row.department }}</td>
+                        <td class="text-right">
+                            {% if row.interval.days>0 %}
+                                {{ "%d"|format(row.interval.days) ~ (row.interval.days==1 ? " zi" : " zile") }}
+                            {% endif %}
+
+                            {{ "%02d"|format(row.interval|date('%h')) ~ ":%02d"|format(row.interval|date('%I')) ~ ":%02d"|format(row.interval|date('%s')) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="2" class="text-center">Nici un rezultat.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+    {% if form.vars.value.owner is not null %}
+        {% include '::print_button.html.twig' with {'document':'jurnalul'} %}
+    {% endif %}
+{% endblock %}
