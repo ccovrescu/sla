@@ -109,4 +109,36 @@ class TicketRepository extends EntityRepository {
             return null;
         }
     }
+
+
+    public function gettotal_afectat($systemID, $ownerID, $from, $to)
+    {
+        $qb	=	$this->getEntityManager()->createQueryBuilder();
+
+        $qb
+            ->select(array('t'))
+            ->from('TltTicketBundle:Ticket', 't')
+            ->leftJoin('t.equipment', 'e')
+            ->leftJoin('t.ticketMapping', 'tm')
+            ->leftJoin('tm.mapping', 'mp')
+            ->where('t.isReal=1')
+            ->andWhere('t.backupSolution=2')
+            ->andWhere('tm.resolvedIn>0')
+            ->andWhere('e.owner=:owner')
+            ->andWhere('t.announcedAt BETWEEN :from AND :to')
+            ->andWhere('t.fixedAt BETWEEN :from AND :to')
+            ->andWhere('mp.system=:system')
+            ->orderBy('t.id', 'DESC')
+            ->setParameter('system', $systemID)
+            ->setParameter('owner', $ownerID)
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+        ;
+
+        try {
+            return $qb->getQuery()->getResult();
+        } catch (NoResultException $e) {
+            return null;
+        }
+    }
 }

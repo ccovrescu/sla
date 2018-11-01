@@ -22,6 +22,16 @@ class PamListFilters
     protected $department;
 
     /**
+     * @var \Tlt\AdmnBundle\Entity\Service
+     */
+    private $service;
+
+    /**
+     * @var \Tlt\AdmnBundle\Entity\System
+     */
+    private $system;
+
+    /**
      * @return \Tlt\AdmnBundle\Entity\Owner
      */
     public function getOwner()
@@ -51,5 +61,51 @@ class PamListFilters
     public function setDepartment($department)
     {
         $this->department = $department;
+    }
+
+    /**
+     * Get service
+     *
+     * @return \Tlt\AdmnBundle\Entity\Service
+     */
+    public function getService()
+    {
+        return $this->service;
+    }
+
+    /**
+     * Set service
+     * @param \Tlt\AdmnBundle\Entity\Service $service
+     *
+     * @return Filter
+     */
+    public function setService($service)
+    {
+        $this->service	=	$service;
+
+        return $this;
+    }
+
+    /**
+     * Get system
+     *
+     * @return \Tlt\AdmnBundle\Entity\System
+     */
+    public function getSystem()
+    {
+        return $this->system;
+    }
+
+    /**
+     * Set system
+     * @param \Tlt\AdmnBundle\Entity\System $system
+     *
+     * @return Filter
+     */
+    public function setSystem($system)
+    {
+        $this->system	=	$system;
+
+        return $this;
     }
 }

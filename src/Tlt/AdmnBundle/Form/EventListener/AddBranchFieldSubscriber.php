@@ -1,11 +1,11 @@
 <?php
 namespace Tlt\AdmnBundle\Form\EventListener;
  
+use Doctrine\ORM\EntityRepository;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Doctrine\ORM\EntityRepository;
  
 class AddBranchFieldSubscriber implements EventSubscriberInterface
 {
@@ -66,7 +66,7 @@ class AddBranchFieldSubscriber implements EventSubscriberInterface
         }
 		
 
-        $accessor = PropertyAccess::getPropertyAccessor();
+        $accessor = PropertyAccess::createPropertyAccessor();
 		
 		$owner_id = null;
 		switch ($this->propertyPathToEquipment)

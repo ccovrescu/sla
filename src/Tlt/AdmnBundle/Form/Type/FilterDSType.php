@@ -1,14 +1,15 @@
 <?php
 namespace Tlt\AdmnBundle\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Doctrine\ORM\EntityRepository;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class FilterDSType extends AbstractType
 {
@@ -20,14 +21,14 @@ class FilterDSType extends AbstractType
 				'property' => 'name',
 				'label'		=> 'Departamentul'
 				))
-			->add('Arata', 'submit');
+			->add('Arata', SubmitType::class);
 		
 		
 		$builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 			$data	=	$event->getData();
 			$form	=	$event->getForm();
 			
-			$accessor	=	PropertyAccess::getPropertyAccessor();
+			$accessor	=	PropertyAccess::createPropertyAccessor();
 			$department	=	$accessor->getValue($data, 'department');
 			
 			$this->addServiceForm($form, $department, null);
@@ -62,14 +63,14 @@ class FilterDSType extends AbstractType
 		$form->add('service', 'entity', $formOptions);
 	}
 	
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
 			'data_class' => 'Tlt\AdmnBundle\Entity\FilterDS',
 		));		
 	}
 	
-	public function getName()
+	public function getBlockPrefix()
 	{
 		return 'filterds';
 	}

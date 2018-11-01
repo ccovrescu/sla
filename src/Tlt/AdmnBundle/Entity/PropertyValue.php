@@ -133,4 +133,4 @@ class PropertyValue extends AbstractEntity
     {
         return $this->value;
     }
-} 
+}

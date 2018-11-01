@@ -2,18 +2,20 @@
 namespace Tlt\TicketBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
 
-use Tlt\AdmnBundle\Form\EventListener\LocationListener;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 use Tlt\AdmnBundle\Form\EventListener\BranchListener;
-use Tlt\AdmnBundle\Form\EventListener\ServiceListener;
 use Tlt\AdmnBundle\Form\EventListener\DepartmentListener;
+use Tlt\AdmnBundle\Form\EventListener\LocationListener;
 use Tlt\AdmnBundle\Form\EventListener\OwnerListener;
-use Tlt\TicketBundle\Form\EventListener\EquipmentListener;
+use Tlt\AdmnBundle\Form\EventListener\ServiceListener;
 use Tlt\ProfileBundle\Entity\User;
+use Tlt\TicketBundle\Form\EventListener\EquipmentListener;
 
 
 class TicketEquipmentType extends AbstractType
@@ -52,14 +54,14 @@ class TicketEquipmentType extends AbstractType
         if (array_key_exists('equipment', $options) && $options['equipment'])
             $builder->addEventSubscriber(new EquipmentListener( $this->user, false ));
 
-		$builder->add('salveaza', 'submit');
-		$builder->add('reseteaza', 'reset', array());
+		$builder->add('salveaza', SubmitType::class);
+		$builder->add('reseteaza', ResetType::class, array());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setDefaultOptions(OptionsResolverInterface $resolver) {
+	public function configureOptions(OptionsResolver $resolver) {
 		$resolver
 			->setDefaults(array(
 				'data_class'	=>	'Tlt\TicketBundle\Entity\TicketEquipment',
@@ -75,7 +77,7 @@ class TicketEquipmentType extends AbstractType
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getName() {
+	public function getBlockPrefix() {
 		return 'ticketEquipment';
 	}
 }

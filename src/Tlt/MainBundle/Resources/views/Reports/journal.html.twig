@@ -65,6 +65,7 @@
 
     <div class="row text-center">
         <h2>Lista sesizarilor in intervalul {{ form.start.vars.value.day }}.{{ form.start.vars.value.month }}.{{ form.start.vars.value.year }} - {{ form.end.vars.value.day }}.{{ form.end.vars.value.month }}.{{ form.end.vars.value.year }}</h2>
+		<h2> {{ "now"|date("d/m/Y") }} </h2>
     </div>
 
     <style type="text/css">
@@ -119,6 +120,16 @@
                                         TC
                                     {% elseif ticket.equipment.service.department.id == "3" %}
                                         TI
+									{% elseif ticket.equipment.service.department.id == "4" %}
+                                        SCL CONT
+									{% elseif ticket.equipment.service.department.id == "5" %}
+                                        SCL TC
+									{% elseif ticket.equipment.service.department.id == "6" %}
+                                        SCL TI
+                                    {% elseif ticket.equipment.service.department.id == "7" %}
+                                        MMS TC
+                                    {% elseif ticket.equipment.service.department.id == "8" %}
+                                        MMS TI
                                     {% endif %}
                                 {% else %}
                                     -

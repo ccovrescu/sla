@@ -1,12 +1,12 @@
 <?php
 namespace Tlt\AdmnBundle\Form\DataTransformer;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
-use Doctrine\Common\Persistence\ObjectManager;
-use Tlt\AdmnBundle\Entity\Equipment;
-
 use Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList;
+
+use Tlt\AdmnBundle\Entity\Equipment;
 
 class EquipmentToArrayTransformer implements DataTransformerInterface
 {

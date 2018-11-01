@@ -7,11 +7,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-use Tlt\AdmnBundle\Entity\ZoneLocation;
-use Tlt\AdmnBundle\Form\Type\ZoneLocationType;
-
 use Tlt\AdmnBundle\Entity\Filter;
+use Tlt\AdmnBundle\Entity\ZoneLocation;
+
 use Tlt\AdmnBundle\Form\Type\FilterType;
+use Tlt\AdmnBundle\Form\Type\ZoneLocationType;
 
 class ZoneLocationController extends Controller
 {

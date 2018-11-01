@@ -6,14 +6,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Tlt\AdmnBundle\Entity\Announcer;
-use Tlt\AdmnBundle\Form\Type\AnnouncerType;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Tlt\AdmnBundle\Entity\AnnouncerFilter;
-use Tlt\AdmnBundle\Form\Type\AnnouncerFilterType;
 use Tlt\AdmnBundle\Entity\Owner;
+use Tlt\AdmnBundle\Form\Type\AnnouncerFilterType;
+use Tlt\AdmnBundle\Form\Type\AnnouncerType;
 
 
 class AnnouncerController extends Controller

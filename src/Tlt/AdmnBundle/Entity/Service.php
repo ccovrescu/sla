@@ -2,8 +2,8 @@
 
 namespace Tlt\AdmnBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Service
@@ -174,4 +174,60 @@ class Service extends AbstractEntity
 	{
 		return $this->getName();
 	}
+
+    /**
+     * Add equipments
+     *
+     * @param \Tlt\AdmnBundle\Entity\Equipment $equipments
+     * @return Service
+     */
+    public function addEquipment(\Tlt\AdmnBundle\Entity\Equipment $equipments)
+    {
+        $this->equipments[] = $equipments;
+
+        return $this;
+    }
+
+    /**
+     * Remove equipments
+     *
+     * @param \Tlt\AdmnBundle\Entity\Equipment $equipments
+     */
+    public function removeEquipment(\Tlt\AdmnBundle\Entity\Equipment $equipments)
+    {
+        $this->equipments->removeElement($equipments);
+    }
+
+    /**
+     * Get equipments
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getEquipments()
+    {
+        return $this->equipments;
+    }
+
+    /**
+     * Add serviceToSystems
+     *
+     * @param \Tlt\AdmnBundle\Entity\ServiceToSystem $serviceToSystems
+     * @return Service
+     */
+    public function addServiceToSystem(\Tlt\AdmnBundle\Entity\ServiceToSystem $serviceToSystems)
+    {
+        $this->serviceToSystems[] = $serviceToSystems;
+
+        return $this;
+    }
+
+    /**
+     * Remove serviceToSystems
+     *
+     * @param \Tlt\AdmnBundle\Entity\ServiceToSystem $serviceToSystems
+     */
+    public function removeServiceToSystem(\Tlt\AdmnBundle\Entity\ServiceToSystem $serviceToSystems)
+    {
+        $this->serviceToSystems->removeElement($serviceToSystems);
+    }
 }

@@ -6,11 +6,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Tlt\AdmnBundle\Entity\Location;
-use Tlt\AdmnBundle\Form\Type\LocationType;
-
 use Tlt\AdmnBundle\Entity\Choose;
+use Tlt\AdmnBundle\Entity\Location;
+
 use Tlt\AdmnBundle\Form\Type\ChooseType;
+use Tlt\AdmnBundle\Form\Type\LocationType;
 
 class LocationController extends Controller
 {

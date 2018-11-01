@@ -24,10 +24,48 @@
 				{{ form_label(form.department) }}
 				{{ form_widget(form.department, {'attr': {'class': 'form-control'}}) }}
 			</div>
+        <div class="form-group">
+            {{ form_label(form.category) }}
+            {{ form_widget(form.category, {'attr': {'class': 'form-control'}}) }}
+        </div>
 			
 			{{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}
 			{{ form_widget(form.reseteaza, {'attr': {'class': 'btn btn-default'}}) }}
 			
 			{{ form_rest(form) }}
 		{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+
+        $("#system_department").change(function(){
+            // alert( "Handler for java called." );
+            var data = {
+                department_id: $(this).val(),
+                category_id: $('#system_category').val(),
+            };
+
+            $.ajax({
+                type: 'post',
+                url: '{{ path("system_select_category") }}',
+                data: data,
+                beforeSend: function(){
+                    $('#loader').modal({show:true,backdrop:'static'});
+                },
+                success: function(data) {
+                    $('#system_category').html('<option value="">-- Alegeti o optiune --</option>');
+
+                    for (var i=0, total = data.length; i < total; i++) {
+                        $('#system_category').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                    }
+                    $('#loader').modal('hide');
+                }
+            })
+        });
+
+
+    </script>
 {% endblock %}

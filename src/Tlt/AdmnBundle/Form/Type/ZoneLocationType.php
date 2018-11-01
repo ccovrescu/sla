@@ -1,11 +1,14 @@
 <?php
 namespace Tlt\AdmnBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ZoneLocationType extends AbstractType
 {
@@ -21,7 +24,7 @@ class ZoneLocationType extends AbstractType
 		$userBranches	=	$this->user->getBranchesIds();
 		
 		$builder
-			->add('id', 'hidden')
+			->add('id', HiddenType::class)
 			->add('branch','entity',array(
 				'class' => 'Tlt\AdmnBundle\Entity\Branch',
 				'property' => 'name',
@@ -42,18 +45,18 @@ class ZoneLocationType extends AbstractType
 								->orderBy('l.name', 'ASC');
 					}
 				))
-			->add('salveaza', 'submit')
-			->add('reseteaza', 'reset', array());
+			->add('salveaza', SubmitType::class)
+			->add('reseteaza', ResetType::class, array());
 	}
 	
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
 			'data_class' => 'Tlt\AdmnBundle\Entity\ZoneLocation',
 		));		
 	}
 	
-	public function getName()
+	public function getBlockPrefix()
 	{
 		return 'zoneLocation';
 	}

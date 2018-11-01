@@ -91,11 +91,12 @@
                             <th class="length-limit">Serviciu/echipament/aplicatie<br/>&nbsp;</th>
                             <th nowrap>Criticitate<br/>&nbsp;</th>
                             <th class="text-center">Program orar<br/>&nbsp;</th>
-                            <th class="text-right no-print">Timp maxim de functionare</th>
+                            <th class="text-right no-print">Timp maxim de functionare (min)</th>
                             <th class="text-right">Disponibilitate<br/>contractata (%)</th>
                             <th class="text-right">Timp total real<br>indisponibilitate (ore)</th>
                             <th class="text-right no-print">Unitati</th>
-                            <th class="no-print">Disponibilitate realizata fara unitati</th>
+                            <!-- modificat la 18.07.2018 -->
+                            {# <th class="no-print">Disponibilitate realizata fara unitati</th>  #}
                             <th class="text-right">Disponibilitate<br/>realizata (%)</th>
                         </tr>
                     </thead>
@@ -103,8 +104,10 @@
                     {% for system in systems %}
 
                         {% if system.units_no>0 %}
-                            {% set r_disp = (1-system.indisponible_time/system.total_time)*100 %}
+                 {#           {% set r_disp = (1-system.indisponible_time/system.total_time)*100 %}
                             {% set ru_disp = (1-system.indisponible_time/system.total_time/system.units_no)*100 %}
+                  #}
+                            {% set ru_disp = (1-system.indisponible_time_partial_affected/system.total_time/system.units_no-system.indisponible_time_total_affected/system.total_time)*100 %}
                         {% else %}
                             {% set r_disp = 0 %}
                             {% set ru_disp = 0 %}
@@ -127,13 +130,15 @@
                                 {% endif %}
                             </td>
                             <td class="text-right text-warning no-print">{{ system.units_no|number_format(0,',','.') }}</td>
-                            <td class="text-right no-print {{ (r_disp<system.g_disp and system.indisponible_time>0 ? 'text-danger text' : 'text-success') }}">
+<!-- modificat la 18.07.2018 -->
+                            {# <td class="text-right no-print {{ (r_disp<system.g_disp and system.indisponible_time>0 ? 'text-danger text' : 'text-success') }}">
                                 {% if system.indisponible_time>0 %}
                                     {{ r_disp|round(2,'floor')|number_format(2) }}%
                                 {% else %}
                                     100.00%
                                 {% endif %}
                             </td>
+#}
                             <td class="text-right {{ (ru_disp<system.g_disp and system.indisponible_time>0 ? 'text-danger' : 'text-success') }}">
                                 {% if system.indisponible_time>0 %}
                                     {{ ru_disp|round(2,'floor')|number_format(2) }}%

@@ -56,7 +56,7 @@ class EquipmentRepository extends EntityRepository
 			return $this->findAll();
 	}
 	// public function findAllJoinedToBranchesAndServices($owner, $branch, $location, $department, $service, $userBranches = null)
-	public function findAllJoinedToBranchesAndServices($owner, $branch, $zoneLocation, $department, $service, $userBranches = null, $userDepartments = null)
+	public function findAllJoinedToBranchesAndServices($owner, $branch, $zoneLocation, $department, $service, $system, $userBranches = null, $userDepartments = null)
 	{
 		$qb = $this->getEntityManager()->createQueryBuilder('e');
 
@@ -70,6 +70,7 @@ class EquipmentRepository extends EntityRepository
 			->leftJoin('zl.branch', 'br')
 			->leftJoin('eq.service', 'sv')
 			->leftJoin('sv.department', 'dp')
+            ->leftJoin('eq.system','system')
 			->where('eq.isActive = :isActive')
 			->andWhere('zl.branch in (:userBranches)')
 			->andWhere('sv.department in (:userDepartments)')
@@ -94,6 +95,9 @@ class EquipmentRepository extends EntityRepository
 		elseif ($department)
 			$qb->andWhere('sv.department=:department')
 				->setParameter('department', $department);
+        if ($system)
+            $qb->andWhere('eq.system=:system')
+                ->setParameter('system', $system);
 
         $qb->addOrderBy('eq.name', 'asc');
 

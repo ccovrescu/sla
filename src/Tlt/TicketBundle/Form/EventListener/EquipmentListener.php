@@ -8,12 +8,12 @@
 
 namespace Tlt\TicketBundle\Form\EventListener;
 
+use Doctrine\ORM\EntityRepository;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
-use Doctrine\ORM\EntityRepository;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Tlt\ProfileBundle\Entity\User;
 

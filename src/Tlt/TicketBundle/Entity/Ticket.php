@@ -6,13 +6,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
 use Symfony\Component\Validator\Constraints as Assert;
-
+//use Tlt\TicketBundle\Entity\TicketMapping;
 use Tlt\AdmnBundle\Entity\AbstractEntity;
+use Tlt\AdmnBundle\Entity\Announcer;
 use Tlt\AdmnBundle\Entity\Branch;
 use Tlt\AdmnBundle\Entity\Equipment;
 use Tlt\AdmnBundle\Entity\GuaranteedValue;
 use Tlt\AdmnBundle\Entity\System;
-use Tlt\AdmnBundle\Entity\Announcer;
 use Tlt\TicketBundle\Entity\Emergency;
 use Tlt\TicketBundle\Entity\Oldness;
 
@@ -167,7 +167,7 @@ class Ticket extends AbstractEntity
      * @ORM\OneToMany(targetEntity="TicketAllocation", mappedBy="ticket", cascade={"persist"})
      * @ORM\OrderBy({"insertedAt" = "DESC"})
      */
-    protected $ticketAllocations;
+        protected $ticketAllocations;
 
     /**
      * @ORM\ManyToOne(targetEntity="TicketType")
@@ -988,6 +988,76 @@ class Ticket extends AbstractEntity
     }
 
     /**
+     * Get totalaffected
+     * @param \Tlt\TicketBundle\Entity\TicketMapping $ticketMapping
+     * @return \Doctrine\Common\Collections\Collection
+     */
+
+    public function isTotalaffected()
+    {
+//        $repo=$this->getDoctrine()->getRepository('Tlt\TicketBundle\Entity\TicketRepository');
+//        $tick=$repo->findoneById($ticket_id);
+//        $ticketMp = new TicketMapping($this->id);
+//        $ticketMp = $this->getTicketMapping();
+        //var_dump($ticketMp);
+        $totalaff = new ArrayCollection();
+        foreach ($this->getTicketMapping() as $ttm)
+        {
+            $totalaff[]=$ttm->isTotalaffected();
+        }
+//        var_dump($totalaff);
+//        die();
+        return $totalaff;
+    }
+
+
+    /**
+     * Get totalaffected
+     * @param \Tlt\TicketBundle\Entity\TicketMapping $ticketMapping
+     * @return \Doctrine\Common\Collections\Collection
+     */
+
+    public function TotalAffectedSystems()
+    {
+//        $repo=$this->getDoctrine()->getRepository('Tlt\TicketBundle\Entity\TicketRepository');
+//        $tick=$repo->findoneById($ticket_id);
+//        $ticketMp = new TicketMapping($this->id);
+//        $ticketMp = $this->getTicketMapping();
+        //var_dump($ticketMp);
+        $totalaff = new ArrayCollection();
+        foreach ($this->getTicketMapping() as $ttm)
+        {
+            if ($ttm->isTotalaffected()==1)
+            {
+                $totalaff[]=$ttm;
+            }
+        }
+//        var_dump($totalaff);
+//        die();
+        return $totalaff;
+    }
+
+
+    /**
+     * Set totalaffected
+     *
+     * @param boolean $totalaffected
+     * @return TicketMapping
+     */
+
+    public function setTotalaffected($totalaffected)
+    {
+        //$repository=$this->
+
+        foreach ($this->getTicketMapping() as $ttm)
+        {
+            $ttm->setTotalaffected($totalaffected);
+        }
+
+        return $this->getTicketMapping() ;
+    }
+
+    /**
      * Intoarce timpul indisponibil pentru un sistem anume.
      *
      * @param System $system
@@ -1001,7 +1071,6 @@ class Ticket extends AbstractEntity
             if ($ticketMapping->getMapping()->getSystem() == $system)
                 $indisponibleTime += $ticketMapping->getResolvedIn();
         }
-
 
         return $indisponibleTime;
     }

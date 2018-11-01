@@ -5,12 +5,12 @@ namespace Tlt\AdmnBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
-use Tlt\AdmnBundle\Entity\Mapping;
-use Tlt\AdmnBundle\Form\Type\MappingType;
-
 use Tlt\AdmnBundle\Entity\Choose;
+use Tlt\AdmnBundle\Entity\Mapping;
 use Tlt\AdmnBundle\Form\Type\ChooseType;
+use Tlt\AdmnBundle\Form\Type\MappingType;
 
 class MappingController extends Controller
 {
@@ -45,7 +45,7 @@ class MappingController extends Controller
 	
 	/**
      * @Route("/mappings/add/{equipment_id}", name="admin_mappings_add")
-     * @Template("TltAdmnBundle:Mappings:add.html.twig")
+     * @Template("TltAdmnBundle:Mapping:add.html.twig")
      */
 	public function addAction(Request $request, $equipment_id)
 	{
@@ -66,10 +66,29 @@ class MappingController extends Controller
 					'equipment' => $equipment
 				)
 			);
-			
+
 			$form->handleRequest($request);
-			
+
+
 			if ($form->isValid()) {
+
+			    //introdus 11.10.2018
+
+//                var_dump($mapping->getSystem()->getId());
+//                var_dump($mapping->getSystem()->getName());
+                //die();
+
+//                if ($mapping->getSystem()->getId() == 161 or $mapping->getSystem()->getId() == 162 or $mapping->getSystem()->getId() == 163 ) {
+                    if ( substr($mapping->getSystem()->getName(),0,29)=="Sistem implicit import echip." ) {
+                    $form->get('system')->addError(
+                    new FormError('Sistemele de IMPORT din vechea aplicatie NU pot fi folosite in mapari!')
+                    );
+//                    echo "<script>alert('Sistemele de IMPORT din vechea aplicatie NU pot fi folosite in mapari!');</script>";
+                     $templateOptions['form'] = $form->createView();
+
+                     return $templateOptions;
+                }
+                // sf introdus 11.10.2018
 				$user	=	$this->getUser();
 				$mapping->setInsertedBy($user->getUsername());
 				$mapping->setModifiedBy($user->getUsername());
@@ -90,10 +109,16 @@ class MappingController extends Controller
 							)
 						);
 			}
-			
-			return $this->render('TltAdmnBundle:Mapping:add.html.twig', array(
+
+			// introdus 11.10.2018
+            $templateOptions['form'] = $form->createView();
+
+            return $templateOptions;
+            // sf introdus 11.10.2018
+/*			return $this->render('TltAdmnBundle:Mapping:add.html.twig', array(
 				'form' => $form->createView(),
 			));
+*/
     	}
 		else
 			return $this->redirect($this->generateUrl('denied'));
@@ -101,7 +126,7 @@ class MappingController extends Controller
 	
 	/**
      * @Route("/mappings/edit/{mapping_id}", name="admin_mappings_edit")
-     * @Template("TltAdmnBundle:Mappings:edit.html.twig")
+     * @Template("TltAdmnBundle:Mapping:edit.html.twig")
      */
 	public function editAction(Request $request, $mapping_id)
 	{
@@ -123,7 +148,27 @@ class MappingController extends Controller
 			$form->handleRequest($request);
 			
 			if ($form->isValid()) {
-				$user	=	$this->getUser();
+
+                //introdus 11.10.2018
+
+//                var_dump($mapping->getSystem()->getId());
+//                var_dump($mapping->getSystem()->getName());
+                //die();
+
+//                if ($mapping->getSystem()->getId() == 161 or $mapping->getSystem()->getId() == 162 or $mapping->getSystem()->getId() == 163 ) {
+                if ( substr($mapping->getSystem()->getName(),0,29)=="Sistem implicit import echip." ) {
+                    $form->get('system')->addError(
+                        new FormError('Sistemele de IMPORT din vechea aplicatie NU pot fi folosite in mapari!')
+                    );
+//                    echo "<script>alert('Sistemele de IMPORT din vechea aplicatie NU pot fi folosite in mapari!');</script>";
+                    $templateOptions['form'] = $form->createView();
+
+                    return $templateOptions;
+                }
+                // sf introdus 11.10.2018
+
+
+                $user	=	$this->getUser();
 				$mapping->setModifiedBy($user->getUsername());
 				$mapping->setFromHost($this->container->get('request')->getClientIp());
 

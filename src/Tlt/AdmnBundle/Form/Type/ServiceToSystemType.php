@@ -1,22 +1,25 @@
 <?php
 namespace Tlt\AdmnBundle\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
-
-use Doctrine\ORM\EntityRepository;
 
 class ServiceToSystemType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add(	'id', 'hidden'	)
+			->add(	'id', HiddenType::class	)
 			->add(	'service',
 					'entity',
 					array(
@@ -27,14 +30,14 @@ class ServiceToSystemType extends AbstractType
 						'required'	 	=>	true
 					)
 				)
-			->add('salveaza', 'submit')
-			->add('reseteaza', 'reset', array());
+			->add('salveaza', SubmitType::class)
+			->add('reseteaza', ResetType::class, array());
 			
 		$builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 			$data	=	$event->getData();
 			$form	=	$event->getForm();
 			
-			$accessor	=	PropertyAccess::getPropertyAccessor();
+			$accessor	=	PropertyAccess::createPropertyAccessor();
 			$service	=	$accessor->getValue($data, 'service');
 			
 			$this->addSystemForm($form, $service, null);
@@ -72,14 +75,14 @@ class ServiceToSystemType extends AbstractType
 		$form->add('system', 'entity', $formOptions);
 	}
 
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
 			'data_class' => 'Tlt\AdmnBundle\Entity\ServiceToSystem',
 		));		
 	}
 	
-	public function getName()
+	public function getBlockPrefix()
 	{
 		return 'serviceToSystem';
 	}

@@ -3,8 +3,9 @@
 namespace Tlt\ProfileBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ResetType extends AbstractType
 {
@@ -13,7 +14,7 @@ class ResetType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('plainPassword', 'repeated', array(
+        $builder->add('plainPassword', RepeatedType::class, array(
                 'type'            => 'password',
                 'required'        => true,
                 'first_options'   => array('label' => 'Parola'),
@@ -24,7 +25,7 @@ class ResetType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
                 'data_class' => 'Tlt\ProfileBundle\Entity\User',
@@ -35,7 +36,7 @@ class ResetType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'tlt_profile_reset';
     }

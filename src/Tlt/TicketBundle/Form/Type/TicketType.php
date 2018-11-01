@@ -1,22 +1,30 @@
 <?php
 namespace Tlt\TicketBundle\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\Entity;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Security\Core\SecurityContext;
-
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Doctrine\ORM\EntityRepository;
-
-use Tlt\TicketBundle\Form\DataTransformer\EquipmentToNumberTransformer;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\SecurityContext;
 use Tlt\TicketBundle\Form\DataTransformer\AnnouncerToNumberTransformer;
+use Tlt\TicketBundle\Form\DataTransformer\EquipmentToNumberTransformer;
+use Tlt\TicketBundle\Form\Type\TicketMappingType;
 
 class TicketType extends AbstractType {
 
     private $securityContext;
+    private $entityManager;
 
     public function __construct(SecurityContext $securityContext)
     {
@@ -30,26 +38,28 @@ class TicketType extends AbstractType {
     {
         // this assumes that the entity manager was passed in as an option
         $entityManager = $options['em'];
+        $this->entityManager=$entityManager;
 
         if ($this->securityContext->isGranted('ROLE_TICKET_INSERT')) {
             $userBranches = $this->securityContext->getToken()->getUser()->getBranchesIds();
 
             $builder
                 ->add(
-                'announcedAt', 'datetime', array(
+                'announcedAt', DateTimeType::class, array(
                     'date_widget' => "choice",
                     'time_widget' => "choice",
                     'date_format'=> 'dd.MM.yyyy',
                     'years' => array(
                         '2015',
                         '2016',
-                        '2017'
+                        '2017',
+						'2018'
                     ),
 //                    'label' => 'Anuntat la:',
 //                    'data' => new \DateTime(),
                 ));
             $builder->add(
-                'takenBy', 'text', array(
+                'takenBy', TextType::class, array(
                     'max_length' => 128,
                     'label' => 'Preluat sesizarea:',
                     'required' => false
@@ -74,13 +84,13 @@ class TicketType extends AbstractType {
                 );
 
             $builder->add(
-                'contactInfo', 'text', array(
+                'contactInfo', TextType::class, array(
                     'max_length' => 128,
                     'label' => 'Date de contact ale sesizantului:',
                     'required' => false
                 ));
             $builder->add(
-                'announcedTo', 'text', array(
+                'announcedTo', TextType::class, array(
                     'max_length' => 128,
                     'label' => 'Persoana anuntata:',
                     'required' => false
@@ -100,7 +110,7 @@ class TicketType extends AbstractType {
                     }
                 ));
             $builder->add(
-                'description', 'textarea', array(
+                'description', TextareaType::class, array(
                     'label' => 'Descriere:',
                     'required' => false
                 ));
@@ -109,7 +119,7 @@ class TicketType extends AbstractType {
 
         if ($this->securityContext->isGranted('ROLE_TICKET_SOLVE')) {
             $builder->add(
-                'isReal', 'choice', array(
+                'isReal', ChoiceType::class, array(
                     'label' => 'Este real?',
                     'empty_value' => '-- Selectati --',
                     'choices' => array(
@@ -119,7 +129,7 @@ class TicketType extends AbstractType {
                     'required' => false
                 ));
             $builder->add(
-                'notRealReason', 'textarea', array(
+                'notRealReason', TextareaType::class, array(
                     'label' => 'De ce nu este real:',
                     'required' => false
                 ));
@@ -134,25 +144,26 @@ class TicketType extends AbstractType {
                     'required' => false
                 ));
             $builder->add(
-                'fixedBy', 'text', array(
+                'fixedBy', TextType::class, array(
                     'label' => 'Persoana care rezolva:',
                     'required' => false
                 ));
             $builder->add(
-                'compartment', 'text', array(
+                'compartment', TextType::class, array(
                     'max_length' => 128,
                     'label' => 'Compartimentul:',
                     'required' => false
                 ));
             $builder->add(
-                'fixedAt', 'datetime', array(
+                'fixedAt', DateTimeType::class, array(
                     'date_widget' => "choice",
                     'time_widget' => 'choice',
                     'date_format' => 'dd.MM.yyyy',
                     'years' => array(
                         '2015',
                         '2016',
-                        '2017'
+                        '2017',
+						'2018'
                     ),
 //                    'label' => 'Data si ora rezolvarii:',
                 ));
@@ -194,19 +205,19 @@ class TicketType extends AbstractType {
                 );
 
             $builder->add(
-                'fixedMode', 'textarea', array(
+                'fixedMode', TextareaType::class, array(
                     'label' => 'Mod de rezolvare:',
                     'required' => false
                 ));
             $builder->add(
-                'resources', 'textarea', array(
+                'resources', TextareaType::class, array(
                     'label' => 'Resurse utilizate:',
                     'required' => false
                 ));
 
             if ($this->securityContext->isGranted('ROLE_TICKET_CLOSE')) {
                 $builder->add(
-                    'isClosed', 'checkbox', array(
+                    'isClosed', CheckboxType::class, array(
                         'label' => 'Da',
                         'required' => false
                     ));
@@ -215,8 +226,8 @@ class TicketType extends AbstractType {
 
 
         if ($this->securityContext->isGranted('ROLE_TICKET_INSERT')) {
-            $builder->add('salveaza', 'submit', array());
-            $builder->add('reseteaza', 'reset', array());
+            $builder->add('salveaza', SubmitType::class, array());
+            $builder->add('reseteaza', ResetType::class, array());
         }
 
 
@@ -277,29 +288,64 @@ class TicketType extends AbstractType {
                 }
 
 
+
                 $equipment_id = ($data->getEquipment() != null ? $data->getEquipment()->getId() : null);
                 $ticket_id = ($data->getId() != null ? $data->getId() : null);
                 $this->addMappingsField($form, $equipment_id, $ticket_id);
+
             }
         });
-
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+/*
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
+            echo "<script>alert('pOST SET DATA');</script>";
+            $var=$data->getTicketMapping();
+            $campuri=array();
+            $campuri = $form->all();
+            $keys = array_keys($campuri);
+           print_r($keys);
+            echo "<br>";
+            $datele=$form->getData();
+            $totalafect = $datele->istotalAffected();
+            $totalafect = $form->get('total_afectate')->getData();
+//            print_r ($totalafect) ;
 
+            foreach ( $totalafect as $total_afectate )
+            {
+                print_r ($total_afectate);
+                echo "<br>";
+            }
+            foreach($totalafect as $x => $x_value) {
+                echo "Key=" . $x . ", Value=" . $x_value;
+                echo "<br>";
+            }
+
+            });
+
+  */
+            $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $data = $event->getData();
+            $form = $event->getForm();
+//                echo "<script>alert('PRE_SUBMIT');</script>";
 //            $em = $form->getConfig()->getOption('em');
 
+/*            echo "<script>alert('pre submit');</script>";
+            $var=$data['total_afectate'];
+            print_r($var) ;
+            die();
+*/
             if (array_key_exists('isReal', $data)) {
                 if( $data['isReal'] == 1) {
                      $form->remove('salveaza');
 
-                     $form->add('salveaza', 'submit', array(
+                     $form->add('salveaza', SubmitType::class, array(
                          'validation_groups' => array('solve')
                      ));
                 } else {
                     $form->remove('salveaza');
 
-                    $form->add('salveaza', 'submit', array(
+                    $form->add('salveaza', SubmitType::class, array(
                         'validation_groups' => array('not-real')
                     ));
                 }
@@ -309,17 +355,20 @@ class TicketType extends AbstractType {
                 $equipment_id = array_key_exists('equipment', $data) ? $data['equipment'] : null;
                 $ticket_id = ($form->getData()->getId() != null ? $form->getData()->getId() : null);
                 $this->addMappingsField($form, $equipment_id, $ticket_id);
+
+
             } else {
                 $form->remove('salveaza');
 
-                $form->add('salveaza', 'submit', array(
+                $form->add('salveaza', SubmitType::class, array(
                     'validation_groups' => array('insert')
                 ));
             }
         });
     }
 
-    public function addMappingsField($form, $equipment_id, $ticket_id)
+
+    public function addMappingsFieldBradescu($form, $equipment_id, $ticket_id)
     {
         $form->add('ticketMapping', new SpecialType($ticket_id), array(
             'class'     => 'Tlt\AdmnBundle\Entity\Mapping',
@@ -335,15 +384,105 @@ class TicketType extends AbstractType {
                     ->setParameter('equipment', $equipment_id)
                     ->orderBy('mp.system', 'ASC');
 
+//                echo "<script>alert('Aici addMapping');</script>";
+
                 return $qb;
             }
         ));
     }
 
+    public function addMappingsField($form, $equipment_id, $ticket_id)
+    {
+ /*       $form->add('ticketMapping', new TicketMappingType($ticket_id), array(
+                'equipment' => $equipment_id,
+                'ticket' => $ticket_id)
+        );
+        */
+
+/*            $form->add('ticketMapping', 'TicketMappingType', array(
+                    'class'=>'TicketMappingType'
+            ));
+
+       $form->get('ticketMapping')
+           ->addModelTransformer(new IssueToNumberTransformer($this->entityManager)); // finally we apply the transformer
+*/
+
+        $form->add('ticketMapping', new SpecialType($ticket_id), array(
+            'class'     => 'Tlt\AdmnBundle\Entity\Mapping',
+            'property' => 'system.name',
+            'label'		=> 'Sisteme afectate',
+            'by_reference' => false,
+            'expanded'  => true,
+            'multiple' => true,
+//            'read_only' => true,
+            'query_builder' => function (EntityRepository $repository) use ($equipment_id) {
+                $qb = $repository->createQueryBuilder('mp')
+                    ->where('mp.equipment = :equipment')
+                    ->setParameter('equipment', $equipment_id)
+                    ->orderBy('mp.system', 'ASC');
+
+//                echo "<script>alert('Aici addMapping');</script>";
+
+                return $qb;
+            }
+        ));
+
+/*
+              $form->add('total_afectate', 'entity', array(
+                   'class'=> 'Tlt\TicketBundle\Entity\TicketMapping',
+                       'label'=>'Afectate Total',
+                  'property' => 'totalaffected',
+                  'property_path'=>'totalaffected',
+                      'by_reference' => false,
+                       'expanded'  => true,
+                       'multiple' => true,
+                       'query_builder' => function (EntityRepository $repository) use ($ticket_id, $equipment_id) {
+                               $qb = $repository->createQueryBuilder('ttm')
+                                   ->addSelect('ttm')
+                                   ->leftJoin('ttm.mapping', 'mp')
+                                   ->leftJoin('mp.system','system')
+                                   ->where('mp.equipment = :equipment')
+                                   ->andWhere('ttm.ticket=:ticket')
+                                   ->setParameter('equipment', $equipment_id)
+                                   ->setParameter('ticket', $ticket_id)
+                                   ->orderBy('mp.system', 'ASC');
+                                return $qb;
+                            }
+                        )
+                    );
+
+*/
+        $form->add('total_afectate', new SpecialType($ticket_id), array(
+            'class'     => 'Tlt\AdmnBundle\Entity\Mapping',
+            'property' => 'system.name',
+            'label'		=> 'Sisteme TOTAL afectate',
+            'property_path'=>'totalaffected',
+            'by_reference' => false,
+            'required'=>true,
+            'expanded'  => true,
+            'multiple' => true,
+//            'read_only' => true,
+            'query_builder' => function (EntityRepository $repository) use ($equipment_id) {
+                $qb = $repository->createQueryBuilder('mp')
+                    ->where('mp.equipment = :equipment')
+                    ->setParameter('equipment', $equipment_id)
+                    ->orderBy('mp.system', 'ASC');
+
+//                echo "<script>alert('Aici addMapping');</script>";
+
+                return $qb;
+            }
+        ));
+
+
+            // sfarsit adaugat 28.08.2018
+
+    }
+
     /**
      * {@inheritDoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver) {
+    public function configureOptions(OptionsResolver $resolver) {
         $resolver
             ->setDefaults(array(
                 'data_class'	=>	'Tlt\TicketBundle\Entity\Ticket',
@@ -359,7 +498,7 @@ class TicketType extends AbstractType {
     /**
      * {@inheritDoc}
      */
-    public function getName() {
+    public function getBlockPrefix() {
         return 'ticket';
     }
 }

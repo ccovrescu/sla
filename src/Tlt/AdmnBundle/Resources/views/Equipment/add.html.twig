@@ -48,7 +48,14 @@
 					{{ form_label(form.owner) }}
 					{{ form_widget(form.owner, {'attr': {'class': 'form-control'}}) }}
 				</div>
-			  </div>
+                {# intordus 18.07.2018 #}
+                <div class="form-group">
+                    {{ form_label(form.system) }}
+                    {{ form_widget(form.system, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                {# sfarsit intordus 18.07.2018 #}
+
+            </div>
 			</div><!-- /.row -->
 			
 		  <div class="row">
@@ -67,6 +74,42 @@
 			
 {% endblock %}
 
+{#
 {% block javascripts %}
 	{{ parent() }}
 {% endblock %}
+#}
+
+{# introdus la 18.07.2018#}
+{% block javascripts %}
+    {{ parent() }}
+
+	<script type="text/javascript">
+
+        $("#equipment_service").change(function(){
+            // alert( "Handler for java called." );
+            var data = {
+                service_id: $(this).val(),
+            };
+
+            $.ajax({
+                type: 'post',
+                url: '{{ path("equipment_select_system") }}',
+                data: data,
+                beforeSend: function(){
+                    $('#loader').modal({show:true,backdrop:'static'});
+                },
+                success: function(data) {
+                    $('#equipment_system').html('<option value="">-- Toate --</option>');
+
+                    for (var i=0, total = data.length; i < total; i++) {
+                        $('#equipment_system').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                    }
+                    $('#loader').modal('hide');
+                }
+            })
+        });
+
+	</script>
+{% endblock %}
+{# sfarsit introdus la 18.07.2018#}

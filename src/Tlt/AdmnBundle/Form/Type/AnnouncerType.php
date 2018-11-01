@@ -1,12 +1,17 @@
 <?php
 namespace Tlt\AdmnBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
-use Symfony\Component\Security\Core\SecurityContext;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\SecurityContext;
 
 class AnnouncerType extends AbstractType
 {
@@ -21,7 +26,7 @@ class AnnouncerType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('id', 'hidden')
+            ->add('id', HiddenType::class)
             ->add('branch', 'entity', array(
                     'class'			=>	'Tlt\AdmnBundle\Entity\Branch',
                     'property'		=>	'name',
@@ -36,43 +41,43 @@ class AnnouncerType extends AbstractType
                 )
             )
             ->add('firstname',
-                'text',
+                TextType::class,
                 array(
                     'max_length' => 128,
                     'label' => 'Prenume',
                 )
             )
             ->add('lastname',
-                'text',
+                TextType::class,
                 array(
                     'max_length' => 64,
                     'label' => 'Nume',
                 )
             )
             ->add('compartment',
-                'text',
+                TextType::class,
                 array(
                     'max_length' => 128,
                     'label' => 'Compartiment',
                     'required' => false
                 )
             )
-            ->add('active', 'choice', array(
+            ->add('active', ChoiceType::class, array(
                 'choices'  => array('0' => 'Inactiv', '1' => 'Activ'),
                     'label' => 'Status'
             ))
-            ->add('salveaza', 'submit')
-            ->add('reseteaza', 'reset', array());
+            ->add('salveaza', SubmitType::class)
+            ->add('reseteaza', ResetType::class, array());
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
                 'data_class' => 'Tlt\AdmnBundle\Entity\Announcer',
             ));
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'announcer';
     }

@@ -102,4 +102,30 @@ abstract class AbstractEntity
 	{
 		return $this->fromHost;
 	}	
+
+    /**
+     * Set insertedAt
+     *
+     * @param \DateTime $insertedAt
+     * @return AbstractEntity
+     */
+    public function setInsertedAt($insertedAt)
+    {
+        $this->insertedAt = $insertedAt;
+
+        return $this;
+    }
+
+    /**
+     * Set modifiedAt
+     *
+     * @param \DateTime $modifiedAt
+     * @return AbstractEntity
+     */
+    public function setModifiedAt($modifiedAt)
+    {
+        $this->modifiedAt = $modifiedAt;
+
+        return $this;
+    }
 }

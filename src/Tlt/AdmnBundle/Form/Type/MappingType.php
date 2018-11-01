@@ -1,11 +1,14 @@
 <?php
 namespace Tlt\AdmnBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 
 
@@ -14,7 +17,7 @@ class MappingType extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('id', 'hidden')
+			->add('id', HiddenType::class)
 			->add('equipment','entity', array(
 				'class' => 'Tlt\AdmnBundle\Entity\Equipment',
 				'property' => 'name',
@@ -29,6 +32,7 @@ class MappingType extends AbstractType
 			->add('system','entity', array(
 				'class' => 'Tlt\AdmnBundle\Entity\System',
 				'property' => 'name',
+                'empty_value' => 'Selecteaza un sistem',
 				'query_builder' => function(EntityRepository $er) use ($options){
 					return $er->createQueryBuilder('sys')
 								->innerJoin('sys.serviceToSystems', 'sts')
@@ -37,11 +41,11 @@ class MappingType extends AbstractType
 					},
 				'label' => 'Sistemul',
 				))
-			->add('salveaza', 'submit')
-			->add('reseteaza', 'reset', array());
+			->add('salveaza', SubmitType::class)
+			->add('reseteaza', ResetType::class, array());
 	}
 	
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver
 			->setDefaults(array(
@@ -50,7 +54,7 @@ class MappingType extends AbstractType
 			));
 	}
 	
-	public function getName()
+	public function getBlockPrefix()
 	{
 		return 'mapping';
 	}	

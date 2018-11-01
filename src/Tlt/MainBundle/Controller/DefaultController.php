@@ -2,19 +2,19 @@
 
 namespace Tlt\MainBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Tlt\AdmnBundle\Entity\Choose;
-use Tlt\AdmnBundle\Form\Type\ChooseType;
 
-use Tlt\MainBundle\Model\SQL;
+use Tlt\AdmnBundle\Form\Type\ChooseType;
 
 use Tlt\MainBundle\Form\Model\AnexaFilters;
 use Tlt\MainBundle\Form\Type\AnexaFiltersType;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Tlt\MainBundle\Model\SQL;
 
 class DefaultController extends Controller
 {
@@ -207,7 +207,8 @@ class DefaultController extends Controller
 			foreach($resultSet as $system) {
 				$units	=	$this->getDoctrine()
 									->getRepository('TltAdmnBundle:System')
-									->getGlobalUnitsNo($system);
+									->getGlobalUnitsNo((int)[$system->getId()]);
+				//die();
 									
 				$indisponibleTime	=	$this->getDoctrine()
 												->getRepository('TltAdmnBundle:System')
@@ -393,7 +394,8 @@ class DefaultController extends Controller
 
                     $statement->execute();
 
-                    $results[$department->getName()][] = $statement->fetchAll()[0];
+                    //$results[$department->getName()][] = $statement->fetchAll()[0];
+                    $results[$department->getName()][] = $statement->fetchAll();
                 }
             }
         }
@@ -470,7 +472,7 @@ class DefaultController extends Controller
 				),
 			)
 		);
-		
+//        echo "<script>alert('Aici slaaction');</script>";
 		$form->handleRequest($request);
 		
 		$owner = null;
@@ -791,12 +793,12 @@ class DefaultController extends Controller
         $message = $mailer->createMessage()
             ->setSubject('You have Completed Registration!')
             ->setFrom('send@example.com')
-            ->setTo('cbradescu@teletrans.ro')
+            ->setTo('ccovrescu@teletrans.ro')
             ->setBody(
                 $this->renderView(
                 // app/Resources/views/Emails/registration.html.twig
                     'Emails/ticket_new.html.twig',
-                    array('name' => 'Catalin')
+                    array('name' => 'Claudiu')
                 ),
                 'text/html'
             )

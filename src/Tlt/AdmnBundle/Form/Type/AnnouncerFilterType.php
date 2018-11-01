@@ -2,15 +2,17 @@
 namespace Tlt\AdmnBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Security\Core\SecurityContext;
 
 
 class AnnouncerFilterType extends AbstractType
@@ -30,7 +32,7 @@ class AnnouncerFilterType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('status', 'choice', array(
+        $builder->add('status', ChoiceType::class, array(
                 'choices'  => array('1' => 'Activ', '0' => 'Inactiv'),
                 'required' => true,
             ));
@@ -71,7 +73,7 @@ class AnnouncerFilterType extends AbstractType
             });
 
         $builder
-            ->add('Arata', 'submit');
+            ->add('Arata', SubmitType::class);
     }
 
     private function addBranchForm($form, $branch_id = null )
@@ -107,7 +109,7 @@ class AnnouncerFilterType extends AbstractType
         $form->add('branch', 'entity', $formOptions);
    }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             array(
@@ -115,7 +117,7 @@ class AnnouncerFilterType extends AbstractType
             ));
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'announcer_filter';
     }

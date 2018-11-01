@@ -3,10 +3,10 @@ namespace Tlt\TicketBundle\Entity;
 
 use Tlt\AdmnBundle\Entity\Branch;
 use Tlt\AdmnBundle\Entity\Department;
-use Tlt\AdmnBundle\Entity\Service;
 use Tlt\AdmnBundle\Entity\Equipment;
-use Tlt\AdmnBundle\Entity\ZoneLocation;
 use Tlt\AdmnBundle\Entity\Owner;
+use Tlt\AdmnBundle\Entity\Service;
+use Tlt\AdmnBundle\Entity\ZoneLocation;
 
 /**
  * TicketEquipment

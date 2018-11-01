@@ -3,7 +3,7 @@
 namespace Tlt\AdmnBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 use Tlt\TicketBundle\Entity\TicketMapping;
 
 /**
@@ -36,15 +36,15 @@ class Mapping extends AbstractEntity
      *
      * @ORM\ManyToOne(targetEntity="System", inversedBy="mappings")
 	 * @ORM\JoinColumn(name="system", referencedColumnName="id")
+     * @Assert\NotBlank(
+     *     message = "Trebuie sa completati o valoare. Campul este obligatoriu."
+     * )
      */
     private $system;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Tlt\TicketBundle\Entity\TicketMapping", mappedBy="mapping", cascade={"persist", "remove"})
+     /**
+      * @ORM\OneToMany(targetEntity="Tlt\TicketBundle\Entity\TicketMapping", mappedBy="mapping", cascade={"persist", "remove"})
      */
     protected $ticketMapping;
-
-
 
     /**
      * Set id
@@ -154,4 +154,5 @@ class Mapping extends AbstractEntity
     {
         return $this->ticketMapping;
     }
+
 }

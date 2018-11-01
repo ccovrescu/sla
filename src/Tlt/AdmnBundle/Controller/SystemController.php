@@ -6,8 +6,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Tlt\AdmnBundle\Entity\System;
 use Tlt\AdmnBundle\Entity\Choose;
+use Tlt\AdmnBundle\Entity\System;
 use Tlt\AdmnBundle\Form\Type\ChooseType;
 use Tlt\AdmnBundle\Form\Type\SystemType;
 use Tlt\MainBundle\Model\TimeCalculation;
@@ -40,7 +40,8 @@ class SystemController extends Controller
 			if ($form['department']->getData()!=0) {
 				$systems = $this->getDoctrine()
 					->getRepository('TltAdmnBundle:System')
-					->findAllFromOneDepartmentOrderedByName($form['department']->getData());
+/*					->findAllFromOneDepartmentOrderedByName($form['department']->getData()); */
+                ->findAllFromOneDepartmentOrderedByCategory($form['department']->getData());
 			} else {
 				$systems = $this->getDoctrine()
 					->getRepository('TltAdmnBundle:System')
@@ -64,7 +65,11 @@ class SystemController extends Controller
 	public function addAction(Request $request)
 	{
 		$system = new System();
-		$form = $this->createForm( new SystemType(), $system);
+		$form = $this->createForm( new SystemType($this->getDoctrine()->getManager(), $this->getUser()), $system,
+            array(
+                'department'=>null,
+                'category'=>null
+            ));
 		
 		$form->handleRequest($request);
 		
@@ -97,8 +102,12 @@ class SystemController extends Controller
 			->getRepository('TltAdmnBundle:System')
 			->find($id);
 		
-		$form = $this->createForm( new SystemType(), $system);
-		
+/*		$form = $this->createForm( new SystemType(), $system); */
+        $form = $this->createForm( new SystemType($this->getDoctrine()->getManager(), $this->getUser()), $system,
+            array(
+                'department'=>$system->getDepartment(),
+                'category'=>$system->getCategory()
+            ));
 		$form->handleRequest($request);
 		
 		if ($form->isValid()) {
@@ -130,16 +139,16 @@ class SystemController extends Controller
 
         $unitsNo = $this->getDoctrine()
             ->getRepository('TltAdmnBundle:System')
-            ->getGlobalUnitsNo($system->getId());
+            ->getGlobalUnitsNo($system->getId(),null,'2018-07-01', '2018-12-31');
 
         $indisponibleTime = $this->getDoctrine()
             ->getRepository('TltAdmnBundle:System')
-            ->getIndisponibleTime('2015-01-01', '2015-06-30', $system);
+            ->getIndisponibleTime('2018-07-01', '2018-07-31', $system);
 
         $workingTime = $system->getGuaranteedValues()->first()->getWorkingTime();
 
 //        $currentPeriodIndiponibleTime = TimeCalculation::getSystemTotalWorkingTime($system, new \DateTime('2015-01-01'), new \DateTime('2015-06-30'));
-        $currentPeriodIndiponibleTime = TimeCalculation::getSystemTotalWorkingTime($workingTime, new \DateTime('2015-01-01'), new \DateTime('2015-06-30'));
+        $currentPeriodIndiponibleTime = TimeCalculation::getSystemTotalWorkingTime($workingTime, new \DateTime('2018-07-01'), new \DateTime('2018-12-31'));
 
         return array(
             'system' => $system,

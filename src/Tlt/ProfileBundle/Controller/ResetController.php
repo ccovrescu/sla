@@ -8,10 +8,10 @@
 
 namespace Tlt\ProfileBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\Validator\Constraints\Email as EmailConstraint;
@@ -38,9 +38,9 @@ class ResetController extends Controller
      * @Route("/send-email", name="tlt_profile_reset_send_email")
      * @Method({"POST"})
      */
-    public function sendEmailAction()
+    public function sendEmailAction(Request $request)
     {
-        $username = $this->getRequest()->request->get('username');
+        $username = $request->request->get('username');
 
         $emailConstraint = new EmailConstraint();
         $emailConstraint->message = 'Adresa de e-mail nu este valida';
@@ -71,7 +71,7 @@ class ResetController extends Controller
             return $this->render('TltProfileBundle:Reset:request.html.twig', array('invalid_username' => $username));
         }
 
-        if ($user->isPasswordRequestNonExpired(86400)) {
+        if ($user->isPasswordRequestNonExpired(8)) {
             $this->get('session')->getFlashBag()->add(
                 'warn',
                 'Parola pentru acest utilizator a mai fost solicitata in ultimele 24 ore.'

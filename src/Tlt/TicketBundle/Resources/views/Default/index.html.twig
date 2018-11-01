@@ -68,8 +68,9 @@
         </div>
         <div class="col-lg-4 text-right">
             <div class="panel-body">
+               {# <button type="submit" class="btn btn-success" onclick="location.href='{{ path('add_ticket') }}'"  disabled>Adauga tichet</button> #}
                 <button type="submit" class="btn btn-success" onclick="location.href='{{ path('add_ticket') }}'" {% if not is_granted('ROLE_TICKET_INSERT') %} disabled {% endif %}>Adauga tichet</button>
-            </div>
+				</div>
         </div>
     </div><!-- /.row -->
 
@@ -111,6 +112,16 @@
                                     TC
                                 {% elseif ticket.department == "3" %}
                                     TI
+                                {% elseif ticket.department == "4" %}
+                                    SCL CONT
+                                {% elseif ticket.department == "5" %}
+                                    SCL TC
+                                {% elseif ticket.department == "6" %}
+                                    SCL TI
+								{% elseif ticket.department == "7" %}
+                                    MMS TC
+                                {% elseif ticket.department == "8" %}
+                                    MMS TI
                                 {% endif %}
                             {% else %}
                                 <samp><abbr title="attribute">n/a</abbr></samp>

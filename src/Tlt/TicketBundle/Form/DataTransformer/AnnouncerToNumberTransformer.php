@@ -7,9 +7,9 @@
  */
 namespace Tlt\TicketBundle\Form\DataTransformer;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
-use Doctrine\Common\Persistence\ObjectManager;
 use Tlt\AdmnBundle\Entity\Announcer;
 
 class AnnouncerToNumberTransformer implements DataTransformerInterface {
@@ -27,7 +27,7 @@ class AnnouncerToNumberTransformer implements DataTransformerInterface {
     }
 
     /**
-     * Transforms an object (equipment) to a string (number).
+     * Transforms an object (announcer) to a string (number).
      *
      * @param  Announcer|null $issue
      * @return string
@@ -42,13 +42,13 @@ class AnnouncerToNumberTransformer implements DataTransformerInterface {
     }
 
     /**
-     * Transforms a string (number) to an object (equipment).
+     * Transforms a string (number) to an object (announcer).
      *
      * @param  string $number
      *
      * @return Announcer|null
      *
-     * @throws TransformationFailedException if object (equipment) is not found.
+     * @throws TransformationFailedException if object (announcer) is not found.
      */
     public function reverseTransform($number)
     {

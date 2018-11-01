@@ -1,11 +1,11 @@
 <?php
 namespace Tlt\AdmnBundle\Form\EventListener;
  
+use Doctrine\ORM\EntityRepository;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Doctrine\ORM\EntityRepository;
  
 class AddDepartmentFieldSubscriber implements EventSubscriberInterface
 {
@@ -52,7 +52,7 @@ class AddDepartmentFieldSubscriber implements EventSubscriberInterface
             return;
         }
  
-        $accessor = PropertyAccess::getPropertyAccessor();
+        $accessor = PropertyAccess::createPropertyAccessor();
  
         $service    = $accessor->getValue($data, $this->propertyPathToService);
         $department = ($service) ? $service->getDepartment() : null;

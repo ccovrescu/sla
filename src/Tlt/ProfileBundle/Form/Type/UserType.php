@@ -8,11 +8,15 @@
 
 namespace Tlt\ProfileBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType {
 
@@ -26,12 +30,12 @@ class UserType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', 'text', array(
+            ->add('username', TextType::class, array(
                 'label' => 'Utilizator',
                 'required' => true,
 //                'disabled' => true
             ))
-            ->add('status', 'choice',array(
+            ->add('status', ChoiceType::class,array(
                 'choices'  => array(
                     '0' => 'Inactiv',
                     '1' => 'Activ'
@@ -39,15 +43,15 @@ class UserType extends AbstractType {
                 'required' => true,
                 'empty_value' => '-- Alegeti o optiune --'
             ))
-            ->add('lastname', 'text', array(
+            ->add('lastname', TextType::class, array(
                 'label' => 'Nume',
                 'required' => true
             ))
-            ->add('firstname', 'text', array(
+            ->add('firstname', TextType::class, array(
                 'label' => 'Prenume',
                 'required' => true
             ))
-            ->add('compartment', 'text', array(
+            ->add('compartment', TextType::class, array(
                 'label' => 'Compartiment',
                 'required' => true
             ))
@@ -88,10 +92,10 @@ class UserType extends AbstractType {
                 'multiple' => true,
 //                'read_only' => true
             ))
-            ->add('email', 'text', array(
+            ->add('email', TextType::class, array(
                 'label' => 'Adresa de e-mail',
             ))
-            ->add('emailNotification', 'choice', array(
+            ->add('emailNotification', ChoiceType::class, array(
                 'label' => 'Notificare pe email',
                 'choices' => array(
                     '0' => 'Nu',
@@ -101,18 +105,18 @@ class UserType extends AbstractType {
                 'expanded' => true,
                 'required' => true
             ))
-            ->add('salveaza', 'submit')
-            ->add('reseteaza', 'reset', array());
+            ->add('salveaza', SubmitType::class)
+            ->add('reseteaza', ResetType::class, array());
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'Tlt\ProfileBundle\Entity\User',
         ));
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'changePassword';
     }

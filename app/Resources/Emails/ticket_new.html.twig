@@ -22,7 +22,16 @@
     </style>
 </head>
 <body>
-<div>A aparut un nou tichet in aplicatia de calcul SLA. Mai jos sunt prezentate cateva detalii:</div>
+{#<div>A aparut un nou tichet in aplicatia de calcul SLA. Mai jos sunt prezentate cateva detalii:</div> #}
+{# introdus azi 07.05.2018, pentru a scrie si agentia din care se realoca tichetele realocate#}
+<div>A aparut un nou tichet in aplicatia de calcul SLA
+    {% if agentia_veche %}
+        , realocat din {{ agentia_veche }}
+    {% endif %}
+    . Mai jos sunt prezentate cateva detalii:
+</div>
+{# sfarsit introdus azi 07.05.2018, pentru a scrie si agentia din care se realoca tichetele realocate#}
+
 <hr />
 <div><strong>Tichet nr:</strong> {{ ticket.id }}</div>
 <div><strong>Entitatea:</strong> {{ ticket.ticketAllocations.last.branch.name }}</div>

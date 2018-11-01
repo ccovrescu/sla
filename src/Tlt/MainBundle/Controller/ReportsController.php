@@ -2,17 +2,17 @@
 
 namespace Tlt\MainBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 use Tlt\MainBundle\Form\Model\JournalFilters;
-use Tlt\MainBundle\Form\Type\JournalFiltersType;
-use Tlt\MainBundle\Form\Model\SlaFilters;
-use Tlt\MainBundle\Form\Type\SlaFiltersType;
 use Tlt\MainBundle\Form\Model\PamListFilters;
+use Tlt\MainBundle\Form\Model\SlaFilters;
+use Tlt\MainBundle\Form\Type\JournalFiltersType;
 use Tlt\MainBundle\Form\Type\PamListFiltersType;
+use Tlt\MainBundle\Form\Type\SlaFiltersType;
 use Tlt\MainBundle\Model\TimeCalculation;
 
 /**
@@ -26,7 +26,7 @@ class ReportsController extends Controller
      */
     public function journalAction(Request $request)
     {
-        $journalFilters = new JournalFilters();
+		$journalFilters = new JournalFilters();
 
         $journalFilters->setStart($this->setStartDate());
         $journalFilters->setEnd($this->setEndDate());
@@ -100,16 +100,17 @@ class ReportsController extends Controller
                 $journalFilters->getEnd()->format('Y-m-d'),
                 $journalFilters->getIsClosed()
             );
-
+//            var_dump($systems);
+//            die();
             $totalWorkingTimeInSemester = array();
 
             foreach ($systems as &$sys) {
                 $system = $this->getDoctrine()->getRepository('TltAdmnBundle:System')->findOneById($sys['id']);
                 $workingTime = $system->getGuaranteedValues()->first()->getWorkingTime();
 
-                $units_no = $this->getDoctrine()->getRepository('TltAdmnBundle:System')->getGlobalUnitsNo($sys['id'], $journalFilters->getOwner()->getId());
+                $units_no = $this->getDoctrine()->getRepository('TltAdmnBundle:System')->getGlobalUnitsNo($sys['id'], $journalFilters->getOwner()->getId(), $journalFilters->getStart()->format('Y-m-d'),
+                    $journalFilters->getEnd()->format('Y-m-d'));
                 $sys['units_no'] = $units_no;
-
 
                 if (array_key_exists(
                     $workingTime->getId(),
@@ -139,7 +140,7 @@ class ReportsController extends Controller
      * @Template()
      */
     public function indisponibilityAction(Request $request) {
-        $filters = new SlaFilters();
+	   $filters = new SlaFilters();
 
         $filters->setStart($this->setStartDate());
         $filters->setEnd($this->setEndDate());
@@ -148,7 +149,7 @@ class ReportsController extends Controller
             new SlaFiltersType($this->get('security.context')),
             $filters
         );
-
+//		echo "<script>alert('claudiu INDISPONIBILITATE')</script>";
         $form->remove('owner');
         $form->remove('is_closed');
 
@@ -184,6 +185,7 @@ class ReportsController extends Controller
                 foreach ($currentSystemReturnedValues as $currentSystemReturnedValue)
                 {
                     $currentSystemReturnedValuesFinal[$currentSystemReturnedValue['owner']] = $currentSystemReturnedValue['indisponibility'];
+					// echo "<script>alert('$currentSystemReturnedValue['owner']')</script>";
                 }
 
                 foreach ($owners as $owner) {
@@ -197,7 +199,7 @@ class ReportsController extends Controller
                 $returnedSystems[$system->getName()] = $currentSystemAllValues;
             }
         }
-
+	
         return array(
             'form'      => $form->createView(),
             'owners'    => $owners,
@@ -282,9 +284,18 @@ class ReportsController extends Controller
             $qb->andWhere('e.inPam = true');
             $qb->andWhere('e.isActive = true');
             $qb->setParameter('owner', $pamListFilters->getOwner());
+// introdus la 24.10.2018
+            if ($pamListFilters->getService())
+                $qb->andWhere('e.service=:service')
+                    ->setParameter('service', $pamListFilters->getService());
+            if ($pamListFilters->getSystem())
+                $qb->andWhere('e.system=:system')
+                    ->setParameter('system', $pamListFilters->getSystem());
+// sfarsit introdus la 24.10.2018
             $qb->setParameter('userBranches', $this->getUser()->getBranchesIds());
             $qb->setParameter('userDepartments', $allowedDepartments);
             $qb->orderBy('e.name', 'ASC');
+//            echo $qb->getQuery()->getSql();
 
             $equipments = $qb->getQuery()->getResult();
         }
@@ -408,7 +419,9 @@ class ReportsController extends Controller
             ->from('TltTicketBundle:TicketAllocation', 'ta2')
             ->where($subQueryDQL->expr()->eq('ta2.ticket', 't.id'))
             ->getDQL();
-
+/*var_dump($journalFilters->getStart(), $journalFilters->getEnd()) ;
+var_dump($journalFilters->getOwner());
+var_dump($this->getUser()->getBranchesIds()); */
         $qb = $this->getDoctrine()->getManager()->createQueryBuilder();
         $qb->select('t.announcedAt, t.fixedAt, d.name as department')
             ->from('TltTicketBundle:Ticket', 't')
@@ -428,6 +441,10 @@ class ReportsController extends Controller
 
 
         $rows = $qb->getQuery()->getResult();
+        /* foreach($rows as $row)
+        {
+            var_dump($row['announcedAt'],$row['fixedAt'],$row['department']);
+        }*/
 
         $nr = 0;
         $current = '';
@@ -453,6 +470,7 @@ class ReportsController extends Controller
                 $nr = 1;
 
                 $interval = $row['announcedAt']->diff($row['fixedAt']);
+
                 $offset->add($interval);
             }
 
@@ -460,6 +478,7 @@ class ReportsController extends Controller
 
             $interval = $row['announcedAt']->diff($row['fixedAt']);
             $offset->add($interval);
+           /* var_dump($current, $offset->getTimestamp()); */
         }
 
         if ($nr>0) {
@@ -489,6 +508,7 @@ class ReportsController extends Controller
             }
 
             $interval = new \DateInterval('PT' . round($totalTime->getTimestamp() / count($results)) . 'S');
+
             $from = new \DateTime('@0');
             $to = clone $from;
             $to = $to->add($interval);
@@ -498,8 +518,13 @@ class ReportsController extends Controller
                 'department' => 'TOTAL',
                 'interval' => $diff
             ];
+          /*  foreach($final as $row)
+            {
+                var_dump($row['department'], $row['interval']);
+            }
+          */
         }
-
+    // echo "<script>alert('claudiu ')</script>";
         return array(
             'form'      => $form->createView(),
             'results'   => $final

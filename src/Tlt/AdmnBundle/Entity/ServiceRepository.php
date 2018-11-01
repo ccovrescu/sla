@@ -22,7 +22,8 @@ class ServiceRepository extends EntityRepository
 			)
 		);
 	}
-	
+
+
 	public function getServiceUnitsNo($service)
 	{
 		$rsm = new ResultSetMapping();

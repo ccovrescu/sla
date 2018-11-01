@@ -2,8 +2,8 @@
 
 namespace Tlt\AdmnBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -48,7 +48,13 @@ class Equipment extends AbstractEntity
 	 * @ORM\JoinColumn(name="service", referencedColumnName="id")
      */	 
     private $service;
-	
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Tlt\AdmnBundle\Entity\System", inversedBy="equipments")
+     * @ORM\JoinColumn(name="system", referencedColumnName="id")
+     */
+    private $system;
+
 	/**
 	 * @var float
      *
@@ -345,5 +351,51 @@ class Equipment extends AbstractEntity
                 $properties .= $property->getValue();
         }
 		return $properties;
+    }
+
+    /**
+     * Add propertiesValues
+     *
+     * @param \Tlt\AdmnBundle\Entity\PropertyValue $propertiesValues
+     * @return Equipment
+     */
+    public function addPropertiesValue(\Tlt\AdmnBundle\Entity\PropertyValue $propertiesValues)
+    {
+        $this->propertiesValues[] = $propertiesValues;
+
+        return $this;
+    }
+
+    /**
+     * Remove propertiesValues
+     *
+     * @param \Tlt\AdmnBundle\Entity\PropertyValue $propertiesValues
+     */
+    public function removePropertiesValue(\Tlt\AdmnBundle\Entity\PropertyValue $propertiesValues)
+    {
+        $this->propertiesValues->removeElement($propertiesValues);
+    }
+
+    /**
+     * Set system
+     *
+     * @param \Tlt\AdmnBundle\Entity\System $system
+     * @return Equipment
+     */
+    public function setSystem(\Tlt\AdmnBundle\Entity\System $system = null)
+    {
+        $this->system = $system;
+
+        return $this;
+    }
+
+    /**
+     * Get system
+     *
+     * @return \Tlt\AdmnBundle\Entity\System 
+     */
+    public function getSystem()
+    {
+        return $this->system;
     }
 }

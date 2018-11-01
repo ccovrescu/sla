@@ -9,9 +9,9 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Tlt\AdmnBundle\Entity\Equipment;
-use Tlt\AdmnBundle\Form\Type\EquipmentType;
-
 use Tlt\AdmnBundle\Entity\Filter;
+
+use Tlt\AdmnBundle\Form\Type\EquipmentType;
 use Tlt\AdmnBundle\Form\Type\FilterType;
 
 class EquipmentController extends Controller
@@ -23,14 +23,12 @@ class EquipmentController extends Controller
     public function indexAction(Request $request)
     {
         $session = $this->get('session');
-
         // Check if data already was submitted and validated
         if ($session->has('submittedData')) {
             $filter = $session->get('submittedData');
         } else {
             $filter = new Filter();
         }
-
 		$form	=	$this->createForm(
 						new FilterType($this->getDoctrine()->getManager(), $this->getUser() ),
 						$filter,
@@ -39,13 +37,13 @@ class EquipmentController extends Controller
 							'zoneLocation'	=>	true,
 							'department'	=>	true,
 							'service'		=>	true,
+							'system'        =>  true,
 							'owner'			=>	true,
 							'method'		=>	'GET',
 						)
 					);
 
 		$form->handleRequest($request);
-		
 		$equipments = array();
 		if ($form->isValid()) {
             // Data is valid so save it in session for another request
@@ -61,6 +59,7 @@ class EquipmentController extends Controller
 											( $filter->getZoneLocation() ? $filter->getZoneLocation()->getId() : null),
 											( $filter->getDepartment() ? $filter->getDepartment()->getId() : null),
 											( $filter->getService() ? $filter->getService()->getId() : null),
+                                            ( $filter->getSystem() ? $filter->getSystem()->getId() : null),
 											$this->getUser()->getBranchesIds(),
 											$this->getUser()->getDepartmentsIds()
 										);
@@ -191,13 +190,38 @@ class EquipmentController extends Controller
 		$equipment = $this->getDoctrine()
 			->getRepository('TltAdmnBundle:Equipment')
 			->find($id);
-		
+
+// introdus pe 19.07.2018
+  $service_id = $equipment->getService();
+
+ /*       $repository =$this->getDoctrine()->getRepository('TltAdmnBundle:Service');
+
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->getRepository('TltAdmnBundle:ServiceToSystem')
+            ->createQueryBuilder('ss')
+            ->select('system.id, system.name')
+            ->join('ss.system','system')
+            ->where('ss.service=:service_id')
+            ->setParameter('service_id',$service_id);
+
+        $systems	= $qb->getQuery()->getResult();
+
+
+*/
+
+// introdus pe 19.07.2018
+
+        $systems=$equipment->getSystem();
+//        die($equipment->getSystem());
+
 		if (in_array($equipment->getZoneLocation()->getBranch()->getId(), $this->getUser()->getBranchesIds())
 			&& in_array($equipment->getService()->getDepartment()->getId(), $this->getUser()->getDepartmentsIds()))
 		{
 			$form = $this->createForm(
 				new EquipmentType($this->getUser()->getBranchesIds(), $this->getUser()->getDepartmentsIds()),
-				$equipment
+				$equipment, array(
+                    'systems'=>$equipment->getSystem(),
+                )
 			);
 			
 			$form->handleRequest($request);

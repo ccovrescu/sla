@@ -52,6 +52,12 @@ class TicketMapping
      */
     private $resolvedIn;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="total_affected", type="boolean", nullable=true)
+     */
+    private $totalaffected;
 
     /**
      * Get id
@@ -131,4 +137,32 @@ class TicketMapping
     {
         return $this->resolvedIn;
     }
+
+
+    /**
+     * Set totalaffected
+     *
+     * @param boolean $totalaffected
+     * @return TicketMapping
+     */
+    public function setTotalaffected($totalaffected)
+    {
+        $this->totalaffected = $totalaffected;
+
+        return $this;
+    }
+    /**
+     * Get totalaffected
+     *
+     * @return boolean
+     */
+    public function isTotalaffected()
+    {
+        return $this->totalaffected;
+    }
+    public function __toString()
+    {
+        return (string)$this->id;
+    }
+
 }

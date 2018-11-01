@@ -17,7 +17,13 @@
 				{{ form_label(form.name) }}
 				{{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder':'introduceti denumirea Agentiei/Centrului '}}) }}
 			</div>
-			
+    {#08.05.2018 #}
+	<div class="form-group">
+        {{ form_label(form.emails) }}
+        {{ form_widget(form.emails, {'attr': {'class': 'form-control', 'placeholder':'introduceti adresa de Email a inginerului sef'}}) }}
+	</div>
+
+    {# sfarsit 08.05.2018 #}
 			{{ form_widget(form.salveaza, {'attr': {'class': 'btn btn-primary'}}) }}
 			{{ form_widget(form.reseteaza, {'attr': {'class': 'btn btn-default'}}) }}
 			

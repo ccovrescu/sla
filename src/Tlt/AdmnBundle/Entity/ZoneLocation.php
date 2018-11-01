@@ -2,8 +2,8 @@
 
 namespace Tlt\AdmnBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * ZoneLocation
@@ -154,4 +154,14 @@ class ZoneLocation extends AbstractEntity
 		// return $this->branch->getName() . ' - ' . $this->location->getName();
 		return $this->location->getName();
 	}
+
+    /**
+     * Remove equipments
+     *
+     * @param \Tlt\AdmnBundle\Entity\Equipment $equipments
+     */
+    public function removeEquipment(\Tlt\AdmnBundle\Entity\Equipment $equipments)
+    {
+        $this->equipments->removeElement($equipments);
+    }
 }

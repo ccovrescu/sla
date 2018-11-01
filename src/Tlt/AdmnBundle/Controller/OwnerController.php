@@ -31,6 +31,7 @@ class OwnerController extends Controller
 	
 	public function addAction(Request $request)
 	{
+		//echo "<script>alert('alert 2');</script>";
 		$owner = new Owner();
 		$form = $this->createForm( new OwnerType(), $owner);
 		

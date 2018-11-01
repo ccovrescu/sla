@@ -103,20 +103,23 @@
                 <li>
                     <a href="{{ path('tickets') }}"><i class="fa fa-desktop fa-fw"></i> Tichete</a>
                 </li>
-                {% if is_granted('ROLE_SLA') %}
+				<!-- comentariu  if is_granted('ROLE_SLA')   -->
+				{# modificat pe 25.01.2018 
+					{% if is_granted('ROLE_SLA')  %}
+				#}
+				
+                {% if (is_granted('ROLE_ADMIN') or is_granted('ROLE_SUPER_ADMIN'))%}
                     <li>
                         <a href="{{ path('anexa') }}"><i class="fa fa-table fa-fw"></i> Anexa A</a>
                     </li>
                 {% endif %}
+				
                 {% if is_granted('ROLE_ALLOWED_TO_EDIT_EQUIPMENTS') %}
                     <li>
                         <a href="#"><i class="fa fa-wrench fa-fw"></i> Administrare<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="{{ path('admin_owners_index') }}">Entitati</a>
-                            </li>
-                            <li>
-                                <a href="{{ path('tlt_admin_announcers_index') }}">Sesizanti</a>
+                                <a href="{{ path('admin_owners_index') }}">Entitati beneficiare</a>
                             </li>
                             <li>
                                 <a href="{{ path('admin_locations_index') }}">Locatii generale</a>
@@ -128,26 +131,36 @@
                                 <a href="{{ path('admin_zone_locations_index') }}">Locatii in Agentie/Centru TLT</a>
                             </li>
                             <li>
-                                <a href="{{ path('admin_departments_index') }}">Tipuri de servicii</a>
+                                <a href="{{ path('admin_departments_index') }}">Departamente</a>
                             </li>
                             <li>
-                                <a href="{{ path('admin_services_index') }}">Servicii</a>
+                                <a href="{{ path('admin_services_index') }}">Servicii globale TLT</a>
                             </li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li>
+                                    <a href="{{ path('admin_systemcategory_index') }}">Categorii Sisteme C136</a>
+                                </li>
+                            {% endif %}
                             <li>
-                                <a href="{{ path('admin_properties_index') }}">Proprietati</a>
+                                <a href="{{ path('admin_systems_index') }}">Sisteme Globale</a>
+                            </li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li>
+                                    <a href="{{ path('admin_sts_index') }}">Mapari sisteme/servicii globale</a>
+                                </li>
+                            {% endif %}
+                            <li>
+                                <a href="{{ path('admin_properties_index') }}">Proprietati Echipamente</a>
                             </li>
                             <li>
                                 <a href="{{ path('admin_equipments_index') }}">Echipamente</a>
                             </li>
                             <li>
-                                <a href="{{ path('admin_systems_index') }}">Sisteme</a>
+                                <a href="{{ path('tlt_admin_announcers_index') }}">Sesizanti deranjamente</a>
                             </li>
                             {% if is_granted('ROLE_ADMIN') %}
                                 <li>
-                                    <a href="{{ path('admin_sts_index') }}">Mapari sisteme - servicii</a>
-                                </li>
-                                <li>
-                                    <a href="{{ path('tlt_profile_user_index') }}">Utilizatori</a>
+                                    <a href="{{ path('tlt_profile_user_index') }}">Utilizatori aplicatia SLA</a>
                                 </li>
                             {% endif %}
                         </ul>
@@ -188,9 +201,10 @@
                         </ul>
                     </li>
                 {% endif %}
-                {% if is_granted('ROLE_ADMIN') %}
+{#                {% if is_granted('ROLE_ADMIN') %}
                     <li><a href="{{ path('main_bundle_systems_disponibility') }}"><i class="fa fa-bar-chart-o"></i> Disponibilitate sisteme</a></li>
                 {% endif %}
+#}
                 <li><a href="{{ path('tickets_blank_icr') }}" target="_blank"><i class="fa fa-file-o"></i> Model fisa de interventie</a></li>
             </ul>
         </div>

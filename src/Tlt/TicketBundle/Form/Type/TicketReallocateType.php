@@ -1,14 +1,16 @@
 <?php
 namespace Tlt\TicketBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
 
-use Tlt\TicketBundle\Entity\TicketReallocate;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 use Tlt\ProfileBundle\Entity\User;
+use Tlt\TicketBundle\Entity\TicketReallocate;
 
 class TicketReallocateType extends AbstractType {
 
@@ -45,14 +47,14 @@ class TicketReallocateType extends AbstractType {
 
                 )
         );
-		$builder->add('salveaza', 'submit');
-		$builder->add('reseteaza', 'reset', array());
+		$builder->add('salveaza', SubmitType::class);
+		$builder->add('reseteaza', ResetType::class, array());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function setDefaultOptions(OptionsResolverInterface $resolver) {
+	public function configureOptions(OptionsResolver $resolver) {
 		$resolver->setDefaults(array(
 			'data_class'	=>	'Tlt\TicketBundle\Entity\TicketAllocation'
 		));
@@ -61,7 +63,7 @@ class TicketReallocateType extends AbstractType {
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getName() {
+	public function getBlockPrefix() {
 		return 'ticketReallocate';
 	}
 }

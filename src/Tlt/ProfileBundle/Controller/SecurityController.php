@@ -4,6 +4,7 @@ namespace Tlt\ProfileBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContext;
 
 class SecurityController extends Controller
@@ -11,9 +12,10 @@ class SecurityController extends Controller
     /**
      * @Route("/login", name="tlt_profile_security_login")
      */
-    public function loginAction()
+    public function loginAction(Request $request)
     {
-        $request = $this->getRequest();
+		// depreciata in 2.8 getRequest()
+//        $request = $this->getRequest();
         $session = $request->getSession();
 
         // get the login error if there is one

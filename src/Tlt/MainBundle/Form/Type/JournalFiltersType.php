@@ -2,13 +2,15 @@
 namespace Tlt\MainBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Security\Core\SecurityContext;
-
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\AbstractType;
+
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Symfony\Component\Security\Core\SecurityContext;
 
 class JournalFiltersType extends AbstractType
 {
@@ -70,29 +72,31 @@ class JournalFiltersType extends AbstractType
                     'required'      => false
                 )
             )
-            ->add('start', 'date', array(
+            ->add('start', DateType::class, array(
                     'widget' => "choice",
                     'format'=> 'dd.MM.yyyy',
                     'years' => array(
                         '2015',
                         '2016',
-                        '2017'
+                        '2017',
+						'2018'
                     ),
                     'label' => 'De la:'
                 )
             )
-            ->add('end', 'date', array(
+            ->add('end', DateType::class, array(
                     'widget' => "choice",
                     'format'=> 'dd.MM.yyyy',
                     'years' => array(
                         '2015',
                         '2016',
-                        '2017'
+                        '2017',
+						'2018'
                     ),
                     'label' => 'Pana la:'
                 )
             )
-            ->add('Arata', 'submit');
+            ->add('Arata', SubmitType::class);
     }
 
     protected function getEquipmentsOwnerIds()
@@ -112,14 +116,14 @@ class JournalFiltersType extends AbstractType
         return $owners->getQuery()->getResult();
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
                 'data_class' => 'Tlt\MainBundle\Form\Model\JournalFilters',
             ));
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'journal_filters';
     }

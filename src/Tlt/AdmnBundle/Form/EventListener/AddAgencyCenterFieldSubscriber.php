@@ -1,14 +1,14 @@
 <?php
 namespace Tlt\AdmnBundle\Form\EventListener;
  
+use Doctrine\ORM\EntityRepository;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Doctrine\ORM\EntityRepository;
 use Tlt\AdmnBundle\Entity\AgencyCenter;
-use Tlt\AdmnBundle\Entity\Location;
 use Tlt\AdmnBundle\Entity\Equipment;
+use Tlt\AdmnBundle\Entity\Location;
  
 class AddAgencyCenterFieldSubscriber implements EventSubscriberInterface
 {
@@ -51,7 +51,7 @@ class AddAgencyCenterFieldSubscriber implements EventSubscriberInterface
             return;
         }
 		
-        $accessor = PropertyAccess::getPropertyAccessor();
+        $accessor = PropertyAccess::createPropertyAccessor();
 		 
         $location    = $accessor->getValue($data, $this->propertyPathToLocation);
         $agency_center = ($location) ? $location->getAgencyCenter() : null;

@@ -1,14 +1,18 @@
 <?php
 namespace Tlt\AdmnBundle\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Doctrine\ORM\EntityRepository;
-
 use Symfony\Component\Form\FormEvent;
+
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Tlt\AdmnBundle\Entity\Equipment;
 
@@ -26,24 +30,24 @@ class ServiceAttributeValueType extends AbstractType
 		$equipment = $options['equipment'];
 		
 		$builder
-			->add('id', 'hidden')
-			->add('equipment','choice', array(
+			->add('id', HiddenType::class)
+			->add('equipment',ChoiceType::class, array(
 				'choices' => array($equipment->getId() => $equipment->getName()),
 				'label' => 'Echipament:',
 				'disabled' => true
 				))
-			->add('service_attr', 'choice', array(
+			->add('service_attr', ChoiceType::class, array(
 				'choices' => $this->getServiceAttributes($equipment->getService()),
 				'label' => 'Proprietatea:'
 				))
-			->add('value','text',array(
+			->add('value',TextType::class,array(
 				'max_length' => 64,
 				'label' => 'Denumire:'
 				))
-			->add('Salveaza', 'submit');
+			->add('Salveaza', SubmitType::class);
 	}
 	
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	public function configureOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(array(
 			'data_class' => 'Tlt\AdmnBundle\Entity\ServiceAttributeValue',
@@ -51,7 +55,7 @@ class ServiceAttributeValueType extends AbstractType
 		));		
 	}
 	
-	public function getName()
+	public function getBlockPrefix()
 	{
 		return 'service_attribute_value';
 	}

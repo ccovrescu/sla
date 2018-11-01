@@ -83,7 +83,7 @@ class ServiceToSystem extends AbstractEntity
     /**
      * Set system
      *
-     * @param \Tlt\AdmneBundle\Entity\System $system
+     * @param \Tlt\AdmnBundle\Entity\System $system
      * @return Mapping
      */
     public function setSystem(\Tlt\AdmnBundle\Entity\System $system = null)

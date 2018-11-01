@@ -25,6 +25,10 @@
 						{{ form_label(form.service) }}
 						{{ form_widget(form.service, {'attr': {'class': 'form-control'}}) }}
 					</div>
+                  <div class="form-group">
+                      {{ form_label(form.system) }}
+                      {{ form_widget(form.system, {'attr': {'class': 'form-control'}}) }}
+                  </div>
 				</div>
 
 			<div class="col-lg-6">
@@ -96,7 +100,7 @@
 										{{equipment.getUniqueName}}
 									</a>
 								</td>
-								<td class="text-right">{{ equipment.total }}</td>
+								<td class="text-right">{{ equipment.total|number_format(0, '.', ',') }}</td>
 								<td class="text-center">
 									{% if equipment.inPam %}
 										<i class="fa fa-check" style="color: green"></i>
@@ -219,7 +223,9 @@
             branch_id: $('#filter_branch').val(),
             location_id: $('#filter_zoneLocation').val()
         };
-
+   {# alert('aici');
+    alert(data['department_id']);
+   #}
         $.ajax({
             type: 'post',
             url: '{{ path("filter_select_services") }}',
@@ -228,11 +234,29 @@
                 $('#loader').modal({show:true,backdrop:'static'});
             },
             success: function(data) {
+
                 $('#filter_service').html('<option value="">-- Toate --</option>');
 
                 for (var i=0, total = data.length; i < total; i++) {
                     $('#filter_service').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
                 }
+            }
+        });
+
+        // introdus azi 19.07.2018
+        $.ajax({
+            type: 'post',
+            url: '{{ path("filter_select_systems") }}',
+            data: data,
+            success: function(data) {
+
+                $('#filter_system').html('<option value="">-- Toate --</option>');
+
+                for (var i=0, total = data.length; i < total; i++) {
+                    $('#filter_system').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                }
+
+                $('#loader').modal('hide');
             }
         });
 
@@ -307,6 +331,22 @@
                     $('#loader').modal('hide');
                 }
             });
+// introus azi 19.07.2018
+            $.ajax({
+                type: 'post',
+                url: '{{ path("filter_select_systems") }}',
+                data: data,
+                success: function(data) {
+                    $('#filter_system').html('<option value="">-- Toate --</option>');
+
+                    for (var i=0, total = data.length; i < total; i++) {
+                        $('#filter_system').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                    }
+
+                    $('#loader').modal('hide');
+                }
+            });
+// sfarsit introdus azi 19.07.2018
         }
         else
         {

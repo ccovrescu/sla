@@ -2,8 +2,8 @@
 
 namespace Tlt\AdmnBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Property
@@ -84,4 +84,37 @@ class Property extends AbstractEntity
     {
         return $this->name;
     }	
- }
+ 
+    /**
+     * Add propertyValues
+     *
+     * @param \Tlt\AdmnBundle\Entity\PropertyValue $propertyValues
+     * @return Property
+     */
+    public function addPropertyValue(\Tlt\AdmnBundle\Entity\PropertyValue $propertyValues)
+    {
+        $this->propertyValues[] = $propertyValues;
+
+        return $this;
+    }
+
+    /**
+     * Remove propertyValues
+     *
+     * @param \Tlt\AdmnBundle\Entity\PropertyValue $propertyValues
+     */
+    public function removePropertyValue(\Tlt\AdmnBundle\Entity\PropertyValue $propertyValues)
+    {
+        $this->propertyValues->removeElement($propertyValues);
+    }
+
+    /**
+     * Get propertyValues
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPropertyValues()
+    {
+        return $this->propertyValues;
+    }
+}

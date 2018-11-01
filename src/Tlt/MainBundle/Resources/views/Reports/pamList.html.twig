@@ -38,6 +38,23 @@
         </div>
     </div>
 
+    {#introdus 23.10.2018#}
+    <div class="row no-print">
+        <div class="col-lg-6">
+            <div class="form-group">
+                {{ form_label(form.service) }}
+                {{ form_widget(form.service, {'attr': {'class': 'form-control'} }) }}
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group">
+                {{ form_label(form.system) }}
+                {{ form_widget(form.system, {'attr': {'class': 'form-control'} }) }}
+            </div>
+        </div>
+    </div>
+
+    {# sfarsit introdus 23.10.2018#}
     <div class="row no-print">
         <div class="col-lg-12">
             <div class="text-right">
@@ -110,3 +127,100 @@
         {% include '::print_button.html.twig' with {'document':'PAM'} %}
     {% endif %}
 {% endblock %}
+
+{# introdus la 23.10.2018#}
+
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+
+        $("#pam_list_filters_owner").focusout(function(){
+            //alert( "Handler for java called." );
+            var data = {
+                department_id: $('#pam_list_filters_department').val(),
+            };
+//         alert(data['department_id']);
+
+            $.ajax({
+                type: 'post',
+                url: '{{ path("select_services") }}',
+                data: data,
+                beforeSend: function(){
+                    $('#loader').modal({show:true,backdrop:'static'});
+                },
+                success: function(data) {
+                    $('#pam_list_filters_service').html('');
+                    $('#pam_list_filters_service').html('<option value="">-- Toate --</option>');
+                    for (var i=0, total = data.length; i < total; i++) {
+                        $('#pam_list_filters_service').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                    }
+                    $('#loader').modal('hide');
+                }
+            });
+        });
+
+        $("#pam_list_filters_department").change(function(){
+                //alert( "Handler for java called." );
+                var data = {
+                    department_id: $(this).val(),
+                };
+//         alert(data['department_id']);
+
+                $.ajax({
+                    type: 'post',
+                    url: '{{ path("select_services") }}',
+                    data: data,
+                    beforeSend: function(){
+                        $('#loader').modal({show:true,backdrop:'static'});
+                    },
+                    success: function(data) {
+                        $('#pam_list_filters_service').html('');
+                        $('#pam_list_filters_service').html('<option value="">-- Toate --</option>');
+                        for (var i=0, total = data.length; i < total; i++) {
+                            $('#pam_list_filters_service').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                        }
+                        $('#loader').modal('hide');
+                    }
+                });
+            });
+
+        $("#pam_list_filters_service").change(function(){
+           // alert( "Handler for java called." );
+            var data = {
+                owner_id: $('#pam_list_filters_owner').val(),
+                department_id: $('#pam_list_filters_department').val(),
+                service_id: $(this).val(),
+            };
+//         alert(data['department_id']);
+
+            $.ajax({
+                type: 'post',
+//                url: '{{ path("filter_select_systems") }}',
+                url: '{{ path("pam_select_systems") }}',
+                data: data,
+                beforeSend: function(){
+                     $('#loader').modal({show:true,backdrop:'static'});
+                },
+                success: function(data) {
+                    $('#pam_list_filters_system').html('');
+                    $('#pam_list_filters_system').html('<option value="">-- Toate --</option>');
+
+                    for (var i=0, total = data.length; i < total; i++) {
+                        $('#pam_list_filters_system').append('<option value="' + data[i].id + '">' + data[i].name + '</option>');
+                    }
+                     $('#loader').modal('hide');
+                }
+            });
+
+        });
+
+    </script>
+
+    <!-- Page Specific Plugins -->
+    <script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
+    <script src="{{ asset('js/tablesorter/tables.js') }}"></script>
+{% endblock %}
+
+{# sfarsit introdus la 23.10.2018#}

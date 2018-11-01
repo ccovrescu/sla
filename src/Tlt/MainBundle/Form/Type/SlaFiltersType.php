@@ -1,12 +1,15 @@
 <?php
 namespace Tlt\MainBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Security\Core\SecurityContext;
-
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Symfony\Component\Security\Core\SecurityContext;
 
 class SlaFiltersType extends AbstractType
 {
@@ -14,6 +17,8 @@ class SlaFiltersType extends AbstractType
 
     public function __construct(SecurityContext $securityContext)
     {
+		//echo "<script>alert('claudiu CONSTRUCT SlaFilters')</script>";
+
         $this->securityContext = $securityContext;
     }
 
@@ -52,44 +57,46 @@ class SlaFiltersType extends AbstractType
                     'required'      => true
                 )
             )
-            ->add('start', 'date', array(
+            ->add('start', DateType::class, array(
                     'widget' => "choice",
                     'format'=> 'dd.MM.yyyy',
                     'years' => array(
                         '2015',
                         '2016',
-                        '2017'
+                        '2017',
+						'2018'
                     ),
                     'label' => 'De la:'
                 )
             )
-            ->add('end', 'date', array(
+            ->add('end', DateType::class, array(
                     'widget' => "choice",
                     'format'=> 'dd.MM.yyyy',
                     'years' => array(
                         '2015',
                         '2016',
-                        '2017'
+                        '2017',
+						'2018'
                     ),
                     'label' => 'Pana la:'
                 )
             )
-            ->add('is_closed', 'checkbox', array(
+            ->add('is_closed', CheckboxType::class, array(
                     'label' => 'Include si tichete NEINCHISE',
                     'required' => false
                 )
             )
-            ->add('Arata', 'submit');
+            ->add('Arata', SubmitType::class);
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
                 'data_class' => 'Tlt\MainBundle\Form\Model\SlaFilters',
             ));
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'sla_filters';
     }

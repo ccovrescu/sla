@@ -2,13 +2,13 @@
 
 namespace Tlt\AdmnBundle\Controller;
 
+use Doctrine\ORM\Query\ResultSetMapping;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-use Doctrine\ORM\Query\ResultSetMapping;
+use Symfony\Component\HttpFoundation\Request;
 
 class AjaxController extends Controller
 {
@@ -258,7 +258,9 @@ class AjaxController extends Controller
 	 */
 	public function services2Action(Request $request)
 	{
+//        echo "<script>alert('select_services');</script>";
 		$department_id = $request->request->get('department_id');
+//        echo "<script>alert($department_id);</script>";
 
 		$em = $this->getDoctrine()->getManager();
 		$qb = $em->getRepository('TltAdmnBundle:Service')
@@ -384,7 +386,8 @@ class AjaxController extends Controller
 	public function filterServicesAction(Request $request)
 	{
 		$department_id = $request->request->get('department_id');
- 
+
+//        echo "<script>alert($department_id);</script>";
 		$em = $this->getDoctrine()->getManager();
 		$qb = $em->getRepository('TltAdmnBundle:Service')
 					->createQueryBuilder('sv')
@@ -655,6 +658,32 @@ class AjaxController extends Controller
         return new JsonResponse($results);
     }
 
+    /*introdusa 09.08.2018 */
+
+    /**
+     * @Route("/ajax/allowed-systemsv1", name="get_allowed_systemsv1")
+     */
+    public function getAllowedSystemsActionvclau(Request $request)
+    {
+        $equipment_id = $request->request->get('equipment_id');
+        echo "<script>alert($equipment_id);</script>";
+
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->getRepository('TltAdmnBundle:Mapping')
+            ->createQueryBuilder('mp')
+            ->select('mp.id, s.name, ttm.totalaffected')
+            ->leftJoin('mp.ticketMapping', 'ttm')
+            ->innerJoin('mp.system', 's')
+            ->where('mp.equipment = :equipment')
+            ->setParameter('equipment', $equipment_id)
+            ->orderBy('s.name', 'ASC');
+        //echo $qb->getDQL();
+        $mappings	= $qb->getQuery()->getResult();
+        return new JsonResponse($mappings);
+    }
+
+    /* sf introdusa 09.08.2018 */
+
     /**
      * @Route("/ajax/allowed-systems", name="get_allowed_systems")
      */
@@ -675,4 +704,243 @@ class AjaxController extends Controller
 
         return new JsonResponse($mappings);
     }
+
+    /**
+     * @Route("/ajax/system-select-category", name="system_select_category")
+     */
+    public function systemCategoryAction(Request $request)
+    {
+        $category_id = $request->request->get('category_id');
+        $department_id	=	$request->request->get('department_id');
+
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->getRepository('TltAdmnBundle:SystemCategory')
+            ->createQueryBuilder('categ')
+            ->select('categ.id, categ.name')
+            ->where('categ.department = :department')
+            ->setParameter('department', $department_id)
+            ->orderBy('categ.name', 'ASC');
+
+
+        $categories	= $qb->getQuery()->getResult();
+
+        return new JsonResponse($categories);
+    }
+
+    /**
+     * @Route("/ajax/equipment-select-system3", name="equipment_select_system3")
+     */
+
+    public function equipmentselectsystemAction3(Request $request)
+    {
+
+        $service_id = $request->request->get('service_id');
+
+        $repository =$this->getDoctrine()->getRepository('TltAdmnBundle:Service');
+
+        $query=$repository->createQueryBuilder('s')
+            ->select('d.id')
+            ->join('s.department', 'd')
+            ->where('s.id = :service_id')
+            ->setParameter('service_id', $service_id)
+            ->getQuery();
+
+        $dep_id=$query->getScalarResult();
+
+        $em = $this->getDoctrine()->getManager();
+
+        $qb = $em->getRepository('TltAdmnBundle:System')
+            ->createQueryBuilder('system')
+            ->select('system.id, system.name')
+            ->leftJoin('system.category','sc')
+            ->where('sc.department=:department_id')
+            ->setParameter('department_id',$dep_id);
+
+        $systems	= $qb->getQuery()->getResult();
+
+        return new JsonResponse($systems);
+    }
+    /**
+     * @Route("/ajax/equipment-select-system", name="equipment_select_system")
+     */
+
+    public function equipmentselectsystemAction(Request $request)
+    {
+
+        $service_id = $request->request->get('service_id');
+
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->getRepository('TltAdmnBundle:ServiceToSystem')
+            ->createQueryBuilder('ss')
+            ->select('system.id, system.name')
+            ->join('ss.system','system')
+            ->where('ss.service=:service_id')
+            ->setParameter('service_id',$service_id);
+
+        $systems	= $qb->getQuery()->getResult();
+
+        return new JsonResponse($systems);
+    }
+
+
+    /**
+     * @Route("/ajax/equipment-select-system1", name="equipment_select_system1")
+     */
+
+    public function equipmentselectsystemAction1(Request $request)
+    {
+
+
+        $service_id = $request->request->get('service_id');
+
+        $repository =$this->getDoctrine()->getRepository('TltAdmnBundle:Service');
+
+        $query=$repository->createQueryBuilder('s')
+            ->select('d.id')
+            ->join('s.department', 'd')
+            ->where('s.id = :service_id')
+            ->setParameter('service_id', $service_id)
+            ->getQuery();
+
+        $dep_id=$query->getScalarResult();
+
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->getRepository('TltAdmnBundle:System')
+            ->createQueryBuilder('system')
+            ->select('system.id, system.name')
+            ->join('system.department','d')
+            ->where('d.id=:department_id')
+            ->setParameter('department_id',$dep_id);
+
+
+        $systems	= $qb->getQuery()->getResult();
+
+
+
+        return new JsonResponse($systems);
+    }
+
+    // filter_select_systems
+
+    /**
+     * @Route("/ajax/filter-systems", name="filter_select_systems")
+     */
+
+    public function filterselectsystemsAction(Request $request)
+    {
+
+        $department_id = $request->request->get('department_id');
+
+        $service_id		= $request->request->get('service_id');
+
+/*        echo "<script>alert($service_id);</script>";
+
+        echo "<script>alert($department_id);</script>";
+*/
+
+//        echo "<script>alert('same message');</script>";
+
+// cu selectare din mapari Servicii - Sisteme
+
+        $em = $this->getDoctrine()->getManager();
+        $qb = $em->getRepository('TltAdmnBundle:ServiceToSystem')
+            ->createQueryBuilder('ss')
+            ->select('distinct system.id, system.name')
+            ->join('ss.system','system');
+
+        if ($service_id) {
+            $qb->andWhere('ss.service = :service_id')
+                ->setParameter('service_id', $service_id);
+        } elseif ($department_id) {
+            $qb->andWhere('system.department = :department')
+                ->setParameter('department', $department_id);
+        }
+
+/*    $qb=$em->getRepository('TltAdmnBundle:System')
+        ->createQueryBuilder('sys')
+        ->select('sys.id, sys.name')
+        ->where('sys.department = :department')
+        ->setParameter('department', $department_id);
+*/
+        $systems	= $qb->getQuery()->getResult();
+
+        return new JsonResponse($systems);
+    }
+
+//    introdus 24.10.2018
+    /**
+     * @Route("/ajax/pam-filter-systems", name="pam_select_systems")
+     */
+
+    public function pamselectsystemsAction(Request $request)
+    {
+        $owner_id = $request->request->get('owner_id');
+        $department_id = $request->request->get('department_id');
+
+        $service_id		= $request->request->get('service_id');
+
+        /*        echo "<script>alert($service_id);</script>";
+
+                echo "<script>alert($department_id);</script>";
+        */
+
+//        echo "<script>alert('same message');</script>";
+
+// cu selectare din mapari Servicii - Sisteme
+
+        $em = $this->getDoctrine()->getManager();
+/*        $qb = $em->getRepository('TltAdmnBundle:ServiceToSystem')
+            ->createQueryBuilder('ss')
+            ->select('distinct system.id, system.name')
+            ->join('ss.system','system');
+*/
+
+        $qb = $em->getRepository('TltAdmnBundle:System')
+            ->createQueryBuilder('sys')
+            ->select('distinct sys.id, sys.name')
+            ->innerJoin('sys.equipments', 'e')
+            ->innerJoin('e.service', 'srv')
+            ->andWhere('e.isActive=true')
+            ->andWhere('e.inPam=true')
+            ->andWhere('e.owner = :owner_id')
+            ->setParameter('owner_id', $owner_id)
+            ->orderBy('sys.name', 'ASC');
+
+/*            ->select('distinct sys.id, sys.name')
+            ->innerJoin('sys.mappings', 'mp')
+            ->innerJoin('mp.equipment', 'e')
+            ->innerJoin('e.service', 'srv')
+            ->andWhere('e.isActive=true')
+            ->andWhere('e.owner = :owner_id')
+            ->setParameter('owner_id', $owner_id)
+            ->orderBy('sys.name', 'ASC');
+*/
+        if ($service_id) {
+            $qb->andWhere('e.service = :service_id')
+                ->setParameter('service_id', $service_id);
+        } elseif ($department_id) {
+            $qb->andWhere('sys.department = :department')
+                ->setParameter('department', $department_id);
+        }
+/*
+ 					->select('distinct system.id, system.name')
+					->leftJoin('system.mappings', 'mapping')
+                    ->where('mapping.equipment = :equipment')
+					->orderBy('system.name', 'ASC')
+ */
+
+//        $qb->orderBy('sys', 'ASC');
+
+        /*    $qb=$em->getRepository('TltAdmnBundle:System')
+                ->createQueryBuilder('sys')
+                ->select('sys.id, sys.name')
+                ->where('sys.department = :department')
+                ->setParameter('department', $department_id);
+        */
+        $systems	= $qb->getQuery()->getResult();
+
+        return new JsonResponse($systems);
+    }
+//    sfarsit introdus 24.10.2018
+
 }

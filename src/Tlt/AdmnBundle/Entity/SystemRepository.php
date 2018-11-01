@@ -2,8 +2,8 @@
 namespace Tlt\AdmnBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 use Tlt\MainBundle\Model\TimeCalculation;
 
@@ -25,7 +25,18 @@ class SystemRepository extends EntityRepository
 			)
 		);
 	}
-	
+
+    public function findAllFromOneDepartmentOrderedByCategory($department)
+    {
+        return $this->findBy(
+            array(
+                'department' => $department
+            ),
+            array(
+                'category' => 'ASC'
+            )
+        );
+    }
 	/**
 	 * Intoarce disponibilitatea garanta a unui sistem.
 	 */
@@ -52,15 +63,53 @@ class SystemRepository extends EntityRepository
 			return 0;
 		}
 	}
-	
+
+	/* adaugat la 11.08.2018 */
+    /**
+     * Intoarce numarul total de unitati ale unui sistem.
+     *
+     * @param interger $systemId
+     *
+     * @return interger|null
+     */
+    public function getGlobalUnitsNo($systemId, $owner_id = null, $start, $end)
+    {
+        $rsm = new ResultSetMapping();
+
+        $rsm->addScalarResult('units', 'units');
+
+        $query = $this->_em->createNativeQuery(
+            "SELECT
+				quantity AS units
+			FROM
+				system_quantity sq
+			WHERE
+				sq.system = $systemId" .
+            ($owner_id != null ? " AND sq.owner=$owner_id " : "").
+            " AND sq.start_date<= '".$start."' and sq.end_date>='".$end."'".
+            " GROUP BY
+				sq.system", $rsm
+        );
+        //       " AND '".$end."' between sq.start_date and sq.end_date".
+        //       " AND ('".$start."' between sq.start_date and sq.end_date) AND ('".$end."' between sq.start_date and sq.end_date)".
+        //var_dump($query->getSQL());
+        try {
+            return (int) current($query->getSingleResult());
+        } catch (NoResultException $e) {
+            return null;
+        }
+    }
+
+    /* sfarsit Adaugat la 11.08.2018*/
+
 	/**
-	 * Intoarce numarul total de unitati al unui sistem.
+	 * Intoarce numarul total de unitati ale unui sistem.
      *
      * @param interger $systemId
      *
      * @return interger|null
 	 */
-	public function getGlobalUnitsNo($systemId, $owner_id = null)
+	public function getGlobalUnitsNoBradescu($systemId, $owner_id = null)
 	{
 		$rsm = new ResultSetMapping();
 
@@ -70,18 +119,18 @@ class SystemRepository extends EntityRepository
 			"SELECT
 				SUM(e.total) AS units
 			FROM
-				mappings m
+				mappings ma
 			LEFT JOIN
 				equipments e
-				ON e.id=m.equipment
+				ON e.id=ma.equipment
 			WHERE
-				m.system=$systemId" .
+				ma.system = $systemId" .
 
             ($owner_id != null ? " AND e.owner=$owner_id " : "")
 
             . "
 			GROUP BY
-				m.system", $rsm
+				ma.system", $rsm
 		);   
 
 		try {
@@ -152,7 +201,7 @@ class SystemRepository extends EntityRepository
 	/**
 	 * Calculeaza disponibilitatea unui sistem intr-o perioada de timp.
 	 */
-	public function getDisponibility($startMoment='2015-01-01', $endMoment = '2015-06-30', $system)
+	public function getDisponibility($startMoment='2018-07-01', $endMoment = '2018-12-31', $system)
 	{
 		$start	= new \DateTime($startMoment);
 		$end	= new \DateTime($endMoment);
@@ -169,7 +218,7 @@ class SystemRepository extends EntityRepository
 		return $disponibility;
 	}
 
-    public function SLA($owner, $departments, $start, $end, $isClosed) {
+    public function SLABradescu($owner, $departments, $start, $end, $isClosed) {
 
         $departments = implode(',', $departments);
 
@@ -229,7 +278,81 @@ class SystemRepository extends EntityRepository
             $rsm
         );
 
-//        var_dump($query->getSQL());
+     //   var_dump($query->getSQL());
+
+        try {
+            return $query->getResult();
+        } catch (NoResultException $e) {
+            return null;
+        }
+    }
+
+    public function SLA($owner, $departments, $start, $end, $isClosed) {
+
+        $departments = implode(',', $departments);
+
+        $rsm = new ResultSetMapping();
+
+        $rsm->addScalarResult('id', 'id');
+        $rsm->addScalarResult('name', 'name');
+        $rsm->addScalarResult('criticality', 'criticality');
+        $rsm->addScalarResult('min_hour', 'min_hour');
+        $rsm->addScalarResult('max_hour', 'max_hour');
+        $rsm->addScalarResult('g_disp', 'g_disp');
+        $rsm->addScalarResult('indisponible_time_total_affected', 'indisponible_time_total_affected');
+        $rsm->addScalarResult('indisponible_time_partial_affected', 'indisponible_time_partial_affected');
+        $rsm->addScalarResult('indisponible_time', 'indisponible_time');
+        $query = $this->_em->createNativeQuery(
+            "
+                SELECT
+                  s.id,
+                  s.name,
+                  s.criticality,
+                  wt.min_hour,
+                  wt.max_hour,
+                  gv.value AS g_disp,
+                  IFNULL(times.indisponible_time_total_affected,0) AS indisponible_time_total_affected,
+                  IFNULL(times.indisponible_time_partial_affected,0) AS indisponible_time_partial_affected,                                    
+                  IFNULL(times.indisponible_time,0) AS indisponible_time
+                FROM
+                  systems s
+                  LEFT JOIN
+                    (SELECT
+                      mp.system AS system_id,
+                      SUM(IF(ttm.total_affected, ttm.resolved_in,0)) AS indisponible_time_total_affected,                        
+                      SUM(IF(ttm.total_affected,0, ttm.resolved_in)) AS indisponible_time_partial_affected,
+                      SUM(ttm.resolved_in) AS indisponible_time          
+                    FROM
+                      tickets_ticket_mapping ttm
+                      LEFT JOIN tickets t
+                        ON t.id = ttm.ticket_id
+                      LEFT JOIN mappings mp
+                        ON mp.id = ttm.mapping_id
+                      LEFT JOIN equipments eq
+                        ON eq.id=t.equipment_id
+                    WHERE t.is_real = 1
+                      AND t.backup_solution = 2
+                      AND t.fixed_at BETWEEN '$start' AND '$end'
+                      " .
+//                        ($isClosed == 1 ? ' AND t.is_closed = 1 ' : ' ')
+            ($isClosed == 1 ? ' ' : ' AND t.is_closed = 1 ')
+            . "
+                      AND eq.owner = $owner
+                    GROUP BY mp.system) times
+                    ON times.system_id = s.id
+                    LEFT JOIN
+                        guaranteed_values gv
+                        ON gv.system=s.id
+                    LEFT JOIN working_time wt
+                        ON wt.id=gv.workingTime
+                WHERE s.department IN ($departments)
+                ORDER BY s.department,
+                  s.name
+              ",
+            $rsm
+        );
+
+//           var_dump($query->getSQL());
 
         try {
             return $query->getResult();
@@ -257,7 +380,7 @@ class SystemRepository extends EntityRepository
             $rsm->addScalarResult('owner', 'owner');
             $rsm->addScalarResult('indisponibility', 'indisponibility');
 
-            $query = $this->_em->createNativeQuery(
+            $query = $this->_em->createNativeQuery(	
                 "
                 SELECT
                   eq.owner,

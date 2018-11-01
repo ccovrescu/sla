@@ -7,9 +7,9 @@
  */
 namespace Tlt\TicketBundle\Form\DataTransformer;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
-use Doctrine\Common\Persistence\ObjectManager;
 use Tlt\AdmnBundle\Entity\Equipment;
 
 class EquipmentToNumberTransformer implements DataTransformerInterface {

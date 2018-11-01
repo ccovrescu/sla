@@ -2,8 +2,8 @@
 
 namespace Tlt\AdmnBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -94,4 +94,37 @@ class Location extends AbstractEntity
 	{
 		return $this->getName();
 	}
+
+    /**
+     * Add zoneLocations
+     *
+     * @param \Tlt\AdmnBundle\Entity\ZoneLocation $zoneLocations
+     * @return Location
+     */
+    public function addZoneLocation(\Tlt\AdmnBundle\Entity\ZoneLocation $zoneLocations)
+    {
+        $this->zoneLocations[] = $zoneLocations;
+
+        return $this;
+    }
+
+    /**
+     * Remove zoneLocations
+     *
+     * @param \Tlt\AdmnBundle\Entity\ZoneLocation $zoneLocations
+     */
+    public function removeZoneLocation(\Tlt\AdmnBundle\Entity\ZoneLocation $zoneLocations)
+    {
+        $this->zoneLocations->removeElement($zoneLocations);
+    }
+
+    /**
+     * Get zoneLocations
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getZoneLocations()
+    {
+        return $this->zoneLocations;
+    }
 }

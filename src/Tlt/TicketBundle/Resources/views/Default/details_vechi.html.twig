@@ -1,0 +1,460 @@
+{% extends '::base.html.twig' %}
+
+{% form_theme form 'TltTicketBundle::fields.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/icr.css' ) }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
+{% block page %}
+
+    {% include 'TltTicketBundle:Default:icr.html.twig' %}
+
+    <div class="row no-print">
+        <div class="col-lg-12">
+            <h1>Detalii <small>Tichet {{ticket.id}}</small></h1>
+            <ol class="breadcrumb">
+                <li><a href="{{ path('tickets') }}"><i class="icon-dashboard"></i> Tichete</a></li>
+                <li class="active"><i class="icon-file-alt"></i> Detalii</li>
+            </ol>
+        </div>
+    </div><!-- /.row -->
+
+    <div class="row">
+    <div class="col-lg-12">
+    <table class="table icr no-print">
+    <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td colspan="4" class="text-center">
+            <strong>Departamentul TELETRANS (DTI/DTC/DIP/SCL)</strong><br/>
+            <abbr title="attribute">
+                {% if ticket.equipment is defined and ticket.equipment is not null %}
+                    {% if ticket.equipment.service.department.id == "1" %}
+                        {{ "DIP"|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+                    {% elseif ticket.equipment.service.department.id == "2" %}
+                        {{ "DTC"|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+                    {% elseif ticket.equipment.service.department.id == "3" %}
+                        {{ "DTI"|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+				    {% elseif ticket.equipment.service.department.id == "4" %}
+                        {{ "SCL CONT"|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+                    {% elseif ticket.equipment.service.department.id == "5" %}
+                        {{ "DTC"|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+                    {% elseif ticket.equipment.service.department.id == "6" %}
+                        {{ "DTI"|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+					{% elseif ticket.equipment.service.department.id == "7" %}
+                        {{ "DTC"|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+                    {% elseif ticket.equipment.service.department.id == "8" %}
+                        {{ "DTI"|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+                    {% endif %}
+                {% else %}
+                    {{ " "|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+                {% endif %}
+            </abbr>
+        </td>
+        <td colspan="4" class="text-center">
+            <strong>Entitate TELETRANS (Executiv/Agentie/Centru)</strong><br/>
+            <abbr title="attribute">
+                {% if ticket is not null %}
+                    {{ ticket.ticketAllocations.first.branch.name|str_pad(60)|replace({' ':'&nbsp;'})|raw }}
+                {% else %}
+                    {{ " "|str_pad(60)|replace({' ':'&nbsp;'})|raw }}
+                {% endif %}
+            </abbr>
+            <br/>&nbsp;
+
+
+            {% if ticket.isReal is defined and ticket.isReal is null %}
+                {% if ticket.ticketEquipments is not defined or ticket.ticketEquipments|length==0 %}
+                    {% if is_granted('ROLE_TICKET_INSERT') %}
+                        <button id="ticket_reallocate" type="button" class="btn btn-info btn-xs no-print" onclick="location.href='{{ path('reallocate_ticket', {'id' : ticket.id}) }}'">Realocare</button>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </td>
+        <td colspan="2">
+            <br/>
+            <strong>Urgent:</strong>
+            {% if ticket.equipment is defined and ticket.equipment is not null %}
+                {% if ticket.emergency is not null and ticket.emergency.id == 1 %}
+                    DA <i class="fa fa-square-o"></i> &nbsp; NU <i class="fa fa-check-square-o"></i>
+                {% else %}
+                    DA <i class="fa fa-check-square-o"></i> &nbsp; NU <i class="fa fa-square-o"></i>
+                {% endif %}
+            {% else %}
+                DA <i class="fa fa-square-o"></i> &nbsp;NU <i class="fa fa-square-o"></i>
+            {% endif %}
+            <br/>&nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <strong>Nr. SLA:</strong>
+            <abbr title="attribute">
+                {{ ticket.id|default(" ")|str_pad(10)|replace({' ':'&nbsp;'})|raw }}
+            </abbr>
+            <br/>&nbsp;
+        </td>
+        <td colspan="4" class="text-center">
+            <strong>Data/Ora sesizarii:</strong><br/>
+            <abbr title="attribute">
+                {{ (ticket is not null ? ticket.announcedAt|date('d.m.Y H:i') : " ")|str_pad(35)|replace({' ':'&nbsp;'})|raw }}
+            </abbr>
+        </td>
+        <td colspan="4" class="text-center">
+            <strong>Persoana din tura care preia sesizarea:</strong><br/>
+            <abbr title="attribute">
+                {{ticket.takenBy|default(" ")|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
+            </abbr>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="5" class="text-center">
+            <strong>Mod de transmitere sesizare:</strong><br/>
+
+            {% set transmission = '(' %}
+            {% for tType in transmissionTypes %}
+                {% if loop.first %}
+                    {% set transmission = '(' ~ ((ticket is null or tType==ticket.transmissionType) ? tType.name|capitalize : '<strike>' ~ tType.name|capitalize ~ '</strike>') %}
+                {% else %}
+                    {% set transmission = transmission ~ '/' ~ (( ticket is null or tType==ticket.transmissionType) ? tType.name|capitalize : '<strike>' ~ tType.name|capitalize ~ '</strike>') %}
+                {% endif %}
+            {% endfor %}
+
+            {{ (transmission ~ ')')|raw }}
+        </td>
+        <td colspan="5" class="text-center">
+            <strong>Persoana anuntata:</strong><br/>
+            <abbr title="attribute">
+                {{ ticket.announcedTo|default(" ")|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
+            </abbr>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="5" class="text-center">
+            <strong>Sesizare lansata de: (Ex/DEN/DET/ST/OMEPA)</strong><br/>
+            <abbr title="attribute">
+                {{ ticket.equipment.owner.name|default(" ")|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
+            </abbr>
+        </td>
+        <td colspan="5" class="text-center">
+            <strong>Persoana care face sesizarea:</strong><br/>
+            <abbr title="attribute">
+                {{ ticket.announcedBy|default(" ")|str_pad(70)|replace({' ':'&nbsp;'})|raw }}
+            </abbr>
+            <br/>
+            {{ ticket.contactInfo|default(" ") }}
+        </td>
+    </tr>
+    <tr>
+        <td colspan="10"><strong>Descriere pe scurt deranjament:</strong> <pre><samp><abbr title="attribute">{{ ticket.description|default(' ') }}</abbr></samp></pre></td>
+    </tr>
+
+    <!-- Este sau nu real -->
+    {% if form is defined and form.isReal is defined %}
+
+        {% include 'TltTicketBundle:Default:ticket_solve.html.twig' %}
+    {% else %}
+        {% if ticket.isReal is not null %}
+            <tr>
+                <td colspan="3">
+                    <strong>Este real?</strong>
+                    <samp>
+                        <abbr title="attribute">
+                            {% if ticket.isReal == 1 %}
+                                <i class="fa fa-check-square-o"></i> Da&nbsp;
+                                <i class="fa fa-square-o"></i> Nu
+                            {% else %}
+                                <i class="fa fa-square-o"></i> Da&nbsp;
+                                <i class="fa fa-check-square-o"></i> Nu
+                            {% endif %}
+                        </abbr>
+                    </samp>
+                </td>
+                <td colspan="7"><strong>De ce nu este real?</strong> <pre><samp><abbr title="attribute">{{ ticket.notRealReason|default(' ') }}</abbr></samp></pre></td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-center">
+                    <strong>Tip interventie:</strong><br/>
+                    <samp><abbr title="attribute">{{ ticket.ticketType.name|default('') }}</abbr></samp>
+                </td>
+                <td colspan="7" nowrap class="text-center">
+                    <strong>Compartimentul din cadrul TELETRANS implicat in rezolvarea sesizarii:</strong><br/>
+                    <samp>
+                        <abbr title="attribute">
+                                {{ ticket.compartment }}
+                        </abbr>
+                    </samp>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <strong>Vechime echipament:</strong>
+                    <samp>
+                        <abbr title="attribute">
+                            {% if ticket.oldness.id == 2 %}
+                                <i class="fa fa-square-o"></i> 1-3&nbsp;
+                                <i class="fa fa-check-square-o"></i> peste 3 ani
+                            {% else %}
+                                <i class="fa fa-check-square-o"></i> 1-3&nbsp;
+                                <i class="fa fa-square-o"></i> peste 3 ani
+                            {% endif %}
+                        </abbr>
+                    </samp>
+                </td>
+                <td colspan="6">
+                    <strong>S-a asigurat solutie de rezerva?</strong>
+                    <samp>
+                        <abbr title="attribute">
+                            {# 1: Da #}
+                            {% if ticket.backupSolution.id == 1 %}
+                                <i class="fa fa-check-square-o"></i> Da&nbsp;
+                                <i class="fa fa-square-o"></i> Nu&nbsp;
+                                <i class="fa fa-square-o"></i> Nu este cazul
+                            {% endif %}
+
+                            {# 2: NU #}
+                            {% if ticket.backupSolution.id == 2 %}
+                                <i class="fa fa-square-o"></i> Da&nbsp;
+                                <i class="fa fa-check-square-o"></i> Nu&nbsp;
+                                <i class="fa fa-square-o"></i> Nu este cazul
+                            {% endif %}
+
+                            {# 3: Nu este cazul#}
+                            {% if ticket.backupSolution.id == 3 %}
+                                <i class="fa fa-square-o"></i> Da&nbsp;
+                                <i class="fa fa-square-o"></i> Nu&nbsp;
+                                <i class="fa fa-check-square-o"></i> Nu este cazul
+                            {% endif %}
+                        </abbr>
+                    </samp>
+                </td>
+
+            </tr>
+            <tr>
+                <td colspan="10"><strong>Echipament:</strong> <samp><abbr title="attribute">{{ ticket.equipment.name|default('') }}</abbr></samp></td>
+            </tr>
+            <tr>
+                <td  rowspan="{{ 1+ticket.ticketMapping|length }}" colspan="2"><strong>Sisteme afectate:</strong></td>
+                {% if ticket.ticketMapping is not defined or ticket.ticketMapping|length==0 %}
+                    <td colspan="8"><samp><abbr title="attribute">Nici unul.</abbr></samp></td>
+                {% endif %}
+            </tr>
+
+            {% for mapping in ticket.ticketMapping %}
+                <tr>
+                    <td colspan="8">
+                        <samp>
+                            <abbr title="Indisponibilitate: {{ mapping.resolvedIn }} minute">
+                                <i class="fa fa-check-square-o"></i> {{ mapping.mapping.system.name }}
+                                {% if mapping.totalaffected == true %}
+                                    <i class="fa fa-check-square-o"></i> Afectat total
+                                {% else %}
+                                {% endif %}
+
+                            </abbr>
+                        </samp>
+                    </td>
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td colspan="5" nowrap>
+                    <strong>Persoana care rezolva:</strong>
+                    <samp><abbr title="attribute">{{ ticket.fixedBy }}</abbr></samp>
+                </td>
+                <td colspan="5">
+                    <strong>Data/Ora rezolvare:</strong>
+                    <samp><abbr title="attribute">{{ ticket.fixedAt|date('d.m.Y H:i') }}</abbr></samp></td>
+            </tr>
+            <tr>
+                <td colspan="10"><strong>Mod de rezolvare:</strong> <pre><abbr title="attribute">{{ ticket.fixedMode }}</abbr></pre></td>
+            </tr>
+            <tr>
+                <td colspan="10"><strong>Resurse utilizate:</strong> <pre><abbr title="attribute">{{ ticket.resources|default('') }}</abbr></pre></td>
+            </tr>
+        {% endif %}
+    {% endif %}
+
+    {% if form.isClosed is not defined %}
+        <tr>
+            <td colspan="10"><strong>Tichetul este inchis?</strong>
+                <samp>
+                    <abbr title="attribute">
+                        {% if ticket.isClosed == 1 %}
+                            <i class="fa fa-check-square-o"></i> Da&nbsp;
+                            <i class="fa fa-square-o"></i> Nu&nbsp;
+                        {% else %}
+                            <i class="fa fa-square-o"></i> Da&nbsp;
+                            <i class="fa fa-check-square-o"></i> Nu
+                        {% endif %}
+                    </abbr>
+                </samp>
+            </td>
+        </tr>
+    {% endif %}
+    </table>
+    <!--</div>-->
+    </div>
+    </div><!-- /.row -->
+
+    {% if form.vars.valid %}
+        {% include '::print_button.html.twig' with {'document':'fisa'} %}
+    {% endif %}
+{% endblock  %}
+
+{% block javascripts %}
+	{{ parent() }}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/i18n/ro.js"></script>
+
+    <script type="text/javascript">
+
+        $('#print-button').on('click', function(e) {
+            window.open($(e.currentTarget).data('url'), '_blank');
+        });
+
+        $("#ticket_equipment2").select2({
+            ajax: {
+                url: "{{ path('admin_ajax_equipments') }}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, page) {
+                    // parse the results into the format expected by Select2.
+                    // since we are using custom formatting functions we do not need to
+                    // alter the remote JSON data
+                    return {
+                        results: data.items
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            minimumInputLength: 3,
+            multiple: false,
+            allowClear: true,
+            placeholder: "Selectati un echipament",
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+
+        function formatRepo (repo) {
+            if (repo.loading) return repo.text;
+
+            var markup = '<div class="clearfix">' +
+                    '<div class="col-sm-12">' +
+                    '<div class="clearfix">' +
+                    '<div class="col-sm-6"><strong>' + repo.name + '</strong></div>' +
+                    '<div class="col-sm-3"><strong><em>' + repo.service + '</em></strong></div>' +
+                    '<div class="col-sm-3"><strong><em>' + repo.location + '</em></strong></div>' +
+                    '</div>';
+
+            if (repo.properties) {
+                markup += '<div class="col-sm-12"><small>' + repo.properties + '</small></div>';
+            }
+
+            markup += '</div></div>';
+
+            return markup;
+        }
+
+        function formatRepoSelection (repo) {
+            return repo.name || repo.text;
+        }
+
+
+
+        $("#ticket_equipment2").change(function(){
+
+            var data = {
+                equipment_id: $(this).val()
+            };
+
+            $('#ticket_equipment').val( $(this).val() );
+
+            $.ajax({
+                type: 'post',
+                url: '{{ path("get_allowed_systems") }}',
+                data: data,
+                success: function(data) {
+                    $('#div_ticket_affectedSystems').html('');
+
+                    var output = '';
+
+                    output = output + '<div class="form-group"><label class="control-label required">Sisteme afectate</label>';
+                    output = output + '<div id="ticket_ticketMapping">';
+                    for (var i=0, total = data.length; i < total; i++) {
+                        output = output + '' +
+                            '<div class="checkbox">' +
+                            '<label><input type="checkbox" id="ticket_ticketMapping_' + data[i].id + '" name="ticket[ticketMapping][]" class="affectedSystems" value="' + data[i].id + '" />' + data[i].name + '</label></div>';
+                        // introdus 05.09.2018
+                        // sf introdus 05.09.2018
+                    }
+
+                    output = output + '</div></div>';
+
+                    $('#div_ticket_affectedSystems').append(output);
+
+                    console.log($('#div_ticket_affectedSystems').html());
+                },
+                error: function(ts) { alert(ts.responseText) }
+            });
+
+            $.ajax({
+                type: 'post',
+                url: '{{ path("get_equipment_name") }}',
+                data: data,
+                success: function(data) {
+                    if (data[0].service != null)
+                        $(".help-block").html('<strong><em>' + data[0].service + ' \\ ' + data[0].location + '</em></strong><br>' + data[0].properties);
+                    else
+                        $(".help-block").html('Descriere: Nu ati selectat nici un echipament.');
+                }
+            });
+        });
+
+        // introdus la 05.09.2018
+        $("#checkbox").change(function(){
+
+            var data = {
+                mapping_id: $(this).val()
+            };
+            var idul= $(this).attr('id');
+            alert($(this).attr('id'));
+            alert($(this).attr('value'));
+            alert(idul.substring(0,21));
+            if (idul.substring(0,21)=='ticket_ticketMapping_') {
+                alert('Este ticket_ticketMapping_ !!! ');
+                if ($(this).is(":checked"))
+                {
+                    alert('E selectat');
+                }
+            }
+
+
+           });
+
+        // sf inrodus la 05.09.2018
+    </script>
+
+{% endblock %}

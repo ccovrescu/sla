@@ -1,11 +1,11 @@
 <?php
 namespace Tlt\AdmnBundle\Form\EventListener;
  
+use Doctrine\ORM\EntityRepository;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Doctrine\ORM\EntityRepository;
  
 class AddOwnerFieldSubscriber implements EventSubscriberInterface
 {
@@ -53,7 +53,7 @@ class AddOwnerFieldSubscriber implements EventSubscriberInterface
             return;
         }
  
-        $accessor = PropertyAccess::getPropertyAccessor();
+        $accessor = PropertyAccess::createPropertyAccessor();
 		
         $equipment	= $accessor->getValue($data, $this->propertyPathToEquipment);
         $owner = ($equipment) ? $equipment->getOwner()->getId() : null;

@@ -1,12 +1,15 @@
 <?php
 namespace Tlt\TicketBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Security\Core\SecurityContext;
-
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Symfony\Component\Security\Core\SecurityContext;
 
 class TicketFiltersType extends AbstractType
 {
@@ -22,7 +25,7 @@ class TicketFiltersType extends AbstractType
         $builder
             ->add(
                 'service_type',
-                'choice',
+                ChoiceType::class,
                 array(
                     'label' => 'Tip serviciu',
                     'choices' => array_replace(
@@ -35,7 +38,7 @@ class TicketFiltersType extends AbstractType
             )
             ->add(
                 'search',
-                'text',
+                TextType::class,
                 array(
                     'label' => 'Cauta',
                     'required' => false
@@ -43,7 +46,7 @@ class TicketFiltersType extends AbstractType
             )
             ->add(
                 'isReal',
-                'choice',
+                ChoiceType::class,
                 array(
                     'label' => 'Status',
                     'choices' => array(
@@ -55,19 +58,19 @@ class TicketFiltersType extends AbstractType
             )
             ->add(
                 'Arata',
-                'submit'
+                SubmitType::class
             )
         ;
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
                 'data_class' => 'Tlt\TicketBundle\Form\Type\Model\TicketFilters',
             ));
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'ticket_filters';
     }

@@ -3,20 +3,24 @@
 namespace Tlt\ProfileBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChangePasswordType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('oldPassword', 'password', array(
+        $builder->add('oldPassword', PasswordType::class, array(
             'label' => 'Parola curenta',
             'label_attr' => array(
                 'class' => 'control-label'
             )
         ));
-        $builder->add('newPassword', 'repeated', array(
+        $builder->add('newPassword', RepeatedType::class, array(
             'type' => 'password',
             'invalid_message' => 'Parolele trebuie sa coincida.',
             'required' => true,
@@ -28,18 +32,18 @@ class ChangePasswordType extends AbstractType
             ),
             'second_options' => array('label' => 'Confirmare parola'),
         ));
-        $builder->add('salveaza', 'submit');
-        $builder->add('reseteaza', 'reset', array());
+        $builder->add('salveaza', SubmitType::class);
+        $builder->add('reseteaza', ResetType::class, array());
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'Tlt\ProfileBundle\Form\Model\ChangePassword',
         ));
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'change_passwd';
     }

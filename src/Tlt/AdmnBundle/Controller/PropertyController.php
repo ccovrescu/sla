@@ -6,11 +6,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Tlt\AdmnBundle\Entity\Property;
-use Tlt\AdmnBundle\Form\Type\PropertyType;
-
 use Tlt\AdmnBundle\Entity\Choose;
+use Tlt\AdmnBundle\Entity\Property;
+
 use Tlt\AdmnBundle\Form\Type\ChooseType;
+use Tlt\AdmnBundle\Form\Type\PropertyType;
 
 class PropertyController extends Controller
 {

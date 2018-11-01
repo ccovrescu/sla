@@ -5,16 +5,18 @@ namespace Tlt\ProfileBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Tlt\AdmnBundle\Entity\Branch;
-use Tlt\AdmnBundle\Entity\Department;
-
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Tlt\AdmnBundle\Entity\Branch;
+
+use Tlt\AdmnBundle\Entity\Department;
+use Tlt\AdmnBundle\Entity\Owner;
 
 /**
  * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="Tlt\ProfileBundle\Entity\UserRepository")
  */
-class User implements UserInterface, \Serializable
+class User implements AdvancedUserInterface, \Serializable
 {
     /**
      * @ORM\Column(type="integer")
@@ -665,4 +667,28 @@ class User implements UserInterface, \Serializable
             $user->eraseCredentials();
         }
     }
+
+    // Aici incepe AdvancedUserInterface
+    public function isAccountNonExpired()
+    {
+        return true;
+    }
+
+    public function isAccountNonLocked()
+    {
+        return true;
+    }
+
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    public function isEnabled()
+    {
+        //
+        //return $this->isActive;
+        return $this->getStatus();
+    }
+
 }

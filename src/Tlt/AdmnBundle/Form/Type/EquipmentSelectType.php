@@ -3,10 +3,10 @@ namespace Tlt\AdmnBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Tlt\AdmnBundle\Form\EventListener\AddOwnerFieldSubscriber;
 use Tlt\AdmnBundle\Form\EventListener\AddBranchFieldSubscriber;
-use Tlt\AdmnBundle\Form\EventListener\AddLocationFieldSubscriber;
 use Tlt\AdmnBundle\Form\EventListener\AddEquipmentFieldSubscriber;
+use Tlt\AdmnBundle\Form\EventListener\AddLocationFieldSubscriber;
+use Tlt\AdmnBundle\Form\EventListener\AddOwnerFieldSubscriber;
 
 class EquipmentSelectType extends AbstractType
 {
@@ -18,7 +18,7 @@ class EquipmentSelectType extends AbstractType
 		$builder->addEventSubscriber(new AddEquipmentFieldSubscriber('equipment'));
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'registration';
     }

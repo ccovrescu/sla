@@ -30,8 +30,6 @@ class TimeCalculation {
         $startWorkingTime = strtotime($startWorkingTime);
         $endWorkingTime = strtotime($endWorkingTime);
         $minutes_per_day = (int)(($endWorkingTime - $startWorkingTime) / 60) + 1;
-
-
         // ESTABLISH THE HOLIDAYS
         $holidays = array(
             '2015-01-01',
@@ -65,7 +63,8 @@ class TimeCalculation {
             /**
              * Daca nu este program NON STOP, atunci scadem WEEKEND-urile si SARBATORILE LEGALE
              */
-            if ( date('H:i:s', $startWorkingTime)!=date('H:i:s', strtotime('00:00:00')) || date('H:i:s', $endWorkingTime)!=date('H:i:s', strtotime('23:59:59')) ) {
+            if ( date('H:i:s', $startWorkingTime)!=date('H:i:s', strtotime('00:00:00')) || date('H:i:s', $endWorkingTime)!=date('H:i:s', strtotime('23:59:59')) )
+            {
                 // ELIMINATE WEEKENDS - SAT AND SUN
                 $weekday = date('D', $start);
                 if (substr($weekday, 0, 1) == 'S') continue;
@@ -85,7 +84,8 @@ class TimeCalculation {
 
             $workminutes++;
         } // end while
-
+  //      var_dump($workminutes);
+  //      die();
         $workminutes = $workminutes - (ceil($workminutes / $minutes_per_day) > 1 ? ceil($workminutes / $minutes_per_day) - 1 : 1);
 
         return ($workminutes > 0 ? $workminutes : 0);

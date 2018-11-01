@@ -157,4 +157,14 @@ class Announcer extends AbstractEntity
     {
         return $this->firstname . ' ' . $this->lastname;
     }
+
+    /**
+     * Get active
+     *
+     * @return boolean 
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
 }

@@ -9,16 +9,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Tlt\TicketBundle\Entity\Ticket;
-use Tlt\TicketBundle\Entity\TicketMapping;
-use Tlt\TicketBundle\Form\Type\Model\TicketFilters;
-use Tlt\TicketBundle\Form\Type\TicketFiltersType;
-use Tlt\TicketBundle\Form\Type\TicketType;
 use Tlt\TicketBundle\Entity\TicketAllocation;
 use Tlt\TicketBundle\Entity\TicketEquipment;
-use Tlt\TicketBundle\Form\Type\TicketReallocateType;
+use Tlt\TicketBundle\Entity\TicketMapping;
+use Tlt\TicketBundle\Form\Type\Model\TicketFilters;
 use Tlt\TicketBundle\Form\Type\TicketEquipmentType;
-
+use Tlt\TicketBundle\Form\Type\TicketFiltersType;
+use Tlt\TicketBundle\Form\Type\TicketReallocateType;
+use Tlt\TicketBundle\Form\Type\TicketType;
 use Tlt\TicketBundle\Model\ICRPDF;
+
+use Twig_Template;
 
 class DefaultController extends Controller
 {
@@ -192,7 +193,7 @@ class DefaultController extends Controller
                     $this->renderView(
                     // app/Resources/views/Emails/ticket_new.html.twig
                         'Emails/ticket_new.html.twig',
-                        array('ticket' => $ticket)
+                        array('ticket' => $ticket, 'agentia_veche'=>null)
                     ),
                     'text/html'
                 );
@@ -244,6 +245,14 @@ class DefaultController extends Controller
             ->getRepository('TltTicketBundle:Ticket')
             ->findOneById($id);
 
+        // introdus azi 07.05.2018 - trimitere de mail la realocare tichet
+        $ticket_allocation_vechi = $this->getDoctrine()
+            ->getRepository('TltTicketBundle:TicketAllocation')
+            ->findOneBy(array('ticket'=>$id), array('id'=> 'DESC'));
+        // in $branch_vechi stochez Agentia DIN CARE se realoca tichetul, pentru a o scrie in mail
+        // pentru asta extrag din TichetAllocations ULTIMA inregistare avand ticket = $id (id-ul tichetului)
+        $branch_vechi = $ticket_allocation_vechi->getBranch()->getName();
+            // SFARSIT introdus azi 07.05.2018 - trimitere de mail la realocare tichet
         if ($ticket->getIsReal() != null) {
             throw new AccessDeniedException();
         }
@@ -269,8 +278,59 @@ class DefaultController extends Controller
             $em->persist($ticketAllocation);
             $em->flush();
 
-            // TODO: de implementat trimiterea unui email.
+            // introdus azi 07.05.2018 - trimitere de mail la realocare tichet
 
+           // var_dump($branch_vechi);
+            $mailer = $this->get('mailer');
+            $message = $mailer->createMessage()
+                ->setSubject('Tichet nou - realocat din '.$branch_vechi)
+                ->setFrom('no-reply@teletrans.ro', 'Aplicatie SLA')
+//                ->setTo($ticket->getTicketAllocations()->last()->getBranch()->getEmails())
+                ->setBody(
+                     $this->renderView(
+                    // app/Resources/views/Emails/ticket_new.html.twig
+                        'Emails/ticket_new.html.twig',
+                        array('ticket' => $ticket, 'agentia_veche'=>$branch_vechi)
+                    ),
+                    'text/html'
+                );
+
+            $emails = explode(";", $ticket->getTicketAllocations()->last()->getBranch()->getEmails());
+            foreach ($emails as $index => $email) {
+                if ($index == 0) {
+                    $message->setTo(trim($email));
+                } else {
+//                    $message->addCc(trim($email));
+                    $message->addTo(trim($email));
+                }
+            }
+
+             //$mailer->send($message);
+
+            if ($mailer->send($message))
+            {
+                echo "Sent\n";
+            }
+            else
+            {
+                echo "Failed\n";
+            }
+
+
+            return $this->redirect(
+                $this->generateUrl(
+                    'success_ticket',
+                    array(
+                        'action' => 'add',
+                        'id' => $ticket->getId()
+                    )
+                )
+            );
+
+
+            // pana aici introdus azi 07.05.2018
+            // TODO: de implementat trimiterea unui email.
+            // implementat de Claudiu la 07.05.2018
             return $this->redirect(
                 $this->generateUrl(
                     'success_ticket',
@@ -348,7 +408,6 @@ class DefaultController extends Controller
             'transmissionTypes' => $transmissionTypes
         );
 
-
         $form = $this->createForm(
             new TicketType($this->container->get('security.context')),
             $ticket,
@@ -379,6 +438,18 @@ class DefaultController extends Controller
 
                 return $templateOptions;
             }
+            $today = date("Y-m-d H:i:s");
+//            var_dump($today);
+
+            if ($ticket->getFixedAt()->format("Y-m-d H:i:s") > $today) {
+                $form->get('fixedAt')->addError(
+                    new FormError('Data/Ora rezolvarii nu poate fi in viitor!')
+                );
+                $templateOptions['form'] = $form->createView();
+
+                return $templateOptions;
+            }
+
 
             if ($ticket->getIsReal() == 1) {
                 if ($ticket->getEquipment() === null) {
@@ -397,7 +468,7 @@ class DefaultController extends Controller
                     if (count($mappings) == 0) {
                         $form->get('ticketMapping')->addError(
                             new FormError(
-                                'Nu a-ti facut nici o mapare pentru acest echipament. Mergeti la <a href="' . $this->generateUrl(
+                                'Nu ati facut nici o mapare pentru acest echipament. Mergeti la <a href="' . $this->generateUrl(
                                     'admin_mappings_index',
                                     array('equipment_id' => $ticket->getEquipment()->getId())
                                 ) . '">[ mapari ]</a> pentru a adauga cel putin o mapare!'
@@ -412,6 +483,70 @@ class DefaultController extends Controller
                 }
             }
 
+// introdus 12.09.2018
+            $campuri[] = $request->request->all();
+
+/*            print_r($campuri);
+            echo "<br>";
+            $keys = array_keys($campuri);
+            print_r($keys);
+            echo "<br>";
+            print_r(array_values($campuri));
+            echo "<br>";
+*/
+              if (array_key_exists("ticketMapping",$campuri[0]["ticket"]))
+              {
+                  $sisteme_afectate = $campuri[0]["ticket"]["ticketMapping"] ;
+              }
+
+            if (array_key_exists("total_afectate",$campuri[0]["ticket"]))
+            {
+                // matricea sistemelor (maparilor) TOTAL afectate
+                $totalafectate = $campuri[0]["ticket"]["total_afectate"] ;
+                $lungimea = count($totalafectate);
+/*
+                for ($i=0; $i<$lungimea; $i++) {
+                    echo ($totalafectate[$i]);
+                    echo "<br>";
+                }
+                foreach ( ($totalafectate) as $total_afectate )
+                {
+                    print_r ($total_afectate);
+                    echo "<br>";
+                }
+
+                $arrlength = count($totalafectate);
+
+                for($x = 0; $x < $arrlength; $x++) {
+                    $afectata = $totalafectate[$x];
+                    echo ($afectata);
+                    echo "<br>";
+                }
+                foreach($totalafectate as $x => $x_value) {
+                    echo "Key=" . $x . ", Value=" . $x_value;
+                    echo "<br>";
+                }
+*/
+                foreach ($ticket->getTicketMapping() as $ticketMapping) {
+                        $ticketMappingId=$ticketMapping->getMapping()->getId();
+//                        echo "ticketMappingId = ".$ticketMappingId;
+                        if (in_array($ticketMappingId, $totalafectate) )
+                        {
+                            //and in_array($ticketMappingId, $sisteme_afectate)
+//                            echo "ID ul se gaseste in totalafectate !!"."<br>";
+                            $ticketMapping->setTotalaffected(true);
+                        }
+                        else
+                        {
+                            $ticketMapping->setTotalaffected(false);
+                        }
+                    }
+            }
+            else {echo "Nu exista cheia"."<br>";}
+
+//            die();
+// sfarsit introdus 12.09.2018
+
             // perform some action, such as saving the task to the database
             $em = $this->getDoctrine()->getManager();
 
@@ -423,9 +558,38 @@ class DefaultController extends Controller
                         $ticketMapping->getMapping()->getSystem()->getGuaranteedValues()->first()
                     )
                 );
+                // introdus 13.09.2018
+                // sf introdus 13.09.2018
             }
 
-            $em->flush();
+/*
+// introdus 16.09.2018
+
+            $data = $request->request->all();
+
+            print("REQUEST DATA<br/>");
+            foreach ($data as $k => $d) {
+                print("$k: <pre>"); print_r($d); print("</pre>");
+            }
+
+            $children = $form->all();
+
+            print("<br/>FORM CHILDREN<br/>");
+            foreach ($children as $ch) {
+                print($ch->getName() . "<br/>");
+            }
+
+            $data = array_diff_key($data, $children);
+//$data contains now extra fields
+
+            print("<br/>DIFF DATA<br/>");
+            foreach ($data as $k => $d) {
+                print("$k: <pre>"); print_r($d); print("</pre>");
+            }
+//die();
+// sf introdus 16.09.2018
+*/
+                $em->flush();
 
             return $this->redirect(
                 $this->generateUrl(
@@ -624,7 +788,8 @@ class DefaultController extends Controller
         $pdf->Output('icr.pdf', 'I');
     }
 
-    public function icr($id = null)
+
+    public function icrBradescu($id = null)
     {
         $ticket = null;
         if ($id != null) {
@@ -641,13 +806,13 @@ class DefaultController extends Controller
         $pdf = new ICRPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
         // set document information
-                $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetCreator(PDF_CREATOR);
         $pdf->SetAuthor('TELETRANS SA');
         $pdf->SetTitle('Fisa ' . ($ticket ? $ticket->getId() : ''));
-                $pdf->SetSubject('Fisa de interventie');
+        $pdf->SetSubject('Fisa de interventie');
         $pdf->SetKeywords('Fisa, interventie, ' . ($ticket ? $ticket->getId() : ''));
 
-                // set margins
+        // set margins
         $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
         $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
         $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
@@ -655,7 +820,7 @@ class DefaultController extends Controller
         // set auto page breaks
         $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
 
-                // set image scale factor
+        // set image scale factor
         $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
         // ---------------------------------------------------------
@@ -677,7 +842,7 @@ class DefaultController extends Controller
         // row 1
         $pdf->SetFont('times', 'I', 10, '', true);
         $pdf->setCellMargins(0.5, 0.5, 0.25, 0.25);
-        $pdf->MultiCell(65, 16, "Departamentul TELETRANS\n(DTI/DTC/DIP)\n..................", 1, 'C',false,0,'','',true,0,false,true,16,'M');
+        $pdf->MultiCell(65, 16, "Departamentul TELETRANS\n(DTI/DTC/DIP/SCL)\n..................", 1, 'C',false,0,'','',true,0,false,true,16,'M');
 
         $pdf->setCellMargins(0.25, 0.5, 0.25, 0.25);
         $pdf->MultiCell(68.5, 16, "Entitate TELETRANS (Executiv/Agentie/Centru)\n.................................", 1, 'C',false,0,'','',true,0,false,true,16,'M');
@@ -1036,6 +1201,23 @@ class DefaultController extends Controller
                     case 3:
                         $pdf->MultiCell(65, 6, "DTI", 0, 'C',false,0,'','',true,0,false,true,6,'M');
                         break;
+                    case 4:
+                        $pdf->MultiCell(65, 6, "SCL CONT", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+                    case 5:
+                        $pdf->MultiCell(65, 6, "DTC", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+                    case 6:
+                        $pdf->MultiCell(65, 6, "DTI", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+                    case 7:
+                        $pdf->MultiCell(65, 6, "DTC", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+                    case 8:
+                        $pdf->MultiCell(65, 6, "DTI", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+
+
                 }
             }
 
@@ -1098,7 +1280,7 @@ class DefaultController extends Controller
             foreach ($mappings as $mapping)
             {
                 if (strlen($systems)>0)
-                        $systems .= ', ';
+                    $systems .= ', ';
                 $systems .= $mapping->getMapping()->getSystem()->getName();
             }
 
@@ -1127,4 +1309,555 @@ class DefaultController extends Controller
 
         return $pdf;
     }
+
+    public function icr($id = null)
+    {
+        $ticket = null;
+        if ($id != null) {
+            $ticket = $this->getDoctrine()
+                ->getRepository('TltTicketBundle:Ticket')
+                ->findOneBy(
+                    ['id' => $id]
+                );
+        }
+
+        define('K_PATH_IMAGES', $this->get('kernel')->getRootDir());
+
+        // create new PDF document
+        $pdf = new ICRPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+        // set document information
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('TELETRANS SA');
+        $pdf->SetTitle('Fisa ' . ($ticket ? $ticket->getId() : ''));
+        $pdf->SetSubject('Fisa de interventie');
+        $pdf->SetKeywords('Fisa, interventie, ' . ($ticket ? $ticket->getId() : ''));
+
+        // set margins
+        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+        // set auto page breaks
+        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+        // set image scale factor
+        $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+        // ---------------------------------------------------------
+
+        // set default font subsetting mode
+        $pdf->setFontSubsetting(true);
+
+        // Add a page
+        // This method has several options, check the source code documentation for more information.
+        $pdf->AddPage();
+
+        // ------------
+
+        $pdf->SetFont('times', 'B', 12, '', true);
+        $pdf->writeHTMLCell(0, 0, $pdf->GetX(), $pdf->GetY(), 'FISA DE INTERVENTIE<sup><em>1</em></sup>', 0, 1, false, true, 'C');
+
+        $startY = $pdf->GetY();
+
+        // row 1
+        $pdf->SetFont('times', 'I', 10, '', true);
+        $pdf->setCellMargins(0.5, 0.5, 0.25, 0.25);
+        $pdf->MultiCell(65, 16, "Departamentul TELETRANS\n(DTI/DTC/DIP/SCL)\n..................", 1, 'C',false,0,'','',true,0,false,true,16,'M');
+
+        $pdf->setCellMargins(0.25, 0.5, 0.25, 0.25);
+        $pdf->MultiCell(68.5, 16, "Entitate TELETRANS (Executiv/Agentie/Centru)\n.................................", 1, 'C',false,0,'','',true,0,false,true,16,'M');
+
+        $x = $pdf->GetX();
+        $y = $pdf->GetY();
+
+        if ($ticket and $ticket->getEquipment()!= null)
+            if ($ticket and $ticket->getEmergency()->getId() == 1) {
+                $pdf->writeHTMLCell(
+                    14,
+                    6,
+                    $x + 15,
+                    $y + 6,
+                    '<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',
+                    0,
+                    0
+                );
+                $pdf->writeHTMLCell(
+                    14,
+                    6,
+                    $pdf->GetX(),
+                    $y + 6,
+                    '<img src="' . K_PATH_IMAGES . '/../web/css/checked.jpg">',
+                    0,
+                    0
+                );
+            } else {
+                $pdf->writeHTMLCell(
+                    14,
+                    6,
+                    $x + 15,
+                    $y + 6,
+                    '<img src="' . K_PATH_IMAGES . '/../web/css/checked.jpg">',
+                    0,
+                    0
+                );
+                $pdf->writeHTMLCell(
+                    14,
+                    6,
+                    $pdf->GetX(),
+                    $y + 6,
+                    '<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',
+                    0,
+                    0
+                );
+            }
+        else {
+            $pdf->writeHTMLCell(14, 6, $x+15, $y+6,'<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',0,0);
+            $pdf->writeHTMLCell(14, 6, $pdf->GetX(), $y+6,'<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',0,0);
+        }
+
+        $pdf->SetX($x);
+        $pdf->SetY($y, false);
+
+        $pdf->setCellMargins(0.25, 0.5, 0.5, 0.25);
+        $pdf->MultiCell(44.5, 16, "Urgent:          DA            NU", 1, 'L',false,1,'','',true,0,false,true,16,'M');
+
+        // row 2
+        $pdf->setCellMargins(0.5, 0.25, 0.25, 0.25);
+        $pdf->MultiCell(35, 11, "Nr. SLA: ..............", 1, 'C',false,0,'','',true,0,false,true,11,'T');
+
+        $pdf->setCellMargins(0.25, 0.25, 0.25, 0.25);
+        $pdf->MultiCell(55, 11, "Data/Ora sesizarii:\n....................................", 1, 'C',false,0,'','',true,0,false,true,11,'T');
+
+        $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(88, 11, "Persoana din tura care preia sesizarea:\n.....................................................", 1, 'C',false,1,'','',true,0,false,true,11,'T');
+
+        // row 3
+        $transmissionTypes = $this->getDoctrine()->getRepository('TltTicketBundle:TransmissionType')->findAll();
+
+        $transmissions  = '(';
+        foreach ($transmissionTypes as $transmission)
+        {
+            if ($transmissions[strlen($transmissions)-1] != '(')
+                $transmissions .= '/';
+            $transmissions .= (($ticket == null or $transmission==$ticket->getTransmissionType()) ? ucfirst($transmission->getName()) : '<strike>' . ucfirst($transmission->getName()) . '</strike>');
+        }
+        $transmissions .= ')';
+        $pdf->setCellMargins(0.5, 0.25, 0.25, 0.25);
+//        $pdf->MultiCell(90.5, 11, "Mod de transmitere sesizare:\n" . $transmissions, 1, 'C',false,0,'','',true,0,false,true,11,'T');
+        $pdf->writeHTMLCell(90.5, 11, $pdf->GetX(), $pdf->GetY(), "Mod de transmitere sesizare:<br/>" . $transmissions, 1, 0, false, true, 'C');
+
+        $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(88, 11, "Persoana anuntata:\n.....................................................", 1, 'C',false,1,'','',true,0,false,true,11,'T');
+
+        // row 4
+        $pdf->setCellMargins(0.5, 0.25, 0.25, 0.25);
+        $pdf->MultiCell(90.5, 11, "Sesizare lansata de: (Ex/DEN/DET/ST/OMEPA)\n.................................................................", 1, 'C',false,0,'','',true,0,false,true,11,'T');
+
+        $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(88, 11, "Persoana care face sesizarea:\n.....................................................", 1, 'C',false,1,'','',true,0,false,true,11,'T');
+
+        // row 5
+        $pdf->setCellMargins(0.5, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(179, 24, "Descriere pe scurt deranjament:", 1, 'L',false,1,'','',true,0,false,true,24,'T');
+
+        // row 6
+        $x = $pdf->GetX();
+        $y = $pdf->GetY();
+
+        if ($ticket and $ticket->getIsReal()!= null)
+            if ($ticket->getIsReal() == true ) {
+                $pdf->writeHTMLCell(
+                    14,
+                    6,
+                    $x + 32,
+                    $y+0.5,
+                    '<img src="' . K_PATH_IMAGES . '/../web/css/checked.jpg">',
+                    0,
+                    0
+                );
+                $pdf->writeHTMLCell(
+                    14,
+                    6,
+                    $pdf->GetX(),
+                    $y+0.5,
+                    '<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',
+                    0,
+                    0
+                );
+            } else {
+                $pdf->writeHTMLCell(
+                    14,
+                    6,
+                    $x + 32,
+                    $y+0.5,
+                    '<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',
+                    0,
+                    0
+                );
+                $pdf->writeHTMLCell(
+                    14,
+                    6,
+                    $pdf->GetX(),
+                    $y+0.5,
+                    '<img src="' . K_PATH_IMAGES . '/../web/css/checked.jpg">',
+                    0,
+                    0
+                );
+            }
+        else {
+            $pdf->writeHTMLCell(
+                14,
+                6,
+                $x + 32,
+                $y+0.5,
+                '<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',
+                0,
+                0
+            );
+            $pdf->writeHTMLCell(
+                14,
+                6,
+                $pdf->GetX(),
+                $y+0.5,
+                '<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',
+                0,
+                0
+            );
+        }
+
+        $pdf->SetX($x);
+        $pdf->SetY($y, false);
+
+        $pdf->setCellMargins(0.5, 0.25, 0.25, 0.25);
+        $pdf->MultiCell(60.5, 11, "Sesizarea este reala:         DA            NU", 1, 'L',false,0,'','',true,0,false,true,11,'T');
+
+        $notRealReasonX = $pdf->getX();
+        $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(118, 11, "De ce NU este reala:\n................................................................................................................", 1, 'L',false,1,'','',true,0,false,true,11,'T');
+
+        // row 7
+        $pdf->setCellMargins(0.5, 0.25, 0.25, 0.25);
+        $pdf->MultiCell(50.5, 11, "Tip interventie:\n...........................................", 1, 'C',false,0,'','',true,0,false,true,11,'T');
+
+        $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(128, 11, "Compartimentul din cadrul TELETRANS implicat in rezolvarea sesizarii:\n............................................................................", 1, 'C',false,1,'','',true,0,false,true,11,'T');
+
+        // row 7
+        $x = $pdf->GetX();
+        $y = $pdf->GetY();
+
+        if ($ticket and $ticket->getIsReal()!= null)
+            if ($ticket->getOldness() and $ticket->getOldness()->getId() == 2 ) {
+                $pdf->writeHTMLCell(
+                    18,
+                    6,
+                    $x + 33,
+                    $y+0.5,
+                    '<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',
+                    0,
+                    0
+                );
+                $pdf->writeHTMLCell(
+                    23,
+                    6,
+                    $pdf->GetX(),
+                    $y+0.5,
+                    '<img src="' . K_PATH_IMAGES . '/../web/css/checked.jpg">',
+                    0,
+                    0
+                );
+            } else {
+                $pdf->writeHTMLCell(
+                    18,
+                    6,
+                    $x + 33,
+                    $y+0.5,
+                    '<img src="' . K_PATH_IMAGES . '/../web/css/checked.jpg">',
+                    0,
+                    0
+                );
+                $pdf->writeHTMLCell(
+                    23,
+                    6,
+                    $pdf->GetX(),
+                    $y+0.5,
+                    '<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',
+                    0,
+                    0
+                );
+            }
+        else {
+            $pdf->writeHTMLCell(
+                18,
+                6,
+                $x + 33,
+                $y+0.5,
+                '<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',
+                0,
+                0
+            );
+            $pdf->writeHTMLCell(
+                23,
+                6,
+                $pdf->GetX(),
+                $y+0.5,
+                '<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',
+                0,
+                0
+            );
+        }
+
+
+        $pdf->SetX($x);
+        $pdf->SetY($y, false);
+
+        $pdf->setCellMargins(0.5, 0.25, 0.25, 0.25);
+        $pdf->MultiCell(75.5, 6, "Vechime echipament:        1-3 ani          peste 3 ani", 1, 'L',false,0,'','',true,0,false,true,6,'T');
+
+        $x = $pdf->GetX();
+        $y = $pdf->GetY();
+
+        if ($ticket and $ticket->getIsReal() != null) {
+            switch ($ticket->getBackupSolution()->getId())
+            {
+                case 1:
+                    $pdf->writeHTMLCell(12, 6, $x+46, $y+0.5,'<img src="' . K_PATH_IMAGES . '/../web/css/checked.jpg">',0,0);
+                    $pdf->writeHTMLCell(12, 6, $pdf->GetX(), $y+0.5,'<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',0,0);
+                    $pdf->writeHTMLCell(12, 6, $pdf->GetX(), $y+0.5,'<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',0,0);
+                    break;
+                case 2:
+                    $pdf->writeHTMLCell(12, 6, $x+46, $y+0.5,'<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',0,0);
+                    $pdf->writeHTMLCell(12, 6, $pdf->GetX(), $y+0.5,'<img src="' . K_PATH_IMAGES . '/../web/css/checked.jpg">',0,0);
+                    $pdf->writeHTMLCell(12, 6, $pdf->GetX(), $y+0.5,'<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',0,0);
+                    break;
+                case 3:
+                    $pdf->writeHTMLCell(12, 6, $x+46, $y+0.5,'<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',0,0);
+                    $pdf->writeHTMLCell(12, 6, $pdf->GetX(), $y+0.5,'<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',0,0);
+                    $pdf->writeHTMLCell(12, 6, $pdf->GetX(), $y+0.5,'<img src="' . K_PATH_IMAGES . '/../web/css/checked.jpg">',0,0);
+                    break;
+            }
+        } else {
+            $pdf->writeHTMLCell(12, 6, $x+46, $y+0.5,'<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',0,0);
+            $pdf->writeHTMLCell(12, 6, $pdf->GetX(), $y+0.5,'<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',0,0);
+            $pdf->writeHTMLCell(12, 6, $pdf->GetX(), $y+0.5,'<img src="' . K_PATH_IMAGES . '/../web/css/unchecked.jpg">',0,0);
+        }
+
+        $pdf->SetX($x);
+        $pdf->SetY($y, false);
+
+        $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(103, 6, "S-a asigurat solutie de rezerva:        Da         Nu          Nu este cazul", 1, 'L',false,1,'','',true,0,false,true,6,'T');
+
+        // row 8
+        $equipmentY = $pdf->GetY();
+        $pdf->setCellMargins(0.5, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(179, 6, "Echipament: ......................................................................................................................................", 1, 'L',false,1,'','',true,0,false,true,6,'T');
+
+        // row 9
+        $pdf->setCellMargins(0.5, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(179, 24, "Sisteme afectate:", 1, 'L',false,1,'','',true,0,false,true,24,'T');
+// introdus 18.09.2018
+
+        $pdf->setCellMargins(0.5, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(179, 10, "Sisteme TOTAL afectate:", 1, 'L',false,1,'','',true,0,false,true,10,'T');
+
+// sf introdus 18.09.2018
+        // row 10
+        $pdf->setCellMargins(0.5, 0.25, 0.25, 0.25);
+        $pdf->MultiCell(100.5, 6, "Persoana care rezolva: ..........................................", 1, 'L',false,0,'','',true,0,false,true,6,'T');
+
+        $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(78, 6, "Data/Ora rezolvarii: ...............................", 1, 'L',false,1,'','',true,0,false,true,6,'T');
+
+        // row 11
+        $pdf->setCellMargins(0.5, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(179, 30, "Mod de rezolvare:", 1, 'L',false,1,'','',true,0,false,true,30,'T');
+
+        // row 11
+        $pdf->setCellMargins(0.5, 0.25, 0.5, 0.25);
+        $pdf->MultiCell(179, 20, "Resurse utilizate:", 1, 'L',false,1,'','',true,0,false,true,20,'T');
+
+        $pdf->SetLineStyle(array('width' => 0.25, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0,0,0)));
+        $pdf->Rect(
+            $pdf->getMargins()['left'],
+            $startY,
+            $pdf->getPageWidth() - $pdf->getMargins()['left'] - $pdf->getMargins()['right'],
+            $pdf->GetY() - $startY + 0.25
+        );
+
+        $pdf->Cell(0, 0, 'Anexe: ............................................................................................................', 0, 1, 'L', 0, '', 0);
+
+        $pdf->Ln();
+
+        $pdf->SetX(66);
+        $pdf->Cell(42,0,'Executant(i)',0,0,'C',0,'',0);
+        $pdf->Cell(42,0,'Avizat Manager',0,0,'C',0,'',0);
+        $pdf->Cell(42,0,'Avizat Beneficiar',0,1,'C',0,'',0);
+
+        $pdf->Cell(50,0,'Nume:',0,0,'L',0,'',0);
+        $pdf->Cell(42,0,'...................................',0,0,'C',0,'',0);
+        $pdf->Cell(42,0,'...................................',0,0,'C',0,'',0);
+        $pdf->Cell(42,0,'...................................',0,1,'C',0,'',0);
+
+        $pdf->Cell(50,0,'Semnatura:',0,0,'L',0,'',0);
+        $pdf->Cell(42,0,'...................................',0,0,'C',0,'',0);
+        $pdf->Cell(42,0,'...................................',0,0,'C',0,'',0);
+        $pdf->Cell(42,0,'...................................',0,1,'C',0,'',0);
+
+        $pdf->Ln();
+
+        $pdf->Line($pdf->GetX(), $pdf->GetY(), $pdf->GetX()+70, $pdf->GetY(), array());
+        $pdf->writeHTMLCell(0, 0, $pdf->GetX(), $pdf->GetY(), '<sup><em>1</em></sup>Se completeaza conform procedurilor specifice fiecarui departament', 0, 1, false, true, 'L');
+
+
+        if ($ticket != null) {
+            $pdf->SetY($startY+8.5);
+
+            if ($ticket->getEquipment() and $ticket->getEquipment() != null) {
+                $pdf->setCellMargins(0.5, 0.5, 0.25, 0.25);
+                switch ($ticket->getEquipment()->getService()->getDepartment()->getId())
+                {
+                    case 1:
+                        $pdf->MultiCell(65, 6, "DIP", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+                    case 2:
+                        $pdf->MultiCell(65, 6, "DTC", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+                    case 3:
+                        $pdf->MultiCell(65, 6, "DTI", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+                    case 4:
+                        $pdf->MultiCell(65, 6, "SCL CONT", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+                    case 5:
+                        $pdf->MultiCell(65, 6, "DTC", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+                    case 6:
+                        $pdf->MultiCell(65, 6, "DTI", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+                    case 7:
+                        $pdf->MultiCell(65, 6, "DTC", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+                    case 8:
+                        $pdf->MultiCell(65, 6, "DTI", 0, 'C',false,0,'','',true,0,false,true,6,'M');
+                        break;
+
+
+                }
+            }
+
+            $pdf->setCellMargins(0.25, 0.5, 0.25, 0.25);
+            $pdf->MultiCell(68.5, 6, $ticket->getTicketAllocations()->first()->getBranch()->getName(), 0, 'C',false,1,'','',true,0,false,true,6,'M');
+
+            $pdf->SetX(33);
+            $pdf->SetY($pdf->GetY()+1, false);
+            $pdf->setCellMargins(0.5, 0.25, 0.25, 0.25);
+            $pdf->MultiCell(13, 6, $ticket->getId(), 0, 'C',false,0,'','',true,0,false,true,6,'T');
+
+            $pdf->SetX($pdf->GetX()+4);
+            $pdf->SetY($pdf->GetY()+4.5, false);
+            $pdf->setCellMargins(0.25, 0.25, 0.25, 0.25);
+            $pdf->MultiCell(55, 6, $ticket->getAnnouncedAt()->format('d.m.Y H:i'), 0, 'C',false,0,'','',true,0,false,true,6,'T');
+
+            $lastX = $pdf->GetX();
+            $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+            $pdf->MultiCell(88, 6, $ticket->getTakenBy(), 0, 'C',false,1,'','',true,0,false,true,6,'T');
+
+            $pdf->SetX($lastX);
+            $pdf->SetY($pdf->GetY()+4.5, false);
+            $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+            $pdf->MultiCell(88, 6, $ticket->getAnnouncedTo(), 0, 'C',false,1,'','',true,0,false,true,6,'T');
+
+            $pdf->SetY($pdf->GetY()+5);
+            $pdf->setCellMargins(0.5, 0.25, 0.25, 0.25);
+            $pdf->MultiCell(90.5, 6, ($ticket->getEquipment() ? $ticket->getEquipment()->getOwner()->getName() : ''), 0, 'C',false,0,'','',true,0,false,true,6,'T');
+
+            $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+            $pdf->MultiCell(88, 6, $ticket->getAnnouncedBy(), 0, 'C',false,1,'','',true,0,false,true,6,'T');
+
+            $pdf->SetFont('times', 'BI', 10, '', true);
+            $pdf->SetY($pdf->GetY()+5.55, false);
+            $pdf->setCellMargins(0.5, 0.25, 0.5, 0.25);
+            $pdf->MultiCell(179, 20, $ticket->getDescription(), 0, 'L',false,1,'','',true,0,false,true,20,'T',true);
+
+            $pdf->SetFont('times', 'I', 10, '', true);
+            $pdf->SetX($notRealReasonX);
+            $pdf->setY($pdf->GetY()+4,false);
+            $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+            $pdf->MultiCell(118, 6, $ticket->getNotRealReason() ? : '', 0, 'L',false,1,'','',true,0,false,true,6,'T', true);
+
+            $pdf->setY($pdf->GetY()+4.5);
+            $pdf->setCellMargins(0.5, 0.25, 0.25, 0.25);
+            $pdf->MultiCell(50.5, 6, $ticket->getTicketType() ? : '', 0, 'C',false,0,'','',true,0,false,true,6,'T');
+
+            $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+            $pdf->MultiCell(128, 6, $ticket->getCompartment(), 0, 'C',false,1,'','',true,0,false,true,6,'T');
+
+            $pdf->SetX(35);
+            $pdf->SetY($equipmentY-0.5, false);
+            $pdf->setCellMargins(0.5, 0.25, 0.5, 0.25);
+            $pdf->MultiCell(159, 6, $ticket->getEquipment() ? : '', 0, 'L',false,1,'','',true,0,false,true,6,'T');
+
+            $systems = '';
+            $mappings = $ticket->getTicketMapping()->toArray();
+
+            /** @var TicketMapping $mapping */
+            foreach ($mappings as $mapping)
+            {
+                if (strlen($systems)>0)
+                    $systems .= ', ';
+                $systems .= $mapping->getMapping()->getSystem()->getName();
+            }
+
+            $pdf->SetY($pdf->GetY()+4.5);
+            $pdf->setCellMargins(0.5, 0.25, 0.5, 0.25);
+            $pdf->MultiCell(179, 20, $systems, 0, 'L',false,1,'','',true,0,false,true,20,'T');
+
+// introdus la 17.09.2018
+            $systeme_total_afectate = '';
+            $mappings_total_affected = $ticket->TotalAffectedSystems()->toArray();
+//            var_dump($mappings_total_affected);
+//            die();
+
+            foreach ($mappings_total_affected as $mapping)
+            {
+                if (strlen($systeme_total_afectate)>0)
+                    $systeme_total_afectate .= ', ';
+                $systeme_total_afectate .= $mapping->getMapping()->getSystem()->getName();
+            }
+            $pdf->SetY($pdf->GetY()+4.5);
+            $pdf->setCellMargins(0.5, 0.25, 0.5, 0.25);
+            $pdf->MultiCell(179, 10, $systeme_total_afectate, 0, 'L',false,1,'','',true,0,false,true,10,'T');
+
+//        var_dump($systeme_total);
+//            die();
+// sf introdus la 17.09.2018
+
+            $pdf->SetX(50);
+            $pdf->SetY($pdf->GetY()-5.0,false);
+            $pdf->setCellMargins(0.5, 0.25, 0.25, 0.25);
+            $pdf->MultiCell(65.5, 6, $ticket->getFixedBy(), 0, 'L',false,0,'','',true,0,false,true,6,'T');
+
+            $pdf->SetX($pdf->GetX()+30);
+            $pdf->setCellMargins(0.25, 0.25, 0.5, 0.25);
+            $pdf->MultiCell(48, 6, $ticket->getFixedAt() ? $ticket->getFixedAt()->format('d.m.Y H:i') : '', 0, 'L',false,1,'','',true,0,false,true,6,'T');
+
+            $pdf->SetFont('times', 'BI', 10, '', true);
+            $pdf->SetY($pdf->GetY()+5, false);
+            $pdf->setCellMargins(0.5, 0.25, 0.5, 0.25);
+            $pdf->MultiCell(179, 25.5, $ticket->getFixedMode(), 0, 'L',false,1,'','',true,0,false,true,25.5,'T',true);
+
+            $pdf->SetY($pdf->GetY()+5, false);
+            $pdf->setCellMargins(0.5, 0.25, 0.5, 0.25);
+            $pdf->MultiCell(179, 19, $ticket->getResources(), 0, 'L',false,1,'','',true,0,false,true,19,'T',true);
+        }
+
+        return $pdf;
+    }
+
+
 }
+
+
+

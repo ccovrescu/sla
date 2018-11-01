@@ -1,12 +1,14 @@
 <?php
 namespace Tlt\AdmnBundle\Form\Type;
  
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -30,7 +32,7 @@ class ChooseType extends AbstractType
 		
 		if ($options['owner']['available']) {
 			$builder
-				->add('owner','choice',array(
+				->add('owner',ChoiceType::class,array(
 					'choices' => $this->getOwners((isset($options['owner']['showAll']) ? $options['owner']['showAll'] : null)),
 					'required' => 'false',
 					'label' => 'Entitatea'
@@ -39,7 +41,7 @@ class ChooseType extends AbstractType
 
 		if ($options['branch']['available']) {
 			$builder
-				->add('branch','choice',array(
+				->add('branch',ChoiceType::class,array(
 					'choices' => $this->getBranches((isset($options['branch']['showAll']) ? $options['branch']['showAll'] : null)),
 					'required' => 'false',
 					'label' => 'Sucursala'
@@ -48,7 +50,7 @@ class ChooseType extends AbstractType
 		
 		if ($options['location']['available']) {
 			$builder
-				->add('location','choice',array(
+				->add('location',ChoiceType::class,array(
 					'choices' => array('0' => 'Toate'),
 					'required' => 'false',
 					'label' => 'Locatia'
@@ -57,7 +59,7 @@ class ChooseType extends AbstractType
 		
 		if ($options['department']['available']) {
 			$builder
-				->add('department','choice',array(
+				->add('department',ChoiceType::class,array(
 					'choices' => $this->getDepartments((isset($options['department']['showAll']) ? $options['department']['showAll'] : null)),
 					'required' => 'false',
 					'label' => 'Departamentul'
@@ -66,7 +68,7 @@ class ChooseType extends AbstractType
 		
 		if ($options['service']['available']) {
 			$builder
-				->add('service','choice',array(
+				->add('service',ChoiceType::class,array(
 					'choices' => $this->getServices( 0, (isset($options['service']['showAll']) ? $options['service']['showAll'] : null)),
 					// 'choices' => array('0' => 'Toate'),
 					'required' => 'false',
@@ -76,7 +78,7 @@ class ChooseType extends AbstractType
 		
 		if ($options['equipment']['available']) {
 			$builder
-				->add('equipment','choice',array(
+				->add('equipment',ChoiceType::class,array(
 					'choices' => array('0' => 'Toate'),
 					'required' => 'false',
 					'label' => 'Echipamentul'
@@ -84,7 +86,7 @@ class ChooseType extends AbstractType
 		}
 		
 		$builder
-			->add('Arata', 'submit');
+			->add('Arata', SubmitType::class);
 		
 		$builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
             $data = $event->getData();
@@ -100,7 +102,7 @@ class ChooseType extends AbstractType
 					);
 			
 					$form->remove('location');
-					$form->add('location', 'choice', $formOptions);
+					$form->add('location', ChoiceType::class, $formOptions);
 				}
 			} catch(\Symfony\Component\Form\Exception\OutOfBoundsException $e){
 			}
@@ -116,7 +118,7 @@ class ChooseType extends AbstractType
 					);
 			
 					$form->remove('service');
-					$form->add('service', 'choice', $formOptions);
+					$form->add('service', ChoiceType::class, $formOptions);
 				}
 			} catch(\Symfony\Component\Form\Exception\OutOfBoundsException $e){
 				// die ('ChooseType: eroare serviciu');
@@ -132,14 +134,14 @@ class ChooseType extends AbstractType
 					);
 			
 					$form->remove('equipment');
-					$form->add('equipment', 'choice', $formOptions);
+					$form->add('equipment', ChoiceType::class, $formOptions);
 				}
 			} catch(\Symfony\Component\Form\Exception\OutOfBoundsException $e){
 			}
 		});
 	}
 	 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
 			array(
@@ -172,7 +174,7 @@ class ChooseType extends AbstractType
         ));
     }
  
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'choose';
     }

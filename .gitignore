@@ -9,3 +9,12 @@
 /vendor/
 /bin/
 /composer.phar
+/httpd_server_sla/
+/.rules/
+*.tar
+*.gz
+/in_plus/
+/.idea/
+/git_log.txt
+*.php~
+details_vechi.html.twig

@@ -1,13 +1,13 @@
 <?php
 namespace Tlt\AdmnBundle\Form\EventListener;
  
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormEvent;
+
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Tlt\ProfileBundle\Entity\User;
 
@@ -54,6 +54,7 @@ class ServiceListener implements EventSubscriberInterface
     {
 		$userBranches		=	$this->user->getBranchesIds();
 		$userDepartments	=	$this->user->getDepartmentsIds();
+   //     echo "<script>alert($department_id);</script>";
 
         $formOptions = array(
             'class'         => 'TltAdmnBundle:Service',
@@ -104,6 +105,7 @@ class ServiceListener implements EventSubscriberInterface
 	
 	public function preSetData(FormEvent $event)
     {
+    //         echo "<script>alert('Preset Data');</script>";
         $data = $event->getData();
         $form = $event->getForm();
  
@@ -120,6 +122,8 @@ class ServiceListener implements EventSubscriberInterface
 	
     public function preSubmit(FormEvent $event)
     {
+       // echo "<script>alert('PreSUBMIT Data');</script>";
+
         $data = $event->getData();
         $form = $event->getForm();
 

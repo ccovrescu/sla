@@ -24,6 +24,8 @@ class SpecialType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+//        echo "<script>alert('Aici Special');</script>";
+
         $ticketMappingToMappingTransformer = new TicketMappingToMappingTransformer($options['em'], $this->ticketId);
         $builder->addModelTransformer($ticketMappingToMappingTransformer);
     }
@@ -33,7 +35,7 @@ class SpecialType extends AbstractType
         return 'entity';
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'mapping';
     }

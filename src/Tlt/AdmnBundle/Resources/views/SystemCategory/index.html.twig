@@ -1,0 +1,88 @@
+{% extends '::base.html.twig' %}
+
+{% block page %}
+        <div class="row">
+          <div class="col-lg-12">
+            <h1>Categorii Sisteme C136<small>Index</small></h1>
+            <ol class="breadcrumb">
+              <li><a href="{{ path('admin_systemcategory_index') }}"><i class="icon-dashboard"></i> Categorii Sisteme</a></li>
+              <li class="active"><i class="icon-file-alt"></i> Categorii Sisteme</li>
+            </ol>
+          </div>
+        </div><!-- /.row -->
+		
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="bs-example">
+              <div class="jumbotron">
+			  
+		{{ form_start(form) }}
+			<div class="form-group">
+				{{ form_label(form.department) }}
+				{{ form_widget(form.department, {'attr': {'class': 'form-control', 'placeholder':'introduceti denumirea'}}) }}
+			</div>
+			
+			{{ form_widget(form.Arata, {'attr': {'class': 'btn btn-primary'}}) }}
+			
+			{{ form_rest(form) }}
+		{{ form_end(form) }}
+		
+              </div>
+            </div>
+          </div>
+        </div><!-- /.row -->
+		
+ <div class="row">
+        <div class="col-lg-12">
+
+            <h4 class="text-danger"><b>Categoriile de sisteme aferente SCL OMEPA si MMS OMEPA sunt utilizate doar pentru compatibilitate cu structura aplicatiei anterioare</b></h4>
+            <br/>
+ <div/>
+		
+		<div class="row">
+          <div class="col-lg-8 text-left">
+                <h2>Lista Categorii Sisteme</h2>
+          </div>
+          <div class="col-lg-4 text-right">
+              <div class="panel-body">
+                <button type="submit" class="btn btn-primary" onclick="location.href='{{ path('admin_systemcategory_create') }}'">Adauga Categorie</button>
+              </div>
+          </div>
+        </div><!-- /.row -->		
+		
+
+           <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped tablesorter">
+				<thead>
+					<tr>
+						<th>Denumire <i class="fa fa-sort"></i></th>
+						<th class="text-right">Optiuni</th>
+					</tr>
+               </thead>
+               <tbody>
+					{% if categories %}
+						{% for category in categories %}
+							<tr>
+								<td>{{ category.name }}</td>
+								<td class="text-right"><a href="{{ path('admin_systemcategory_edit', {'id' : category.id}) }}">modifica</a></td>
+							</tr>
+						{% endfor %}
+					{% endif %}
+               </tbody>
+			   <tfoot>
+					<tr>
+						<th colspan="2" class="text-center">Total {{ categories|length }} Categorii.</th>
+					</tr>
+			   </tfoot>
+            </table>
+        </div>
+
+{% endblock  %}
+
+{% block javascripts %}
+	{{ parent() }}
+		
+	<!-- Page Specific Plugins -->
+	<script src="{{ asset('js/tablesorter/jquery.tablesorter.js') }}"></script>
+	<script src="{{ asset('js/tablesorter/tables.js') }}"></script>
+{% endblock %}

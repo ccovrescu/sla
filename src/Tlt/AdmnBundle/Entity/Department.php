@@ -2,8 +2,8 @@
 
 namespace Tlt\AdmnBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -28,6 +28,11 @@ class Department extends AbstractEntity
      * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Tlt\AdmnBundle\Entity\SystemCategory", mappedBy="department")
+     */
+    private $categories;
 
     /**
      * @ORM\OneToMany(targetEntity="Service", mappedBy="department")
@@ -125,4 +130,37 @@ class Department extends AbstractEntity
 	{
 		return $this->getName();
 	}
+
+    /**
+     * Add categories
+     *
+     * @param \Tlt\AdmnBundle\Entity\SystemCategory $categories
+     * @return Department
+     */
+    public function addCategory(\Tlt\AdmnBundle\Entity\SystemCategory $categories)
+    {
+        $this->categories[] = $categories;
+
+        return $this;
+    }
+
+    /**
+     * Remove categories
+     *
+     * @param \Tlt\AdmnBundle\Entity\SystemCategory $categories
+     */
+    public function removeCategory(\Tlt\AdmnBundle\Entity\SystemCategory $categories)
+    {
+        $this->categories->removeElement($categories);
+    }
+
+    /**
+     * Get categories
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCategories()
+    {
+        return $this->categories;
+    }
 }

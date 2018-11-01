@@ -29,8 +29,13 @@ class Filter
 	/**
      * @var \Tlt\AdmnBundle\Entity\owner
 	 */
-	 private $owner;	 
-	
+	 private $owner;
+
+    /**
+     * @var \Tlt\AdmnBundle\Entity\System
+     */
+    private $system;
+
     /**
      * Get branch
      *
@@ -102,7 +107,6 @@ class Filter
 		return $this;
 	}
 
-	
     /**
      * Get service
      *
@@ -126,6 +130,28 @@ class Filter
 		return $this;
 	}
 
+    /**
+     * Get system
+     *
+     * @return \Tlt\AdmnBundle\Entity\System
+     */
+    public function getSystem()
+    {
+        return $this->system;
+    }
+
+    /**
+     * Set system
+     * @param \Tlt\AdmnBundle\Entity\System $system
+     *
+     * @return Filter
+     */
+    public function setSystem($system)
+    {
+        $this->system	=	$system;
+
+        return $this;
+    }
 
     /**
      * Get owner

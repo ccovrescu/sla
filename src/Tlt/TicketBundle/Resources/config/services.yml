@@ -6,3 +6,4 @@ services:
         class: Tlt\TicketBundle\Twig\StringPaddingExtension
         tags:
             - { name: twig.extension }
+     
