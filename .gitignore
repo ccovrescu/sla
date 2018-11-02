@@ -9,3 +9,10 @@
 /vendor/
 /bin/
 /composer.phar
+/.idea/
+/.rules/
+/httpd_server_sla/
+/in_plus/
+*.tar
+*.tar.gz
+*.php~
