@@ -9,19 +9,22 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Security;
 
 class TicketFiltersType extends AbstractType
 {
     private $securityContext;
 
-    public function __construct(SecurityContext $securityContext)
+/*    public function __construct(SecurityContext $securityContext)
     {
         $this->securityContext = $securityContext;
     }
-
+*/
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $securityContext = $options['securityContext'];
+        $this->securityContext = $securityContext;
+
         $builder
             ->add(
                 'service_type',
@@ -29,11 +32,12 @@ class TicketFiltersType extends AbstractType
                 array(
                     'label' => 'Tip serviciu',
                     'choices' => array_replace(
-                        array('0'=>'n/a'),
-                        $this->securityContext->getToken()->getUser()->getDepartmentsArray()
+                        array('n/a'=>'0'),
+                        $this->securityContext->getToken()->getUser()-> getDepartmentsArray()
                     ),
                     'multiple' => true,
                     'expanded' => true,
+                    'choices_as_values'=>true
                 )
             )
             ->add(
@@ -50,10 +54,11 @@ class TicketFiltersType extends AbstractType
                 array(
                     'label' => 'Status',
                     'choices' => array(
-                        '1' => 'NU este real'
+                        'NU este real'=>'1'
                     ),
                     'multiple' => true,
-                    'expanded' => true
+                    'expanded' => true,
+                    'choices_as_values'=>true
                 )
             )
             ->add(
@@ -67,7 +72,9 @@ class TicketFiltersType extends AbstractType
     {
         $resolver->setDefaults(array(
                 'data_class' => 'Tlt\TicketBundle\Form\Type\Model\TicketFilters',
-            ));
+                'securityContext'=>false,
+            ))
+            ->setRequired(array( 'securityContext' ));
     }
 
     public function getBlockPrefix()

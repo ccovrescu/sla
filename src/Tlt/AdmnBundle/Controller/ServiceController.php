@@ -21,13 +21,13 @@ class ServiceController extends Controller
     public function indexAction(Request $request)
     {
 		$form = $this->createForm(
-			new ChooseType($this->getDoctrine()),
+			ChooseType::class,
 			new Choose(),
 			array(
 				'department' => array(
 					'available'=>true,
-					'showAll' => true
-				),
+					'showAll' => true),
+                    'doctrine' => $this->getDoctrine(),
 			)
 		);
 		
@@ -63,7 +63,7 @@ class ServiceController extends Controller
 	public function addAction(Request $request)
 	{
 		$service = new Service();
-		$form = $this->createForm( new ServiceType(), $service);
+		$form = $this->createForm(  ServiceType::class, $service);
 		
 		$form->handleRequest($request);
 		
@@ -96,7 +96,7 @@ class ServiceController extends Controller
 			->getRepository('TltAdmnBundle:Service')
 			->find($id);
 		
-		$form = $this->createForm( new ServiceType(), $service);
+		$form = $this->createForm(  ServiceType::class, $service);
 		
 		$form->handleRequest($request);
 		

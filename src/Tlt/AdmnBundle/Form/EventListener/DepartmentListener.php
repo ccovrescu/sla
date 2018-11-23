@@ -5,7 +5,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -61,7 +61,7 @@ class DepartmentListener implements EventSubscriberInterface
         if ($this->showAll)
         {
             $formOptions['required'] = false;
-            $formOptions['empty_value'] = '-- Toate --';
+            $formOptions['placeholder'] = '-- Toate --';
         }
 		
 		$userDepartments	=	$this->user->getDepartmentsIds();
@@ -85,7 +85,7 @@ class DepartmentListener implements EventSubscriberInterface
             $formOptions['data'] = null;
         }
 
-        $form->add('department', 'entity', $formOptions);
+        $form->add('department', EntityType::class, $formOptions);
     }
 
     public function preSetData(FormEvent $event)

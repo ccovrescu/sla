@@ -5,7 +5,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -61,7 +61,7 @@ class BranchListener implements EventSubscriberInterface
         if ($this->showAll)
         {
             $formOptions['required'] = false;
-            $formOptions['empty_value'] = '-- Toate --';
+            $formOptions['placeholder'] = '-- Toate --';
         }
 
         $userBranches		=	$this->user->getBranchesIds();
@@ -107,7 +107,7 @@ class BranchListener implements EventSubscriberInterface
              $formOptions['data'] = null;
          }
  
-        $form->add('branch', 'entity', $formOptions);
+        $form->add('branch', EntityType::class, $formOptions);
     }
 
     public function preSetData(FormEvent $event)

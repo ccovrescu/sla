@@ -33,7 +33,7 @@ class OwnerController extends Controller
 	{
 		//echo "<script>alert('alert 2');</script>";
 		$owner = new Owner();
-		$form = $this->createForm( new OwnerType(), $owner);
+		$form = $this->createForm( 'Tlt\AdmnBundle\Form\Type\OwnerType', $owner);
 		
 		$form->handleRequest($request);
 		
@@ -66,7 +66,7 @@ class OwnerController extends Controller
 			->getRepository('TltAdmnBundle:Owner')
 			->find($id);
 		
-		$form = $this->createForm( new OwnerType(), $owner);
+		$form = $this->createForm( 'Tlt\AdmnBundle\Form\Type\OwnerType', $owner);
 		
 		$form->handleRequest($request);
 		

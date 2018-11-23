@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -21,10 +21,10 @@ class ServiceToSystemType extends AbstractType
 		$builder
 			->add(	'id', HiddenType::class	)
 			->add(	'service',
-					'entity',
+					'Symfony\Bridge\Doctrine\Form\Type\EntityType',
 					array(
 						'class' => 'Tlt\AdmnBundle\Entity\Service',
-						'property' => 'name',
+						'choice_label' => 'name',
 						'label'	=> 'Serviciu',
 						'group_by' => 'department.name',
 						'required'	 	=>	true
@@ -58,7 +58,7 @@ class ServiceToSystemType extends AbstractType
 	{
 		$formOptions = array(
 			'class' => 'Tlt\AdmnBundle\Entity\System',
-			'property' => 'name',
+			'choice_label' => 'name',
 			'label'		=> 'Sistemul',
 			'query_builder' => function (EntityRepository $repository) use ($service_id) {
 									$qb = $repository->createQueryBuilder('sys')
@@ -72,7 +72,7 @@ class ServiceToSystemType extends AbstractType
 			}
 		);
 		
-		$form->add('system', 'entity', $formOptions);
+		$form->add('system', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', $formOptions);
 	}
 
 	public function configureOptions(OptionsResolver $resolver)

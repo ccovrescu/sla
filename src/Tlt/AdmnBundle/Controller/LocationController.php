@@ -37,7 +37,7 @@ class LocationController extends Controller
 	public function addAction(Request $request)
 	{
 		$location = new Location();
-		$form = $this->createForm( new LocationType(), $location);
+		$form = $this->createForm( LocationType::class, $location);
 		
 		$form->handleRequest($request);
 		
@@ -70,7 +70,7 @@ class LocationController extends Controller
 			->getRepository('TltAdmnBundle:Location')
 			->find($id);
 		
-		$form = $this->createForm( new LocationType(), $location);
+		$form = $this->createForm( LocationType::class, $location);
 		
 		$form->handleRequest($request);
 		

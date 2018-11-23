@@ -60,7 +60,7 @@ class MappingController extends Controller
 			$mapping->setEquipment($equipment);
 
 			$form = $this->createForm(
-				new MappingType(),
+				MappingType::class,
 				$mapping,
 				array(
 					'equipment' => $equipment
@@ -138,7 +138,7 @@ class MappingController extends Controller
 			&& in_array($mapping->getEquipment()->getService()->getDepartment()->getId(), $this->getUser()->getDepartmentsIds()))
 		{
 			$form = $this->createForm(
-						new MappingType(),
+						MappingType::class,
 						$mapping,
 						array(
 							'equipment' => $mapping->getEquipment()

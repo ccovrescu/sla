@@ -130,6 +130,7 @@
                     {% if form.ticketMapping|length>0 %}
                         <div id="ticket_ticketMapping">
                         {% for mapping in form.ticketMapping %}
+                    {#  {{ dump(mapping.vars.value) }}  #}
                             <div class="checkbox">
                                 {{ form_widget(mapping, {'attr' : {'class':'affectedSystems'}}) }}
                             </div>

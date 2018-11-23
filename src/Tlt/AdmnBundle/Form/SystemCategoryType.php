@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class SystemCategoryType extends AbstractType
 {
@@ -16,9 +17,9 @@ class SystemCategoryType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('department','entity',array(
+            ->add('department','Symfony\Bridge\Doctrine\Form\Type\EntityType',array(
                 'class' => 'Tlt\AdmnBundle\Entity\Department',
-                'property' => 'name',
+                'choice_label' => 'name',
                 'label'		=> 'Departamentul'
             ))
             ->add('name',TextType::class,array(

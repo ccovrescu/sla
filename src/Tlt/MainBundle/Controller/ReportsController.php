@@ -32,11 +32,12 @@ class ReportsController extends Controller
         $journalFilters->setEnd($this->setEndDate());
 
         $form = $this->createForm(
-            new JournalFiltersType(
-                $this->get('security.context'),
-                $this->get('doctrine.orm.entity_manager')
-            ),
-            $journalFilters
+            JournalFiltersType::class,
+            $journalFilters,
+            array(
+                'objectManager'=>$this->get('doctrine.orm.entity_manager'),
+                'securityContext'=>$this->container->get('security.token_storage'),
+            )
         );
 
         $form->handleRequest($request);
@@ -86,8 +87,12 @@ class ReportsController extends Controller
         $journalFilters->setEnd($this->setEndDate());
 
         $form = $this->createForm(
-            new SlaFiltersType($this->get('security.context')),
-            $journalFilters
+            SlaFiltersType::class,
+            $journalFilters,
+            array(
+                'securityContext'=>$this->container->get('security.token_storage'),
+            )
+
         );
 
         $form->handleRequest($request);
@@ -146,8 +151,11 @@ class ReportsController extends Controller
         $filters->setEnd($this->setEndDate());
 
         $form = $this->createForm(
-            new SlaFiltersType($this->get('security.context')),
-            $filters
+            SlaFiltersType::class,
+            $filters,
+            array(
+                'securityContext'=>$this->container->get('security.token_storage')
+            )
         );
 //		echo "<script>alert('claudiu INDISPONIBILITATE')</script>";
         $form->remove('owner');
@@ -248,11 +256,12 @@ class ReportsController extends Controller
         $pamListFilters = new PamListFilters();
 
         $form = $this->createForm(
-            new PamListFiltersType(
-                $this->get('security.context'),
-                $this->get('doctrine.orm.entity_manager')
-            ),
-            $pamListFilters
+            PamListFiltersType::class,
+            $pamListFilters,
+            array(
+                'objectManager'=>$this->get('doctrine.orm.entity_manager'),
+                'securityContext'=>$this->container->get('security.token_storage'),
+            )
         );
 
         $form->handleRequest($request);
@@ -327,11 +336,12 @@ class ReportsController extends Controller
         $journalFilters->setEnd($this->setEndDate());
 
         $form = $this->createForm(
-            new JournalFiltersType(
-                $this->get('security.context'),
-                $this->get('doctrine.orm.entity_manager')
-            ),
-            $journalFilters
+            JournalFiltersType::class,
+            $journalFilters,
+            array(
+                'objectManager'=>$this->get('doctrine.orm.entity_manager'),
+                'securityContext'=>$this->container->get('security.token_storage'),
+            )
         );
 
         $form->handleRequest($request);
@@ -405,11 +415,12 @@ class ReportsController extends Controller
         $journalFilters->setEnd($this->setEndDate());
 
         $form = $this->createForm(
-            new JournalFiltersType(
-                $this->get('security.context'),
-                $this->get('doctrine.orm.entity_manager')
-            ),
-            $journalFilters
+            JournalFiltersType::class,
+            $journalFilters,
+            array(
+                'objectManager'=>$this->get('doctrine.orm.entity_manager'),
+                'securityContext'=>$this->container->get('security.token_storage'),
+            )
         );
 
         $form->handleRequest($request);

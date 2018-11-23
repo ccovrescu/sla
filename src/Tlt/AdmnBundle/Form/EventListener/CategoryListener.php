@@ -5,7 +5,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -66,7 +66,7 @@ class CategoryListener implements EventSubscriberInterface
         if ($this->showAll)
         {
             $formOptions['required'] = false;
-            $formOptions['empty_value'] = '-- Alegeti o optiune --';
+            $formOptions['placeholder'] = '-- Alegeti o optiune --';
            // $formOptions['property'] = 'name';
         }
 
@@ -97,7 +97,7 @@ class CategoryListener implements EventSubscriberInterface
             $formOptions['data'] = null;
         }
 
-        $form->add('category', 'entity', $formOptions);
+        $form->add('category', EntityType::class, $formOptions);
     }
 
     public function preSetData(FormEvent $event)

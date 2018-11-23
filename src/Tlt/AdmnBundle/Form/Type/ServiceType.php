@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class ServiceType extends AbstractType
 {
@@ -19,9 +20,9 @@ class ServiceType extends AbstractType
 				'max_length' => 255,
 				'label' => 'Denumirea Serviciului'
 				))
-			->add('department','entity',array(
+			->add('department','Symfony\Bridge\Doctrine\Form\Type\EntityType',array(
 				'class' => 'Tlt\AdmnBundle\Entity\Department',
-				'property' => 'name',
+				'choice_label' => 'name',
 				'label'		=> 'Departamentul'
 				))
 			->add('salveaza', SubmitType::class)

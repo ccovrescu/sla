@@ -20,22 +20,25 @@ class ChooseType extends AbstractType
 	private $doctrine;
 	// private $tokenStorage;
 	
-    public function __construct( /*TokenStorageInterface $tokenStorage,*/ RegistryInterface $doctrine)
+/*    public function __construct( RegistryInterface $doctrine)
     {
 		// $this->tokenStorage = $tokenStorage;
         $this->doctrine = $doctrine;
     }
-	
+*/
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 		// $user = $this->tokenStorage->getToken()->getUser();
-		
+        $doctrine = $options['doctrine'];
+        $this->doctrine = $doctrine;
+
 		if ($options['owner']['available']) {
 			$builder
 				->add('owner',ChoiceType::class,array(
 					'choices' => $this->getOwners((isset($options['owner']['showAll']) ? $options['owner']['showAll'] : null)),
 					'required' => 'false',
-					'label' => 'Entitatea'
+					'label' => 'Entitatea',
+                    'choices_as_values'=>true,
 					));
 		}
 
@@ -44,7 +47,8 @@ class ChooseType extends AbstractType
 				->add('branch',ChoiceType::class,array(
 					'choices' => $this->getBranches((isset($options['branch']['showAll']) ? $options['branch']['showAll'] : null)),
 					'required' => 'false',
-					'label' => 'Sucursala'
+					'label' => 'Sucursala',
+                    'choices_as_values'=>true,
 					));
 		}
 		
@@ -53,7 +57,8 @@ class ChooseType extends AbstractType
 				->add('location',ChoiceType::class,array(
 					'choices' => array('0' => 'Toate'),
 					'required' => 'false',
-					'label' => 'Locatia'
+					'label' => 'Locatia',
+                    'choices_as_values'=>true,
 					));
 		}
 		
@@ -62,7 +67,8 @@ class ChooseType extends AbstractType
 				->add('department',ChoiceType::class,array(
 					'choices' => $this->getDepartments((isset($options['department']['showAll']) ? $options['department']['showAll'] : null)),
 					'required' => 'false',
-					'label' => 'Departamentul'
+					'label' => 'Departamentul',
+                    'choices_as_values'=>true,
 					));
 		}
 		
@@ -72,7 +78,8 @@ class ChooseType extends AbstractType
 					'choices' => $this->getServices( 0, (isset($options['service']['showAll']) ? $options['service']['showAll'] : null)),
 					// 'choices' => array('0' => 'Toate'),
 					'required' => 'false',
-					'label' => 'Serviciul'
+					'label' => 'Serviciul',
+                    'choices_as_values'=>true,
 					));
 		}
 		
@@ -81,7 +88,8 @@ class ChooseType extends AbstractType
 				->add('equipment',ChoiceType::class,array(
 					'choices' => array('0' => 'Toate'),
 					'required' => 'false',
-					'label' => 'Echipamentul'
+					'label' => 'Echipamentul',
+                    'choices_as_values'=>true,
 					));
 		}
 		
@@ -98,7 +106,8 @@ class ChooseType extends AbstractType
 					$formOptions = array(
 						'choices'         => $this->getLocations($data['branch']),
 						'required'   => 'false',
-						'label'         => 'Locatia'
+						'label'         => 'Locatia',
+                        'choices_as_values'=>true
 					);
 			
 					$form->remove('location');
@@ -114,7 +123,8 @@ class ChooseType extends AbstractType
 						// 'choices'         => $this->getServices($data['department']),
 						'choices'         => $this->getServices( $data['department'], (isset($options['service']['showAll']) ? $options['service']['showAll'] : null) ),
 						'required'   => 'false',
-						'label'         => 'Serviciul'
+						'label'         => 'Serviciul',
+                        'choices_as_values'=>true
 					);
 			
 					$form->remove('service');
@@ -130,7 +140,8 @@ class ChooseType extends AbstractType
 					$formOptions = array(
 						'choices'         => $this->getEquipments($data['location'], $data['service']),
 						'required'   => 'false',
-						'label'         => 'Equipment'
+						'label'         => 'Equipment',
+                        'choices_as_values'=>true
 					);
 			
 					$form->remove('equipment');
@@ -170,7 +181,8 @@ class ChooseType extends AbstractType
 				'equipment' => array(
 					'available' => false,
 					'all' => false
-				)
+				),
+                'doctrine' => false,
         ));
     }
  
@@ -189,7 +201,8 @@ class ChooseType extends AbstractType
 			$owners = array();
 		
 		foreach ($ows as $ow)
-			$owners[$ow->getId()] = $ow->getName();
+//			$owners[$ow->getId()] = $ow->getName();
+            $owners[$ow->getName()] = $ow->getId();
 			
 		return $owners;
 	}
@@ -204,7 +217,8 @@ class ChooseType extends AbstractType
 			$agencies_centers = array();
 		
 		foreach ($acs as $ac)
-			$agencies_centers[$ac->getId()] = $ac->getName();
+//			$agencies_centers[$ac->getId()] = $ac->getName();
+            $agencies_centers[$ac->getName()] = $ac->getId();
 			
 		return $agencies_centers;
 	}
@@ -219,7 +233,8 @@ class ChooseType extends AbstractType
 		
 		$locations = array('0' => 'Toate');		
 		foreach ($locs as $loc)
-			$locations[$loc->getId()] = $loc->getName();
+//			$locations[$loc->getId()] = $loc->getName();
+            $locations[$loc->getName()] = $loc->getId();
 			
 		return $locations;
 	}
@@ -228,14 +243,15 @@ class ChooseType extends AbstractType
 	private function getDepartments($showAll = true)
 	{
 		$deps = $this->doctrine->getRepository('Tlt\AdmnBundle\Entity\Department')->findAll();
-		
-		if ($showAll)
-			$departments = array('0' => 'Toate');
+//		$deps = $this->doctrine->getRepository('TltAdmnBundle:Department')->findAll();
+        if ($showAll)
+			$departments = array('Toate'=>'0');
 		else
 			$departments = array();
 		
 		foreach ($deps as $dep)
-			$departments[$dep->getId()] = $dep->getName();
+//			$departments[$dep->getId()] = $dep->getName();
+          $departments[$dep->getName()] = $dep->getId();
 			
 		return $departments;
 	}
@@ -260,7 +276,8 @@ class ChooseType extends AbstractType
 			);
 				
 			foreach ($servs as $serv)
-				$services[$serv->getId()] = $serv->getName();
+//				$services[$serv->getId()] = $serv->getName();
+                $services[$serv->getName()] = $serv->getId();
 		}
 			
 		return $services;
@@ -281,7 +298,8 @@ class ChooseType extends AbstractType
 		
 		$equipments = array('0' => 'Toate');		
 		foreach ($equips as $equip)
-			$equipments[$equip->getId()] = $equip->getName();
+//			$equipments[$equip->getId()] = $equip->getName();
+		    $equipments[$equip->getName()] = $equip->getId() ;
 			
 		return $equipments;
 	}

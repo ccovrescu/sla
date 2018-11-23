@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tlt\AdmnBundle\Form\EventListener\CategoryListener;
 use Tlt\ProfileBundle\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class SystemType extends AbstractType
 {
@@ -25,16 +26,21 @@ introdus azi 04.07.2018
      */
     private $em;
 
-    public function __construct(ObjectManager $em, User $user = null)
+/*    public function __construct(ObjectManager $em, User $user = null)
     {
         $this->em   = $em;
         $this->user	=	$user;
     }
-
+*/
     /*   sfarsit introdus azi 04.07.2018
        */
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
+	    $user = $options['user'];
+	    $this->user = $user;
+	    $em = $options['em'];
+	    $this->em = $em;
+
 		$builder
 			->add('id', HiddenType::class)
 			->add('name',TextType::class,array(
@@ -45,10 +51,10 @@ introdus azi 04.07.2018
                     'max_length' => 64,
                     'label' => 'Criticalitate:'
                 ))
-			->add('department','entity',array(
+			->add('department','Symfony\Bridge\Doctrine\Form\Type\EntityType',array(
 				'class' => 'Tlt\AdmnBundle\Entity\Department',
-				'property' => 'name',
-                'empty_value'	=> '-- Alegeti o optiune --',
+				'choice_label' => 'name',
+                'placeholder'	=> '-- Alegeti o optiune --',
 				));
 /*
                  $builder->add('category','entity',array(
@@ -78,7 +84,9 @@ introdus azi 04.07.2018
         $resolver->setDefaults(array(
             'data_class' => 'Tlt\AdmnBundle\Entity\System',
             'department' => null,
-            'category'=>null
+            'category'=>null,
+            'em'=>false,
+            'user'=>false
         ));
     }
 	

@@ -8,7 +8,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Tlt\AdmnBundle\Entity\Branch;
 use Tlt\AdmnBundle\Entity\Location;
- 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
 class AddLocationFieldSubscriber implements EventSubscriberInterface
 {
     private $propertyPathToEquipment;
@@ -30,7 +31,7 @@ class AddLocationFieldSubscriber implements EventSubscriberInterface
     {
         $formOptions = array(
             'class'         => 'Tlt\AdmnBundle\Entity\Location',
-            'empty_value'   => 'Alegeti o optiune',
+            'placeholder'   => 'Alegeti o optiune',
             'label'         => 'Locatia',
             'attr'          => array(
                 'class' => 'location_selector',
@@ -49,7 +50,7 @@ class AddLocationFieldSubscriber implements EventSubscriberInterface
             $formOptions['data'] = $location;
         }
 		
-        $form->add('location', 'entity', $formOptions);
+        $form->add('location', EntityType::class, $formOptions);
     }
  
     public function preSetData(FormEvent $event)

@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -29,19 +30,23 @@ class PamListFiltersType extends AbstractType
      */
     protected $objectManager;
 
-    public function __construct(SecurityContext $securityContext, ObjectManager $objectManager)
+/*    public function __construct(SecurityContext $securityContext, ObjectManager $objectManager)
     {
         $this->securityContext = $securityContext;
         $this->objectManager = $objectManager;
     }
-
+*/
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $securityContext = $options['securityContext'];
+        $this->securityContext = $securityContext;
+        $objectManager = $options['objectManager'];
+        $this->objectManager = $objectManager;
         $userOwners = $this->securityContext->getToken()->getUser()->getOwners();
         $userDepartments = $this->securityContext->getToken()->getUser()->getDepartments();
 
         $builder
-            ->add('owner', 'entity', array(
+            ->add('owner', EntityType::class, array(
                     'class'			=>	'Tlt\AdmnBundle\Entity\Owner',
                     'label'			=>	'Entitatea',
                     'query_builder' => function (EntityRepository $repository) use ($userOwners) {
@@ -62,7 +67,7 @@ class PamListFiltersType extends AbstractType
                     },
                 )
             )
-            ->add('department', 'entity', array(
+            ->add('department', EntityType::class, array(
                     'class'			=>	'Tlt\AdmnBundle\Entity\Department',
                     'label'			=>	'Departament',
                     'query_builder' => function (EntityRepository $repository) use ($userDepartments) {
@@ -80,14 +85,14 @@ class PamListFiltersType extends AbstractType
             ->addEventSubscriber(new ServiceListener( $this->objectManager, $this->securityContext->getToken()->getUser() ))
 
 /*           ->add(	'service',
-              'entity',
+              EntityType::class,
                 array(
                     'class' => 'Tlt\AdmnBundle\Entity\Service',
                     'property' => 'name',
                     'label'	=> 'Serviciu',
                     'group_by' => 'department.name',
                     'required'	 	=>	false,
-                    'empty_value'=>'--Toate--',
+                    'placeholder'=>'--Toate--',
                 )
             )
 
@@ -101,6 +106,12 @@ class PamListFiltersType extends AbstractType
     {
         $resolver->setDefaults(array(
                 'data_class' => 'Tlt\MainBundle\Form\Model\PamListFilters',
+            'securityContext'=>false,
+            'objectManager'=>false,
+
+        ))
+            ->setRequired(array(
+                'objectManager','securityContext',
             ));
     }
 

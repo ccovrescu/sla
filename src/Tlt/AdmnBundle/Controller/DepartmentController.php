@@ -31,7 +31,7 @@ class DepartmentController extends Controller
 	public function addAction(Request $request)
 	{
 		$dep = new Department();
-		$form = $this->createForm( new DepartmentType(), $dep);
+		$form = $this->createForm( DepartmentType::class, $dep);
 		
 		$form->handleRequest($request);
 		
@@ -64,7 +64,8 @@ class DepartmentController extends Controller
 			->getRepository('TltAdmnBundle:Department')
 			->find($id);
 		
-		$form = $this->createForm( new DepartmentType(), $dep);
+		$form = $this->createForm( DepartmentType::class, $dep);
+
 		
 		$form->handleRequest($request);
 		

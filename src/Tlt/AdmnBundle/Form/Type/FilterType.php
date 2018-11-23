@@ -24,14 +24,20 @@ class FilterType extends AbstractType
      */
     private $em;
 	
-	public function __construct(ObjectManager $em, User $user = null)
+/*	public function __construct(ObjectManager $em, User $user = null)
 	{
         $this->em   = $em;
 		$this->user	=	$user;
 	}
-	
+*/
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
+        $user = $options['user'];
+        $this->user = $user;
+        $em = $options['em'];
+        $this->em = $em;
+
+
         if (array_key_exists('department', $options) && $options['department'])
 			$builder->addEventSubscriber(new DepartmentListener( $this->em, $this->user ));
 		if (array_key_exists('service', $options) && $options['service'])
@@ -39,7 +45,7 @@ class FilterType extends AbstractType
         if (array_key_exists('system', $options) && $options['system'])
             $builder->addEventSubscriber(new SystemListener( $this->em, $this->user ));
 		if (array_key_exists('zone', $options) && $options['zone'])
-			$builder->addEventSubscriber(new BranchListener( $this->em, $this->user ));
+			$builder->addEventSubscriber(new BranchListener($this->em, $this->user));
 		if (array_key_exists('zoneLocation', $options) && $options['zoneLocation'])
             $builder->addEventSubscriber(new LocationListener($this->em));
 		if (array_key_exists('owner', $options) && $options['owner'])
@@ -59,7 +65,9 @@ class FilterType extends AbstractType
 				'department' => false,
 				'service' => false,
 				'system'=>false,
-				'owner' => false
+				'owner' => false,
+                'user'=>false,
+                'em'=>false,
 		));
 	}
 	

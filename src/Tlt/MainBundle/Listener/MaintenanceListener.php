@@ -35,4 +35,4 @@ class MaintenanceListener {
             $event->stopPropagation();
         }
     }
-} 
+}

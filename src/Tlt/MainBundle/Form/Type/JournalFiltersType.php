@@ -3,6 +3,7 @@ namespace Tlt\MainBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -24,19 +25,23 @@ class JournalFiltersType extends AbstractType
      */
     protected $objectManager;
 
-    public function __construct(SecurityContext $securityContext, ObjectManager $objectManager)
+/*    public function __construct(SecurityContext $securityContext, ObjectManager $objectManager)
     {
         $this->securityContext = $securityContext;
         $this->objectManager = $objectManager;
     }
-
+*/
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $securityContext = $options['securityContext'];
+        $this->securityContext = $securityContext;
+        $objectManager = $options['objectManager'];
+        $this->objectManager = $objectManager;
         $userOwners = $this->securityContext->getToken()->getUser()->getOwners();
         $userDepartments = $this->securityContext->getToken()->getUser()->getDepartments();
 
         $builder
-            ->add('owner', 'entity', array(
+            ->add('owner', EntityType::class, array(
                     'class'			=>	'Tlt\AdmnBundle\Entity\Owner',
                     'label'			=>	'Entitatea',
                     'query_builder' => function (EntityRepository $repository) use ($userOwners) {
@@ -56,10 +61,10 @@ class JournalFiltersType extends AbstractType
                     },
                 )
             )
-            ->add('department', 'entity', array(
+            ->add('department', EntityType::class, array(
                     'class'			=>	'Tlt\AdmnBundle\Entity\Department',
                     'label'			=>	'Tip Serviciu',
-                    'empty_value'   => '-- Toate --',
+                    'placeholder'   => '-- Toate --',
                     'empty_data'    => null,
                     'query_builder' => function (EntityRepository $repository) use ($userDepartments) {
                         $qb = $repository->createQueryBuilder('dp')
@@ -119,7 +124,12 @@ class JournalFiltersType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-                'data_class' => 'Tlt\MainBundle\Form\Model\JournalFilters',
+            'data_class' => 'Tlt\MainBundle\Form\Model\JournalFilters',
+            'securityContext'=>false,
+            'objectManager'=>false,
+            ))
+            ->setRequired(array(
+                'objectManager','securityContext',
             ));
     }
 

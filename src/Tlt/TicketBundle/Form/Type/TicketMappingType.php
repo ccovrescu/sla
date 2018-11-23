@@ -12,6 +12,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tlt\TicketBundle\Form\DataTransformer\TicketMappingToMappingTransformer;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class TicketMappingType extends AbstractType
 {
@@ -31,9 +32,9 @@ class TicketMappingType extends AbstractType
         $ticketMappingToMappingTransformer = new TicketMappingToMappingTransformer($options['em'], $this->ticketId);
         $builder->addModelTransformer($ticketMappingToMappingTransformer);
 
-        $builder->add('ticketMapping', 'entity', array(
+        $builder->add('ticketMapping', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
             'class'     => 'Tlt\AdmnBundle\Entity\Mapping',
-            'property' => 'system.name',
+            'choice_label' => 'system.name',
             'label'		=> 'Sisteme afectate',
             'by_reference' => false,
             'expanded'  => true,
@@ -48,9 +49,9 @@ class TicketMappingType extends AbstractType
                 return $qb;
             }
         ));
-        $builder->add('totalaffected',  'entity', array(
+        $builder->add('totalaffected',  'Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
                 'class'=> 'Tlt\TicketBundle\Entity\TickeMapping',
-                'property'=>'totalaffected',
+                'choice_label'=>'totalaffected',
                 'label'=>'Afectate Total',
                 'expanded'  => true,
                 'multiple' => true,
@@ -81,7 +82,7 @@ class TicketMappingType extends AbstractType
 
     public function getParent()
     {
-        return 'entity';
+        return 'Symfony\Bridge\Doctrine\Form\Type\EntityType';
     }
 
     public function getBlockPrefix()

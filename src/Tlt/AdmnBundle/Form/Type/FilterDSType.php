@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class FilterDSType extends AbstractType
@@ -16,9 +16,9 @@ class FilterDSType extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('department','entity',array(
+			->add('department','Symfony\Bridge\Doctrine\Form\Type\EntityType',array(
 				'class' => 'Tlt\AdmnBundle\Entity\Department',
-				'property' => 'name',
+				'choice_label' => 'name',
 				'label'		=> 'Departamentul'
 				))
 			->add('Arata', SubmitType::class);
@@ -49,7 +49,7 @@ class FilterDSType extends AbstractType
 	{
 		$formOptions = array(
 			'class' => 'Tlt\AdmnBundle\Entity\Service',
-			'property' => 'name',
+			'choice_label' => 'name',
 			'label'		=> 'Serviciul',
 			'query_builder' => function (EntityRepository $repository) use ($department_id) {
 									$qb = $repository->createQueryBuilder('sv')
@@ -60,7 +60,7 @@ class FilterDSType extends AbstractType
 			}
 		);
 		
-		$form->add('service', 'entity', $formOptions);
+		$form->add('service', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', $formOptions);
 	}
 	
 	public function configureOptions(OptionsResolver $resolver)

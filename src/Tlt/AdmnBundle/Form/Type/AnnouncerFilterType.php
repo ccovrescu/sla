@@ -7,7 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,17 +24,24 @@ class AnnouncerFilterType extends AbstractType
      */
     private $em;
 
-    public function __construct(ObjectManager $em, SecurityContext $securityContext)
+/*    public function __construct(ObjectManager $em, SecurityContext $securityContext)
     {
         $this->em   = $em;
         $this->securityContext = $securityContext;
     }
-
+*/
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $securityContext = $options['securityContext'];
+        $this->securityContext = $securityContext;
+
+        $em = $options['em'];
+        $this->em = $em;
+
         $builder->add('status', ChoiceType::class, array(
-                'choices'  => array('1' => 'Activ', '0' => 'Inactiv'),
+                'choices'  => array('Activ'=>'1', 'Inactiv'=>'0'),
                 'required' => true,
+            'choices_as_values'=>true
             ));
 
 //        $builder
@@ -82,7 +89,7 @@ class AnnouncerFilterType extends AbstractType
             'class' => 'Tlt\AdmnBundle\Entity\Branch',
             'label' => 'Agentie/Centru',
             'required' => false,
-            'empty_value' => 'Toate',
+            'placeholder' => 'Toate',
             'query_builder'	=>	function (EntityRepository $repository) {
                 $qb = $repository->createQueryBuilder('b')
                     ->where('b.id IN (:branches)')
@@ -106,7 +113,7 @@ class AnnouncerFilterType extends AbstractType
             $formOptions['data'] = null;
         }
 
-        $form->add('branch', 'entity', $formOptions);
+        $form->add('branch', EntityType::class, $formOptions);
    }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -114,6 +121,8 @@ class AnnouncerFilterType extends AbstractType
         $resolver->setDefaults(
             array(
                 'data_class' => 'Tlt\AdmnBundle\Entity\AnnouncerFilter',
+                'securityContext'=>false,
+                'em'=>false,
             ));
     }
 

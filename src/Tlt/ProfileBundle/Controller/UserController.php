@@ -52,7 +52,7 @@ class UserController extends Controller
             ->getRepository('TltProfileBundle:User')
             ->findOneById($id);
 
-        $form = $this->createForm( new UserType(), $user);
+        $form = $this->createForm( UserType::class, $user);
 
         $form->handleRequest($request);
 
@@ -80,7 +80,7 @@ class UserController extends Controller
 //        $form = $this->createForm( new ChangePasswordType(), $user);
 
         $changePasswordModel = new ChangePassword();
-        $form = $this->createForm(new ChangePasswordType(), $changePasswordModel);
+        $form = $this->createForm(ChangePasswordType::class, $changePasswordModel);
 
         $form->handleRequest($request);
 
@@ -136,7 +136,7 @@ class UserController extends Controller
         $user = new User();
         $user->setStatus(true);
         $user->setPlainPassword('123456');
-        $form = $this->createForm( new UserType(), $user);
+        $form = $this->createForm( UserType::class, $user);
 
         $form->handleRequest($request);
 
@@ -184,9 +184,10 @@ class UserController extends Controller
     {
         $user = $this->getDoctrine()
             ->getRepository('TltProfileBundle:User')
-            ->find($id);
+            ->find($id);	
 
-        if ($this->get('security.context')->isGranted('ROLE_ADMIN'))
+       if ($this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+
         {
             // remove object
             $em = $this->getDoctrine()->getManager();

@@ -8,7 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Tlt\ProfileBundle\Entity\User;
 use Tlt\TicketBundle\Entity\TicketReallocate;
 
@@ -29,10 +29,10 @@ class TicketReallocateType extends AbstractType {
         $userBranches		=	$this->user->getBranchesIds();
 
 		$builder->add(
-			'branch', 'entity', array(
+			'branch', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
 				'class'			=>	'Tlt\AdmnBundle\Entity\Branch',
-				'property'		=>	'name',
-				'empty_value'	=>	'-- Alegeti o optiune --',
+				'choice_label'		=>	'name',
+				'placeholder'	=>	'-- Alegeti o optiune --',
 				'label'			=>	'Agentia/Centrul:',
 				'required'		=>	true
 

@@ -32,7 +32,7 @@ class BranchController extends Controller
 	public function addAction(Request $request)
 	{
 		$branch = new Branch();
-		$form = $this->createForm( new BranchType(), $branch);
+		$form = $this->createForm( BranchType::class, $branch);
 		
 		$form->handleRequest($request);
 		
@@ -65,7 +65,7 @@ class BranchController extends Controller
 			->getRepository('TltAdmnBundle:Branch')
 			->find($id);
 		
-		$form = $this->createForm( new BranchType(), $branch);
+		$form = $this->createForm( BranchType::class, $branch);
 		
 		$form->handleRequest($request);
 		

@@ -2,25 +2,29 @@
 namespace Tlt\MainBundle\Form\Type;
 
 use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Security;
 
 class AnexaFiltersType extends AbstractType
 {
     private $securityContext;
 
-    public function __construct(SecurityContext $securityContext)
+/*    public function __construct(SecurityContext $securityContext)
     {
         $this->securityContext = $securityContext;
     }
-
+*/
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $securityContext = $options['securityContext'];
+        $this->securityContext = $securityContext;
         $userOwners = $this->securityContext->getToken()->getUser()->getOwners();
         $userDepartments = $this->securityContext->getToken()->getUser()->getDepartments();
 
@@ -31,16 +35,18 @@ class AnexaFiltersType extends AbstractType
                         '2015' => '2015',
                         '2016' => '2016',
                         '2017' => '2017',
-						'2018' => '2018'
+						'2018' => '2018',
+                        '2019' => '2019'
                     ),
-                    'label' => 'Anul'
+                    'label' => 'Anul',
+                    'choices_as_values'=>true
                 )
             )
-            ->add('owner', 'entity', array(
+            ->add('owner', EntityType::class, array(
                     'class'			=>	'Tlt\AdmnBundle\Entity\Owner',
                     'label'			=>	'Entitatea',
-                    'empty_value'   => 'Toate',
-                    'empty_data'    => null,
+                    'placeholder'   => 'Toate',
+                        'empty_data'    => null,
                     'query_builder' => function (EntityRepository $repository) use ($userOwners) {
                         $qb = $repository->createQueryBuilder('ow')
                             ->andWhere('ow.id IN (:userOwners)')
@@ -52,7 +58,7 @@ class AnexaFiltersType extends AbstractType
                     'required'      => false
                 )
             )
-            ->add('department', 'entity', array(
+            ->add('department', EntityType::class, array(
                     'class'			=>	'Tlt\AdmnBundle\Entity\Department',
                     'label'			=>	'Tip Serviciu',
                     'query_builder' => function (EntityRepository $repository) use ($userDepartments) {
@@ -73,6 +79,7 @@ class AnexaFiltersType extends AbstractType
     {
         $resolver->setDefaults(array(
                 'data_class' => 'Tlt\MainBundle\Form\Model\AnexaFilters',
+            'securityContext'=>false,
             ));
     }
 

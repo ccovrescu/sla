@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\FormView;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tlt\AdmnBundle\Form\EventListener\AddBranchFieldSubscriber;
@@ -30,32 +30,42 @@ class EquipmentType extends AbstractType
 	private $userDepartments;
 
 
-	public function __construct($userBranches, $userDepartments)
+/*	public function __construct($userBranches, $userDepartments)
 	{
 		$this->userBranches = $userBranches;
 		$this->userDepartments = $userDepartments;
 	}
-	
+*/
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$branches		=	$this->userBranches;
-		$departments	=	$this->userDepartments;
+        $userBranches = $options['branches'];
+        $this->userBranches = $userBranches;
+        $departments = $options['departments'];
 
+/*        if (isset($userDepartments)) {
+            var_dump($userDepartments) ;
+            $this->$userDepartments = $userDepartments;
+        }
+*/
+		$branches		=	$this->userBranches;
+//		$departments	=	$this->$userDepartments;
+
+//        var_dump($this->$userDepartments) ;
 		
 		$builder
 			->add('id', HiddenType::class)
-			->add('owner', 'entity', array(
+			->add('owner', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
 										'class'			=>	'Tlt\AdmnBundle\Entity\Owner',
-										'property'		=>	'name',
-										'empty_value'	=>	'Alegeti o optiune',
+										'choice_label'		=>	'name',
+										'placeholder'	=>	'Alegeti o optiune',
 										'label'			=>	'Entitate',
 										'required'		=>	true
 									)
 				)
-			->add('zoneLocation', 'entity', array(
+			->add('zoneLocation', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
 												'class'			=>	'Tlt\AdmnBundle\Entity\ZoneLocation',
-												'property'		=>	'name',
-												'empty_value'	=>	'Alegeti o optiune',
+												'choice_label'		=>	'name',
+												'placeholder'	=>	'Alegeti o optiune',
 												'label'			=>	'Locatie',
 												'group_by'		=>	'branch.name',
 												'query_builder'	=>	function (EntityRepository $repository) use ($branches) {
@@ -67,11 +77,11 @@ class EquipmentType extends AbstractType
 												'required'		=>	true
 											)
 				)
-			->add('service', 'entity', array(
+			->add('service', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
 											'class' => 'Tlt\AdmnBundle\Entity\Service',
-											'property' => 'name',
+											'choice_label' => 'name',
 											'label'	=> 'Serviciu',
-											'empty_value'	=> 'Alegeti o optiune',
+											'placeholder'	=> 'Alegeti o optiune',
 											'group_by' => 'department.name',
 											'query_builder' => function (EntityRepository $repository) use ($departments) {
 																	$qb = $repository->createQueryBuilder('service')
@@ -79,15 +89,16 @@ class EquipmentType extends AbstractType
 																		->setParameter('departments', array_values($departments));
 																		return $qb;
 																},
-											'required'	 	=>	true
+											'required'	 	=>	true,
+                                            'choices_as_values'=>true,
 										)
 				)
 // introdus azi 18.07.2018
-           ->add('system', 'entity', array(
+           ->add('system', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
                     'class' => 'Tlt\AdmnBundle\Entity\System',
-                    'property' => 'name',
+                    'choice_label' => 'name',
                     'label'	=> 'Sistem',
-                    'empty_value'	=> 'Alegeti o optiune',
+                    'placeholder'	=> 'Alegeti o optiune',
                     'group_by' => 'department.name',
                     'query_builder' => function (EntityRepository $repository) use ($departments) {
                         $qb = $repository->createQueryBuilder('system')
@@ -159,7 +170,9 @@ class EquipmentType extends AbstractType
 		$resolver->setDefaults(array(
 			'data_class' => 'Tlt\AdmnBundle\Entity\Equipment',
             'service' => null,
-            'systems'=>null
+            'systems'=>null,
+            'branches' => false,
+            'departments'  =>false,
 		));
 	}
 	

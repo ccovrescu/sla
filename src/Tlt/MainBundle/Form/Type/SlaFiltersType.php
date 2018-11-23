@@ -8,27 +8,31 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Security\Core\SecurityContext;
 
 class SlaFiltersType extends AbstractType
 {
     private $securityContext;
 
-    public function __construct(SecurityContext $securityContext)
+
+/*    public function __construct(SecurityContext $securityContext)
     {
 		//echo "<script>alert('claudiu CONSTRUCT SlaFilters')</script>";
 
         $this->securityContext = $securityContext;
     }
-
+*/
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $securityContext = $options['securityContext'];
+        $this->securityContext = $securityContext;
+
         $userOwners = $this->securityContext->getToken()->getUser()->getOwners();
         $userDepartments = $this->securityContext->getToken()->getUser()->getDepartments();
 
         $builder
-            ->add('owner', 'entity', array(
+            ->add('owner', EntityType::class, array(
                     'class'			=>	'Tlt\AdmnBundle\Entity\Owner',
                     'label'			=>	'Entitatea',
                     'query_builder' => function (EntityRepository $repository) use ($userOwners) {
@@ -41,10 +45,10 @@ class SlaFiltersType extends AbstractType
                     },
                 )
             )
-            ->add('department', 'entity', array(
+            ->add('department', EntityType::class, array(
                     'class'			=>	'Tlt\AdmnBundle\Entity\Department',
                     'label'			=>	'Tip Serviciu',
-//                    'empty_value'   => '-- Toate --',
+//                    'placeholder'   => '-- Toate --',
 //                    'empty_data'    => null,
                     'query_builder' => function (EntityRepository $repository) use ($userDepartments) {
                         $qb = $repository->createQueryBuilder('dp')
@@ -64,7 +68,8 @@ class SlaFiltersType extends AbstractType
                         '2015',
                         '2016',
                         '2017',
-						'2018'
+						'2018',
+                        '2019'
                     ),
                     'label' => 'De la:'
                 )
@@ -76,7 +81,8 @@ class SlaFiltersType extends AbstractType
                         '2015',
                         '2016',
                         '2017',
-						'2018'
+						'2018',
+                        '2019'
                     ),
                     'label' => 'Pana la:'
                 )
@@ -93,7 +99,9 @@ class SlaFiltersType extends AbstractType
     {
         $resolver->setDefaults(array(
                 'data_class' => 'Tlt\MainBundle\Form\Model\SlaFilters',
-            ));
+                'securityContext'=>false,
+            ))
+            ->setRequired(array( 'securityContext' ));
     }
 
     public function getBlockPrefix()

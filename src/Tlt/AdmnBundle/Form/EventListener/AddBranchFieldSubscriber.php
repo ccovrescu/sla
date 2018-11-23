@@ -6,6 +6,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
  
 class AddBranchFieldSubscriber implements EventSubscriberInterface
 {
@@ -30,7 +31,7 @@ class AddBranchFieldSubscriber implements EventSubscriberInterface
     {
         $formOptions = array(
             'class'         => 'Tlt\AdmnBundle\Entity\Branch',
-            'empty_value'   => 'Alegeti o optiune',
+            'placeholder'   => 'Alegeti o optiune',
             'label'         => 'Sucursala',
             'attr'          => array(
                 'class' => 'branch_selector',
@@ -53,7 +54,7 @@ class AddBranchFieldSubscriber implements EventSubscriberInterface
             $formOptions['data'] = $branch;
         }
 		
-        $form->add('branch', 'entity', $formOptions);
+        $form->add('branch', EntityType::class, $formOptions);
     }
  
     public function preSetData(FormEvent $event)

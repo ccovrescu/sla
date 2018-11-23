@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Tlt\AdmnBundle\Entity\Branch;
 use Tlt\AdmnBundle\Entity\Equipment;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
  
 class AddEquipmentFieldSubscriber implements EventSubscriberInterface
 {
@@ -30,7 +31,7 @@ class AddEquipmentFieldSubscriber implements EventSubscriberInterface
     {
         $formOptions = array(
             'class'         => 'Tlt\AdmnBundle\Entity\Equipment',
-            'empty_value'   => 'Alegeti o optiune',
+            'placeholder'   => 'Alegeti o optiune',
             'label'         => 'Echipament',
             'attr'          => array(
                 'class' => 'equipment_selector',
@@ -45,7 +46,7 @@ class AddEquipmentFieldSubscriber implements EventSubscriberInterface
             }
         );
  
-        $form->add($this->propertyPathToEquipment, 'entity', $formOptions);
+        $form->add($this->propertyPathToEquipment, EntityType::class, $formOptions);
     }
  
     public function preSetData(FormEvent $event)

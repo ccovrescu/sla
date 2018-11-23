@@ -6,6 +6,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
  
 class AddDepartmentFieldSubscriber implements EventSubscriberInterface
 {
@@ -30,7 +31,7 @@ class AddDepartmentFieldSubscriber implements EventSubscriberInterface
             'class'         => 'Tlt\AdmnBundle\Entity\Department',
             'mapped'        => false,
             'label'         => 'Departamentul',
-            'empty_value'   => 'Alegeti o optiune',
+            'placeholder'   => 'Alegeti o optiune',
             'attr'          => array(
                 'class' => 'department_selector',
             ),
@@ -40,7 +41,7 @@ class AddDepartmentFieldSubscriber implements EventSubscriberInterface
             $formOptions['data'] = $department;
         }
 
-        $form->add('department', 'entity', $formOptions);
+        $form->add('department', EntityType::class, $formOptions);
     }
  
     public function preSetData(FormEvent $event)

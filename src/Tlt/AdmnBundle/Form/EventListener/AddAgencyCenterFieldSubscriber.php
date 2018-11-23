@@ -9,6 +9,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Tlt\AdmnBundle\Entity\AgencyCenter;
 use Tlt\AdmnBundle\Entity\Equipment;
 use Tlt\AdmnBundle\Entity\Location;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
  
 class AddAgencyCenterFieldSubscriber implements EventSubscriberInterface
 {
@@ -39,7 +40,7 @@ class AddAgencyCenterFieldSubscriber implements EventSubscriberInterface
             $formOptions['data'] = $agency_center;
         }
 		
-        $form->add('agency_center', 'entity', $formOptions);
+        $form->add('agency_center',EntityType::class, $formOptions);
     }
 	
     public function preSetData(FormEvent $event)

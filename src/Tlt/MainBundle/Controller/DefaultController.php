@@ -244,7 +244,7 @@ class DefaultController extends Controller
      */
 	public function anexaAction(Request $request)
 	{
-        if (!$this->get('security.context')->isGranted('ROLE_SLA')) {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_SLA')) {
             throw new AccessDeniedException();
         }
 
@@ -252,8 +252,13 @@ class DefaultController extends Controller
 
         $anexaFilters->setYear(date('Y'));
         $form = $this->createForm(
-            new AnexaFiltersType($this->get('security.context')),
-            $anexaFilters
+            AnexaFiltersType::class,
+            $anexaFilters,
+			 array (
+				'method' => 'GET',
+				'securityContext'=>$this->get('security.token_storage'),
+//				'authorizationChecker'=>$this->get('security.authorization_checker')
+			)
         );
 
 

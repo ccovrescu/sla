@@ -23,10 +23,12 @@ class ZoneLocationController extends Controller
     {
 		$filter = new Filter();
 		$form = $this->createForm(
-			new FilterType($this->getDoctrine()->getManager(), $this->getUser()),
+            'Tlt\AdmnBundle\Form\Type\FilterType',
 			$filter,
 			array(
-				'zone'	=> true
+				'zone'	=> true,
+                'em'    => $this->getDoctrine()->getManager(),
+                'user'  => $this->getUser(),
 			)
 		);
 		
@@ -60,7 +62,7 @@ class ZoneLocationController extends Controller
 	public function addAction(Request $request)
 	{
 		$zoneLocation = new ZoneLocation();
-		$form = $this->createForm( new ZoneLocationType($this->getUser()), $zoneLocation);
+		$form = $this->createForm( ZoneLocationType::class, $zoneLocation, array('user'=>$this->getUser()));
 		
 		$form->handleRequest($request);
 		
@@ -96,7 +98,7 @@ class ZoneLocationController extends Controller
 		
 		if (in_array($zoneLocation->getBranch()->getId(), $this->getUser()->getBranchesIds()))
 		{
-			$form = $this->createForm( new ZoneLocationType($this->getUser()), $zoneLocation);
+			$form = $this->createForm( ZoneLocationType::class, $zoneLocation, array('user'=>$this->getUser(),));
 			
 			$form->handleRequest($request);
 			

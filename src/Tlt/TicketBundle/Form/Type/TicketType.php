@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\Entity;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -20,17 +21,20 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Tlt\TicketBundle\Form\DataTransformer\AnnouncerToNumberTransformer;
 use Tlt\TicketBundle\Form\DataTransformer\EquipmentToNumberTransformer;
 use Tlt\TicketBundle\Form\Type\TicketMappingType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Tlt\TicketBundle\Form\Type\SpecialType;
 
 class TicketType extends AbstractType {
 
     private $securityContext;
+    private $authorizationChecker;
     private $entityManager;
 
-    public function __construct(SecurityContext $securityContext)
+/*    public function __construct(SecurityContext $securityContext)
     {
         $this->securityContext = $securityContext;
     }
-
+*/
     /**
      * {@inheritDoc}
      */
@@ -39,8 +43,15 @@ class TicketType extends AbstractType {
         // this assumes that the entity manager was passed in as an option
         $entityManager = $options['em'];
         $this->entityManager=$entityManager;
+        $securityContext = $options['securityContext'];
+        $this->securityContext = $securityContext;
+        $authorizationChecker = $options['authorizationChecker'];
+        $this->authorizationChecker = $authorizationChecker;
 
-        if ($this->securityContext->isGranted('ROLE_TICKET_INSERT')) {
+
+
+        if ($this->authorizationChecker->isGranted('ROLE_TICKET_INSERT')) {
+//         if ($this->securityContext->isGranted('ROLE_TICKET_INSERT')) {
             $userBranches = $this->securityContext->getToken()->getUser()->getBranchesIds();
 
             $builder
@@ -53,7 +64,8 @@ class TicketType extends AbstractType {
                         '2015',
                         '2016',
                         '2017',
-						'2018'
+						'2018',
+                        '2019'
                     ),
 //                    'label' => 'Anuntat la:',
 //                    'data' => new \DateTime(),
@@ -65,10 +77,10 @@ class TicketType extends AbstractType {
                     'required' => false
                 ));
             $builder->add(
-                'transmissionType', 'entity', array(
+                'transmissionType', EntityType::class, array(
                     'class' => 'TltTicketBundle:TransmissionType',
-                    'property' => 'name',
-                    'empty_value' => '-- Selectati --',
+                    'choice_label' => 'name',
+                    'placeholder' => '-- Selectati --',
                     'label' => 'Mod de transmitere sesizare:'
                 ));
 
@@ -76,7 +88,7 @@ class TicketType extends AbstractType {
             $builder
                 ->add(
                     $builder
-                        ->create('announcedBy', 'text', array(
+                        ->create('announcedBy',TextType::class, array(
                                 'label' => 'Nume sesizant:',
                                 'required' => false,
                             ))
@@ -96,9 +108,9 @@ class TicketType extends AbstractType {
                     'required' => false
                 ));
             $builder->add(
-                'ticketAllocations', 'entity', array(
+                'ticketAllocations', EntityType::class, array(
                     'class' => 'TltAdmnBundle:Branch',
-//                    'empty_value' => '-- Alegeti o optiune --',
+//                    'placeholder' => '-- Alegeti o optiune --',
                     'label' => 'Agentia/Centrul:',
                     'query_builder' => function (EntityRepository $repository) use ($userBranches) {
                         $qb = $repository->createQueryBuilder('br')
@@ -117,16 +129,17 @@ class TicketType extends AbstractType {
         }
 
 
-        if ($this->securityContext->isGranted('ROLE_TICKET_SOLVE')) {
+        if ($this->authorizationChecker->isGranted('ROLE_TICKET_SOLVE')) {
             $builder->add(
                 'isReal', ChoiceType::class, array(
                     'label' => 'Este real?',
-                    'empty_value' => '-- Selectati --',
+                    'placeholder' => '-- Selectati --',
                     'choices' => array(
-                        '0' => 'Nu',
-                        '1' => 'Da'
+                        'Nu'=>'0',
+                        'Da'=>'1'
                     ),
-                    'required' => false
+                    'required' => false,
+                'choices_as_values'=>true
                 ));
             $builder->add(
                 'notRealReason', TextareaType::class, array(
@@ -134,11 +147,11 @@ class TicketType extends AbstractType {
                     'required' => false
                 ));
             $builder->add(
-                'ticketType', 'entity', array(
+                'ticketType', EntityType::class, array(
                     'class' => 'Tlt\TicketBundle\Entity\TicketType',
-                    'property' => 'name',
+                    'choice_label' => 'name',
                     'label' => 'Tip interventie',
-                    'empty_value' => '-- Selectati --',
+                    'placeholder' => '-- Selectati --',
                     'multiple' => false,
                     'expanded' => false,
                     'required' => false
@@ -163,31 +176,32 @@ class TicketType extends AbstractType {
                         '2015',
                         '2016',
                         '2017',
-						'2018'
+						'2018',
+                        '2019'
                     ),
 //                    'label' => 'Data si ora rezolvarii:',
                 ));
             $builder->add(
-                'oldness', 'entity', array(
+                'oldness', EntityType::class, array(
                     'label' => 'Vechime echipament',
                     'class' => 'Tlt\TicketBundle\Entity\Oldness',
-                    'property' => 'name',
+                    'choice_label' => 'name',
                     'multiple' => false,
                     'expanded' => true,
                 ));
             $builder->add(
-                'backupSolution', 'entity', array(
+                'backupSolution', EntityType::class, array(
                     'label' => 'S-a asigurat solutie de rezerva?',
                     'class' => 'Tlt\TicketBundle\Entity\BackupSolution',
-                    'property' => 'name',
+                    'choice_label' => 'name',
                     'multiple' => false,
                     'expanded' => true,
                 ));
             $builder->add(
-                'emergency', 'entity', array(
+                'emergency', EntityType::class, array(
                     'label' => 'Urgenta',
                     'class' => 'Tlt\TicketBundle\Entity\Emergency',
-                    'property' => 'name',
+                    'choice_label' => 'name',
                     'multiple' => false,
                     'expanded' => true,
                 ));
@@ -197,7 +211,7 @@ class TicketType extends AbstractType {
             $builder
                 ->add(
                     $builder
-                        ->create('equipment', 'hidden', array(
+                        ->create('equipment', HiddenType::class, array(
                             'label' => 'Echipament:',
                             'required' => false,
                         ))
@@ -215,7 +229,7 @@ class TicketType extends AbstractType {
                     'required' => false
                 ));
 
-            if ($this->securityContext->isGranted('ROLE_TICKET_CLOSE')) {
+            if ($this->authorizationChecker->isGranted('ROLE_TICKET_CLOSE')) {
                 $builder->add(
                     'isClosed', CheckboxType::class, array(
                         'label' => 'Da',
@@ -225,7 +239,7 @@ class TicketType extends AbstractType {
         }
 
 
-        if ($this->securityContext->isGranted('ROLE_TICKET_INSERT')) {
+        if ($this->authorizationChecker->isGranted('ROLE_TICKET_INSERT')) {
             $builder->add('salveaza', SubmitType::class, array());
             $builder->add('reseteaza', ResetType::class, array());
         }
@@ -287,15 +301,13 @@ class TicketType extends AbstractType {
                     $form->remove('isClosed');
                 }
 
-
-
                 $equipment_id = ($data->getEquipment() != null ? $data->getEquipment()->getId() : null);
                 $ticket_id = ($data->getId() != null ? $data->getId() : null);
                 $this->addMappingsField($form, $equipment_id, $ticket_id);
-
             }
         });
 /*
+
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
@@ -309,21 +321,33 @@ class TicketType extends AbstractType {
             $datele=$form->getData();
             $totalafect = $datele->istotalAffected();
             $totalafect = $form->get('total_afectate')->getData();
-//            print_r ($totalafect) ;
+           // print_r ($totalafect) ;
 
             foreach ( $totalafect as $total_afectate )
             {
                 print_r ($total_afectate);
                 echo "<br>";
             }
+
             foreach($totalafect as $x => $x_value) {
                 echo "Key=" . $x . ", Value=" . $x_value;
                 echo "<br>";
             }
 
-            });
+            $systeme = $form->get('ticketMapping')->getData();
+            foreach($systeme as $x => $x_value) {
+                echo "Key=" . $x . ", Value=" . $x_value;
+                echo "<br>";
+            }
 
-  */
+            foreach ( $systeme as $system )
+            {
+                print_r ($system);
+                echo "<br>";
+            }
+        });
+// pana aici
+*/
             $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $data = $event->getData();
             $form = $event->getForm();
@@ -367,12 +391,12 @@ class TicketType extends AbstractType {
         });
     }
 
-
+/*
     public function addMappingsFieldBradescu($form, $equipment_id, $ticket_id)
     {
         $form->add('ticketMapping', new SpecialType($ticket_id), array(
             'class'     => 'Tlt\AdmnBundle\Entity\Mapping',
-            'property' => 'system.name',
+            'choice_label' => 'system.name',
             'label'		=> 'Sisteme afectate',
             'by_reference' => false,
             'expanded'  => true,
@@ -390,26 +414,15 @@ class TicketType extends AbstractType {
             }
         ));
     }
+*/
 
     public function addMappingsField($form, $equipment_id, $ticket_id)
     {
- /*       $form->add('ticketMapping', new TicketMappingType($ticket_id), array(
-                'equipment' => $equipment_id,
-                'ticket' => $ticket_id)
-        );
-        */
-
-/*            $form->add('ticketMapping', 'TicketMappingType', array(
-                    'class'=>'TicketMappingType'
-            ));
-
-       $form->get('ticketMapping')
-           ->addModelTransformer(new IssueToNumberTransformer($this->entityManager)); // finally we apply the transformer
-*/
-
-        $form->add('ticketMapping', new SpecialType($ticket_id), array(
+        $form->add('ticketMapping', SpecialType::class, array(
             'class'     => 'Tlt\AdmnBundle\Entity\Mapping',
-            'property' => 'system.name',
+            'choice_label' => 'system.name',
+//            'data'=>array('ticketid'=>$ticket_id,),
+            'tichetul'=>$ticket_id,
             'label'		=> 'Sisteme afectate',
             'by_reference' => false,
             'expanded'  => true,
@@ -420,41 +433,15 @@ class TicketType extends AbstractType {
                     ->where('mp.equipment = :equipment')
                     ->setParameter('equipment', $equipment_id)
                     ->orderBy('mp.system', 'ASC');
-
 //                echo "<script>alert('Aici addMapping');</script>";
-
                 return $qb;
             }
         ));
 
-/*
-              $form->add('total_afectate', 'entity', array(
-                   'class'=> 'Tlt\TicketBundle\Entity\TicketMapping',
-                       'label'=>'Afectate Total',
-                  'property' => 'totalaffected',
-                  'property_path'=>'totalaffected',
-                      'by_reference' => false,
-                       'expanded'  => true,
-                       'multiple' => true,
-                       'query_builder' => function (EntityRepository $repository) use ($ticket_id, $equipment_id) {
-                               $qb = $repository->createQueryBuilder('ttm')
-                                   ->addSelect('ttm')
-                                   ->leftJoin('ttm.mapping', 'mp')
-                                   ->leftJoin('mp.system','system')
-                                   ->where('mp.equipment = :equipment')
-                                   ->andWhere('ttm.ticket=:ticket')
-                                   ->setParameter('equipment', $equipment_id)
-                                   ->setParameter('ticket', $ticket_id)
-                                   ->orderBy('mp.system', 'ASC');
-                                return $qb;
-                            }
-                        )
-                    );
-
-*/
-        $form->add('total_afectate', new SpecialType($ticket_id), array(
+        $form->add('total_afectate', SpecialType::class, array(
             'class'     => 'Tlt\AdmnBundle\Entity\Mapping',
-            'property' => 'system.name',
+            'choice_label' => 'system.name',
+            'tichetul'=>$ticket_id,
             'label'		=> 'Sisteme TOTAL afectate',
             'property_path'=>'totalaffected',
             'by_reference' => false,
@@ -474,7 +461,6 @@ class TicketType extends AbstractType {
             }
         ));
 
-
             // sfarsit adaugat 28.08.2018
 
     }
@@ -486,13 +472,13 @@ class TicketType extends AbstractType {
         $resolver
             ->setDefaults(array(
                 'data_class'	=>	'Tlt\TicketBundle\Entity\Ticket',
+                'securityContext'=>false,
+                'authorizationChecker'=>false,
             ))
             ->setRequired(array(
-                'em',
+                'em','securityContext','authorizationChecker'
             ))
-            ->setAllowedTypes(array(
-                'em' => 'Doctrine\Common\Persistence\ObjectManager',
-            ));
+            ->setAllowedTypes('em','Doctrine\Common\Persistence\ObjectManager');
     }
 
     /**

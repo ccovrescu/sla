@@ -202,7 +202,8 @@ class User implements AdvancedUserInterface, \Serializable
     {
         $departments = array();
         foreach ($this->departments as $department)
-            $departments[$department->getId()] = $department->getName();
+//            $departments[$department->getId()] = $department->getName();
+            $departments[$department->getName()] = $department->getId() ;
 
         if (empty($departments))
             return null;

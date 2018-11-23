@@ -40,10 +40,11 @@ class DefaultController extends Controller
         }
 
         $form = $this->createForm(
-            new TicketFiltersType($this->container->get('security.context')),
+            TicketFiltersType::class,
             $ticketFilters,
             array(
                 'method' => 'GET',
+                'securityContext'=>$this->container->get('security.token_storage'),
             )
         );
 
@@ -149,7 +150,7 @@ class DefaultController extends Controller
      */
     public function addAction(Request $request)
     {
-        if (!$this->get('security.context')->isGranted('ROLE_TICKET_INSERT')) {
+         if (!$this->get('security.authorization_checker')->isGranted('ROLE_TICKET_INSERT')) {
             throw new AccessDeniedException();
         }
 
@@ -159,11 +160,13 @@ class DefaultController extends Controller
         $ticket->setTakenBy($this->getUser()->getLastname() . ' ' . $this->getUser()->getFirstname());
 
         $form = $this->createForm(
-            new TicketType($this->container->get('security.context')),
+            TicketType::class,
             $ticket,
             array(
                 'em' => $this->getDoctrine()->getManager(),
                 'validation_groups' => array('insert'),
+                'securityContext'=>$this->container->get('security.token_storage'),
+                'authorizationChecker'=>$this->get('security.authorization_checker')
             )
         );
 
@@ -237,7 +240,7 @@ class DefaultController extends Controller
      */
     public function reallocateTicket(Request $request, $id)
     {
-        if (!$this->get('security.context')->isGranted('ROLE_TICKET_INSERT')) {
+        if (!$this->get('security.authorization_checker')->isGranted('ROLE_TICKET_INSERT')) {
             throw new AccessDeniedException();
         }
 
@@ -409,11 +412,13 @@ class DefaultController extends Controller
         );
 
         $form = $this->createForm(
-            new TicketType($this->container->get('security.context')),
+            TicketType::class,
             $ticket,
             array(
                 'em' => $this->getDoctrine()->getManager(),
                 'validation_groups' => array('solve'),
+                'securityContext'=>$this->container->get('security.token_storage'),
+                'authorizationChecker'=>$this->get('security.authorization_checker')
 //                'method' => 'PATCH'
             )
         );
@@ -421,6 +426,7 @@ class DefaultController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+//            echo "<script>alert('Am trecut pe aici formular valid');</script>";
             if ($ticket->getIsReal() == 1 && $ticket->getNotRealReason() != null) {
                 $form->get('notRealReason')->addError(
                     new FormError('Un tichet real nu poate avea motivatie ca nu este real')
@@ -484,28 +490,37 @@ class DefaultController extends Controller
             }
 
 // introdus 12.09.2018
+
             $campuri[] = $request->request->all();
 
 /*            print_r($campuri);
             echo "<br>";
+
             $keys = array_keys($campuri);
             print_r($keys);
             echo "<br>";
             print_r(array_values($campuri));
             echo "<br>";
 */
+
               if (array_key_exists("ticketMapping",$campuri[0]["ticket"]))
               {
                   $sisteme_afectate = $campuri[0]["ticket"]["ticketMapping"] ;
+                  echo "<script>alert('exista sisteme afectate');</script>";
+                  echo "<script>alert($sisteme_afectate[0]);</script>";
+              }
+              else {
+                  echo "<script>alert('NU exista sisteme afectate');</script>";
               }
 
             if (array_key_exists("total_afectate",$campuri[0]["ticket"]))
             {
+                echo "<script>alert('exista sisteme TOTAL afectate');</script>";
                 // matricea sistemelor (maparilor) TOTAL afectate
                 $totalafectate = $campuri[0]["ticket"]["total_afectate"] ;
                 $lungimea = count($totalafectate);
 /*
-                for ($i=0; $i<$lungimea; $i++) {
+                 for ($i=0; $i<$lungimea; $i++) {
                     echo ($totalafectate[$i]);
                     echo "<br>";
                 }
@@ -526,8 +541,9 @@ class DefaultController extends Controller
                     echo "Key=" . $x . ", Value=" . $x_value;
                     echo "<br>";
                 }
+                echo "<script>alert('Aici ');</script>";
 */
-                foreach ($ticket->getTicketMapping() as $ticketMapping) {
+            foreach ($ticket->getTicketMapping() as $ticketMapping) {
                         $ticketMappingId=$ticketMapping->getMapping()->getId();
 //                        echo "ticketMappingId = ".$ticketMappingId;
                         if (in_array($ticketMappingId, $totalafectate) )
@@ -542,7 +558,15 @@ class DefaultController extends Controller
                         }
                     }
             }
-            else {echo "Nu exista cheia"."<br>";}
+            else {
+                echo "Nu exista cheia"."<br>";
+                 echo"<script>alert('Nu exista cheia');</script>";
+                foreach ($ticket->getTicketMapping() as $ticketMapping)
+                {
+                   $ticketMapping->setTotalaffected(false);
+                }
+            }
+
 
 //            die();
 // sfarsit introdus 12.09.2018
@@ -601,7 +625,11 @@ class DefaultController extends Controller
                 )
             );
         }
-
+        else
+        {  // $string = (string) $form->getErrors(true, false);
+           // var_dump($string);
+//            echo "<script>alert('Am trecut pe aici formular INvalid');</script>";
+        }
         $templateOptions['form'] = $form->createView();
 
         return $templateOptions;

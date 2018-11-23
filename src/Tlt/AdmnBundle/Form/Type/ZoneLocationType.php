@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -14,20 +15,23 @@ class ZoneLocationType extends AbstractType
 {
 	private $user;
 	
-	public function __construct(\Tlt\ProfileBundle\Entity\User $user = null)
+/*	public function __construct(\Tlt\ProfileBundle\Entity\User $user = null)
 	{
 		$this->user	=	$user;
 	}
-
+*/
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
+	    $user = $options['user'];
+	    $this->user=$user;
+
 		$userBranches	=	$this->user->getBranchesIds();
 		
 		$builder
 			->add('id', HiddenType::class)
-			->add('branch','entity',array(
+			->add('branch',EntityType::class, array(
 				'class' => 'Tlt\AdmnBundle\Entity\Branch',
-				'property' => 'name',
+				'choice_label' => 'name',
 				'label'		=> 'Agentia/Centrul',
 				'query_builder'	=>	function(EntityRepository $er) use ($options, $userBranches){
 					return $er->createQueryBuilder('br')
@@ -36,9 +40,9 @@ class ZoneLocationType extends AbstractType
 								->orderBy('br.name', 'ASC');
 					}
 				))
-			->add('location','entity',array(
+			->add('location',EntityType::class,array(
 				'class' => 'Tlt\AdmnBundle\Entity\Location',
-				'property' => 'name',
+				'choice_label' => 'name',
 				'label'		=> 'Locatia',
 				'query_builder'	=>	function(EntityRepository $er) use ($options){
 					return $er->createQueryBuilder('l')
@@ -53,6 +57,7 @@ class ZoneLocationType extends AbstractType
 	{
 		$resolver->setDefaults(array(
 			'data_class' => 'Tlt\AdmnBundle\Entity\ZoneLocation',
+            'user'  =>false,
 		));		
 	}
 	

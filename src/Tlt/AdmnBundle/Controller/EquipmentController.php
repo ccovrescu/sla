@@ -30,7 +30,7 @@ class EquipmentController extends Controller
             $filter = new Filter();
         }
 		$form	=	$this->createForm(
-						new FilterType($this->getDoctrine()->getManager(), $this->getUser() ),
+						FilterType::class,
 						$filter,
 						array(
 							'zone'			=>	true,
@@ -40,6 +40,8 @@ class EquipmentController extends Controller
 							'system'        =>  true,
 							'owner'			=>	true,
 							'method'		=>	'GET',
+                            'user'          =>  $this->getUser(),
+                            'em'            =>  $this->getDoctrine()->getManager(),
 						)
 					);
 
@@ -83,11 +85,11 @@ class EquipmentController extends Controller
 	public function xindexAction(Request $request)
     {
 			
-		$tokenStorage = $this->container->get('security.context');
+		$tokenStorage = $this->container->get('security.token_storage');
 		
 		// $form = $this->createForm( new ChooseEquipmentType(), new Equipment());
 		$form = $this->createForm(
-			new ChooseType(/*$tokenStorage,*/ $this->getDoctrine()),
+			ChooseType::class,
 			new Choose(),
 			array(
 				'owner' => array(
@@ -109,7 +111,8 @@ class EquipmentController extends Controller
 				'service' => array(
 					'available'=>true,
 					'showAll' => true
-				)
+				),
+                'doctrine'  => $this->getDoctrine(),
 			)
 		);
 		
@@ -151,8 +154,11 @@ class EquipmentController extends Controller
 		// $form = $this->createForm( new EquipmentType(), $equipment);
 		
 		$form = $this->createForm(
-			new EquipmentType($this->getUser()->getBranchesIds(), $this->getUser()->getDepartmentsIds()),
-			$equipment
+			EquipmentType::class,
+			$equipment, array(
+			    'branches'=>$this->getUser()->getBranchesIds(),
+                'departments' => $this->getUser()->getDepartmentsIds(),
+            )
 		);
 		
 		$form->handleRequest($request);
@@ -205,8 +211,6 @@ class EquipmentController extends Controller
             ->setParameter('service_id',$service_id);
 
         $systems	= $qb->getQuery()->getResult();
-
-
 */
 
 // introdus pe 19.07.2018
@@ -217,10 +221,15 @@ class EquipmentController extends Controller
 		if (in_array($equipment->getZoneLocation()->getBranch()->getId(), $this->getUser()->getBranchesIds())
 			&& in_array($equipment->getService()->getDepartment()->getId(), $this->getUser()->getDepartmentsIds()))
 		{
+//		    $dep=$this->getUser()->getDepartmentsIds() ;
+//		    var_dump($dep);
+
 			$form = $this->createForm(
-				new EquipmentType($this->getUser()->getBranchesIds(), $this->getUser()->getDepartmentsIds()),
+				EquipmentType::class,
 				$equipment, array(
                     'systems'=>$equipment->getSystem(),
+                    'branches'=>$this->getUser()->getBranchesIds(),
+                    'departments' => $this->getUser()->getDepartmentsIds(),
                 )
 			);
 			

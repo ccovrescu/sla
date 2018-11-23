@@ -164,7 +164,8 @@ class ResetController extends Controller
 
             // force user logout
             $session->invalidate();
-            $this->get('security.context')->setToken(null);
+            $this->get('security.token_storage')->setToken(null);
+
 
             return $this->redirect($this->generateUrl('tlt_profile_security_login'));
         }

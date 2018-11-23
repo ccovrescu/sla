@@ -5,7 +5,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -69,7 +69,7 @@ class SystemListenerPam implements EventSubscriberInterface
         if ($this->showAll)
         {
             $formOptions['required'] = false;
-            $formOptions['empty_value'] = '-- Toate --';
+            $formOptions['placeholder'] = '-- Toate --';
         }
 
         $formOptions['query_builder'] = function (EntityRepository $repository) use ($department_id, $userBranches, $userDepartments, $service_id, $owner_id) {
@@ -124,7 +124,7 @@ class SystemListenerPam implements EventSubscriberInterface
             $formOptions['data'] = null;
         }
 
-        $form->add('system', 'entity', $formOptions);
+        $form->add('system', EntityType::class, $formOptions);
     }
 	
 	public function preSetData(FormEvent $event)

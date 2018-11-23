@@ -5,7 +5,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -56,7 +56,7 @@ class LocationListener implements EventSubscriberInterface
         if ($this->showAll=='view')
         {
             $formOptions['required'] = false;
-            $formOptions['empty_value'] = '-- Toate --';
+            $formOptions['placeholder'] = '-- Toate --';
         }
 
         $formOptions['query_builder']	=	function (EntityRepository $repository) use ($zone_id, $service_id, $department_id) {
@@ -92,7 +92,7 @@ class LocationListener implements EventSubscriberInterface
             $formOptions['data'] = null;
         }
 
-        $form->add('zoneLocation', 'entity', $formOptions);
+        $form->add('zoneLocation', EntityType::class, $formOptions);
     }
 	
 	public function preSetData(FormEvent $event)

@@ -14,7 +14,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Tlt\ProfileBundle\Entity\User;
 
 class EquipmentListener implements EventSubscriberInterface
@@ -94,7 +94,7 @@ class EquipmentListener implements EventSubscriberInterface
             $formOptions['data'] = $equipment_id;
         }
 
-        $form->add( 'equipment', 'entity', $formOptions);
+        $form->add( 'equipment', 'Symfony\Bridge\Doctrine\Form\Type\EntityType', $formOptions);
     }
 
     public function preSetData(FormEvent $event)

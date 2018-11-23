@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Tlt\AdmnBundle\Entity\Announcer;
-
+use Symfony\Component\Security\Core\Security;
 use Tlt\AdmnBundle\Entity\AnnouncerFilter;
 use Tlt\AdmnBundle\Entity\Owner;
 use Tlt\AdmnBundle\Form\Type\AnnouncerFilterType;
@@ -34,10 +34,12 @@ class AnnouncerController extends Controller
         }
 
         $form = $this->createForm(
-            new AnnouncerFilterType($this->getDoctrine()->getManager(), $this->get('security.context')),
+            AnnouncerFilterType::class,
             $filter,
             array(
-                'method' => 'GET'
+                'method' => 'GET',
+                'em'=>$this->getDoctrine()->getManager(),
+                'securityContext'=>$this->container->get('security.token_storage'),
             )
         );
 
@@ -97,8 +99,9 @@ class AnnouncerController extends Controller
         $announcer->setActive(true);
 
         $form = $this->createForm(
-            new AnnouncerType($this->container->get('security.context')),
-            $announcer
+            AnnouncerType::class,
+            $announcer,
+            array('securityContext'=>$this->container->get('security.token_storage'),)
         );
 
         $form = $form->handleRequest($request);
@@ -132,7 +135,11 @@ class AnnouncerController extends Controller
             ->getRepository('TltAdmnBundle:Announcer')
             ->find($id);
 
-        $form = $this->createForm( new AnnouncerType($this->get('security.context')), $announcer);
+        $form = $this->createForm(  AnnouncerType::class, $announcer, array (
+            'method' => 'GET',
+            'securityContext'=>$this->container->get('security.token_storage'),
+//            'authorizationChecker'=>$this->get('security.authorization_checker')
+        ));
 
         $form->handleRequest($request);
 
@@ -231,11 +238,12 @@ class AnnouncerController extends Controller
      */
     private function createCreateForm(Announcer $entity)
     {
-        $form = $this->createForm(new AnnouncerType($this->container->get('security.context')),
+        $form = $this->createForm(AnnouncerType::class,
             $entity,
             array(
                 'action' => $this->generateUrl('tlt_admin_announcers_create'),
                 'method' => 'POST',
+                'securityContext'=>$this->container->get('security.token_storage'),
             ));
 
         return $form;

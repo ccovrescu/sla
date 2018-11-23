@@ -15,7 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType {
@@ -37,11 +37,12 @@ class UserType extends AbstractType {
             ))
             ->add('status', ChoiceType::class,array(
                 'choices'  => array(
-                    '0' => 'Inactiv',
-                    '1' => 'Activ'
+                    'Inactiv'=>'0',
+                    'Activ'=>'1'
                 ),
                 'required' => true,
-                'empty_value' => '-- Alegeti o optiune --'
+                'placeholder' => '-- Alegeti o optiune --',
+                'choices_as_values'=>true,
             ))
             ->add('lastname', TextType::class, array(
                 'label' => 'Nume',
@@ -55,14 +56,14 @@ class UserType extends AbstractType {
                 'label' => 'Compartiment',
                 'required' => true
             ))
-            ->add('departments','entity',array(
+            ->add('departments','Symfony\Bridge\Doctrine\Form\Type\EntityType',array(
                 'class'     => 'Tlt\AdmnBundle\Entity\Department',
-                'property'  => 'name',
+                'choice_label'  => 'name',
                 'label'		=> 'Tip serviciu',
                 'expanded'  => true,
-                'multiple' => true
+                'multiple' => true,
             ))
-            ->add('branches','entity',array(
+            ->add('branches','Symfony\Bridge\Doctrine\Form\Type\EntityType',array(
                 'class'     => 'Tlt\AdmnBundle\Entity\Branch',
                     'query_builder' => function(EntityRepository $repository) {
                         return $repository->createQueryBuilder('b')->orderBy('b.name', 'ASC');
@@ -73,7 +74,7 @@ class UserType extends AbstractType {
                 'multiple' => true,
 //                'read_only' => true
             ))
-            ->add('owners','entity',array(
+            ->add('owners','Symfony\Bridge\Doctrine\Form\Type\EntityType',array(
                     'class'     => 'Tlt\AdmnBundle\Entity\Owner',
                     'query_builder' => function(EntityRepository $repository) {
                         return $repository->createQueryBuilder('o')->orderBy('o.name', 'ASC');
@@ -84,9 +85,9 @@ class UserType extends AbstractType {
                     'multiple' => true,
 //                'read_only' => true
             ))
-            ->add('roluri','entity',array(
+            ->add('roluri','Symfony\Bridge\Doctrine\Form\Type\EntityType',array(
                 'class'     => 'Tlt\ProfileBundle\Entity\Role',
-                'property'  => 'name',
+                'choice_label'  => 'name',
                 'label'		=> 'Roluri',
                 'expanded'  => true,
                 'multiple' => true,
@@ -98,12 +99,13 @@ class UserType extends AbstractType {
             ->add('emailNotification', ChoiceType::class, array(
                 'label' => 'Notificare pe email',
                 'choices' => array(
-                    '0' => 'Nu',
-                    '1' => 'Da'
+                    'Nu'=>'0',
+                    'Da'=>'1'
                 ),
                 'multiple' => false,
                 'expanded' => true,
-                'required' => true
+                'required' => true,
+                'choices_as_values'=>true
             ))
             ->add('salveaza', SubmitType::class)
             ->add('reseteaza', ResetType::class, array());

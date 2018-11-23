@@ -6,6 +6,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
  
 class AddOwnerFieldSubscriber implements EventSubscriberInterface
 {
@@ -30,7 +31,7 @@ class AddOwnerFieldSubscriber implements EventSubscriberInterface
             'class'         => 'Tlt\AdmnBundle\Entity\Owner',
 			'property'		=>	'name',
 			// 'mapped'		=>	false,
-            'empty_value'   => 'Alegeti o optiune',
+            'placeholder'   => 'Alegeti o optiune',
             'label'         => 'Entitatea',
             'attr'          => array(
                 'class' => 'owner_selector',
@@ -41,7 +42,7 @@ class AddOwnerFieldSubscriber implements EventSubscriberInterface
             $formOptions['data'] = $owner;
         }
 		
-        $form->add('owner', 'entity', $formOptions);
+        $form->add('owner', EntityType::class, $formOptions);
     }
  
     public function preSetData(FormEvent $event)

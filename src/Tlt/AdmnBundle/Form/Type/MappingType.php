@@ -7,7 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 
@@ -18,9 +18,9 @@ class MappingType extends AbstractType
 	{
 		$builder
 			->add('id', HiddenType::class)
-			->add('equipment','entity', array(
+			->add('equipment','Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
 				'class' => 'Tlt\AdmnBundle\Entity\Equipment',
-				'property' => 'name',
+				'choice_label' => 'name',
 				'query_builder' => function(EntityRepository $er) use ($options){
 					return $er->createQueryBuilder('e')
 								->where('e.id=:id')
@@ -29,10 +29,10 @@ class MappingType extends AbstractType
 				'label' => 'Echipamentul',
 				'disabled' => true
 				))
-			->add('system','entity', array(
+			->add('system','Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
 				'class' => 'Tlt\AdmnBundle\Entity\System',
-				'property' => 'name',
-                'empty_value' => 'Selecteaza un sistem',
+				'choice_label' => 'name',
+                'placeholder' => 'Selecteaza un sistem',
 				'query_builder' => function(EntityRepository $er) use ($options){
 					return $er->createQueryBuilder('sys')
 								->innerJoin('sys.serviceToSystems', 'sts')

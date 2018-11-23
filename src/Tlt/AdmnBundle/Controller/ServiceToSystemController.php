@@ -28,7 +28,7 @@ class ServiceToSystemController extends Controller
 		$filterDS->setDepartment($department);
 		
 		$form	=	$this->createForm(
-						new FilterDSType(),
+						FilterDSType::class,
 						$filterDS,
 						array(
 							'method'	=>	'GET'
@@ -74,7 +74,7 @@ class ServiceToSystemController extends Controller
 					
 		$serviceToSystem = new ServiceToSystem();
 		$serviceToSystem->setService($service);
-		$form = $this->createForm( new ServiceToSystemType(), $serviceToSystem);
+		$form = $this->createForm( ServiceToSystemType::class, $serviceToSystem);
 		
 		$form->handleRequest($request);
 		

@@ -60,7 +60,7 @@ class PropertyValueController extends Controller
 			$propertyValue->setEquipment($equipment);
 
 			$form = $this->createForm(
-				new PropertyValueType(),
+				PropertyValueType::class,
 				$propertyValue,
 				array(
 					'equipment' => $equipment
@@ -113,7 +113,7 @@ class PropertyValueController extends Controller
 			&& in_array($propertyValue->getEquipment()->getService()->getDepartment()->getId(), $this->getUser()->getDepartmentsIds()))
 		{
 			$form = $this->createForm(
-						new PropertyValueType(),
+						PropertyValueType::class,
 						$propertyValue,
 						array(
 							'equipment' => $propertyValue->getEquipment()

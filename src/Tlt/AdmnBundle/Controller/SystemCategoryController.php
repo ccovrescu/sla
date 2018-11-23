@@ -29,13 +29,14 @@ class SystemCategoryController extends Controller
     public function indexAction(Request $request)
     {
         $form = $this->createForm(
-            new ChooseType($this->getDoctrine()),
+            ChooseType::class,
             new Choose(),
             array(
                 'department' => array(
                     'available'=>true,
-                    'showAll' => true
+                    'showAll' => true,
                 ),
+                'doctrine'=> $this->getDoctrine(),
             )
         );
 
@@ -118,12 +119,12 @@ class SystemCategoryController extends Controller
      */
     private function createCreateForm(SystemCategory $entity)
     {
-        $form = $this->createForm(new SystemCategoryType(), $entity, array(
+        $form = $this->createForm(SystemCategoryType::class, $entity, array(
             'action' => $this->generateUrl('admin_systemcategory_create'),
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Validare'));
+        $form->add('salveaza', 'Symfony\Component\Form\Extension\Core\Type\SubmitType', array('label' => 'Validare'));
 
         return $form;
     }
@@ -207,12 +208,12 @@ class SystemCategoryController extends Controller
     */
     private function createEditForm(SystemCategory $entity)
     {
-        $form = $this->createForm(new SystemCategoryType(), $entity, array(
+        $form = $this->createForm(SystemCategoryType::class, $entity, array(
             'action' => $this->generateUrl('admin_systemcategory_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Salvare'));
+        $form->add('salveaza', 'Symfony\Component\Form\Extension\Core\Type\SubmitType', array('label' => 'Salvare'));
 
         return $form;
     }
@@ -287,7 +288,7 @@ class SystemCategoryController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('admin_systemcategory_delete', array('id' => $id)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Sterge'))
+            ->add('salveaza', 'Symfony\Component\Form\Extension\Core\Type\SubmitType', array('label' => 'Sterge'))
             ->getForm()
         ;
     }

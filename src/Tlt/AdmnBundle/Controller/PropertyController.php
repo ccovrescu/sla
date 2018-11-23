@@ -39,7 +39,7 @@ class PropertyController extends Controller
 	public function addAction(Request $request)
 	{
 		$serviceAttribute = new Property();
-		$form = $this->createForm( new PropertyType(), $serviceAttribute);
+		$form = $this->createForm( PropertyType::class, $serviceAttribute);
 		
 		$form->handleRequest($request);
 		
@@ -72,7 +72,7 @@ class PropertyController extends Controller
 			->getRepository('TltAdmnBundle:Property')
 			->find($id);
 		
-		$form = $this->createForm( new PropertyType(), $serviceAttribute);
+		$form = $this->createForm( PropertyType::class, $serviceAttribute);
 		
 		$form->handleRequest($request);
 		

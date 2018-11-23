@@ -661,7 +661,7 @@ class AjaxController extends Controller
     /*introdusa 09.08.2018 */
 
     /**
-     * @Route("/ajax/allowed-systemsv1", name="get_allowed_systemsv1")
+     * @Route("/ajax/allowed-systemsv1", name="get_allowedsystemsv1")
      */
     public function getAllowedSystemsActionvclau(Request $request)
     {

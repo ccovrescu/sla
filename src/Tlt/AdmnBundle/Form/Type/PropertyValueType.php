@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvent;
 
 use Symfony\Component\Form\FormEvents;
@@ -24,9 +24,9 @@ class PropertyValueType extends AbstractType
 	{
 		$builder
 			->add('id', HiddenType::class)
-			->add('equipment','entity', array(
+			->add('equipment','Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
 				'class' => 'Tlt\AdmnBundle\Entity\Equipment',
-				'property' => 'name',
+				'choice_label' => 'name',
 				'query_builder' => function(EntityRepository $er) use ($options){
 					return $er->createQueryBuilder('e')
 								->where('e.id=:id')
@@ -35,9 +35,9 @@ class PropertyValueType extends AbstractType
 				'label' => 'Echipamentul',
 				'disabled' => true
 				))
-			->add('property','entity', array(
+			->add('property','Symfony\Bridge\Doctrine\Form\Type\EntityType', array(
 				'class' => 'Tlt\AdmnBundle\Entity\Property',
-				'property' => 'name',
+				'choice_label' => 'name',
 				'label' => 'Proprietatea',
 				))
 			->add('value',TextType::class,array(

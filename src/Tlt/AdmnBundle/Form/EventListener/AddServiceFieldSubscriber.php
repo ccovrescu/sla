@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Tlt\AdmnBundle\Entity\Department;
 use Tlt\AdmnBundle\Entity\Service;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
  
 class AddServiceFieldSubscriber implements EventSubscriberInterface
 {
@@ -30,7 +31,7 @@ class AddServiceFieldSubscriber implements EventSubscriberInterface
     {
         $formOptions = array(
             'class'         => 'Tlt\AdmnBundle\Entity\Service',
-            'empty_value'   => 'Alegeti o optiune',
+            'placeholder'   => 'Alegeti o optiune',
             'label'         => 'Serviciul',
             'attr'          => array(
                 'class' => 'service_selector',
@@ -46,7 +47,7 @@ class AddServiceFieldSubscriber implements EventSubscriberInterface
             }
         );
  
-        $form->add('service', 'entity', $formOptions);
+        $form->add('service', EntityType::class , $formOptions);
     }
  
     public function preSetData(FormEvent $event)

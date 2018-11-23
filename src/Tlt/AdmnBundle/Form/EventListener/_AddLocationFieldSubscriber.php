@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Tlt\AdmnBundle\Entity\AgencyCenter;
 use Tlt\AdmnBundle\Entity\Location;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
  
 class AddLocationFieldSubscriber implements EventSubscriberInterface
 {
@@ -46,7 +47,7 @@ class AddLocationFieldSubscriber implements EventSubscriberInterface
             }
         );
  
-        $form->add($this->propertyPathToLocation, 'entity', $formOptions);
+        $form->add($this->propertyPathToLocation, EntityType::class, $formOptions);
     }
  
     public function preSetData(FormEvent $event)

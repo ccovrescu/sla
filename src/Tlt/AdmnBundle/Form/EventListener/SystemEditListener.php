@@ -5,7 +5,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
-
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -68,7 +68,7 @@ class SystemEditListener implements EventSubscriberInterface
         if ($this->showAll)
         {
             $formOptions['required'] = false;
-            $formOptions['empty_value'] = '-- Toate --';
+            $formOptions['placeholder'] = '-- Toate --';
         }
         $em = $this->getDoctrine()->getManager();
         $Ssrepository = $em->getRepository('TltAdmnBundle:ServiceToSystem');
@@ -99,7 +99,7 @@ class SystemEditListener implements EventSubscriberInterface
             $formOptions['data'] = null;
         }
 
-        $form->add('system', 'entity', $formOptions);
+        $form->add('system', EntityType::class, $formOptions);
     }
 
     public function preSetData(FormEvent $event)

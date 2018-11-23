@@ -21,13 +21,15 @@ class SystemController extends Controller
 	public function indexAction(Request $request)
     {
 		$form = $this->createForm(
-			new ChooseType($this->getDoctrine()),
+			ChooseType::class,
 			new Choose(),
 			array(
 				'department' => array(
 					'available'=>true,
-					'showAll' => true
+					'showAll' => true,
+                    'doctrine'=>$this->getDoctrine(),
 				),
+                'doctrine'=> $this->getDoctrine(),
 			)
 		);
 		
@@ -65,10 +67,12 @@ class SystemController extends Controller
 	public function addAction(Request $request)
 	{
 		$system = new System();
-		$form = $this->createForm( new SystemType($this->getDoctrine()->getManager(), $this->getUser()), $system,
+		$form = $this->createForm( SystemType::class, $system,
             array(
                 'department'=>null,
-                'category'=>null
+                'category'=>null,
+                'em' => $this->getDoctrine()->getManager(),
+                'user'=>$this->getUser(),
             ));
 		
 		$form->handleRequest($request);
@@ -103,10 +107,12 @@ class SystemController extends Controller
 			->find($id);
 		
 /*		$form = $this->createForm( new SystemType(), $system); */
-        $form = $this->createForm( new SystemType($this->getDoctrine()->getManager(), $this->getUser()), $system,
+        $form = $this->createForm( SystemType::class, $system,
             array(
                 'department'=>$system->getDepartment(),
-                'category'=>$system->getCategory()
+                'category'=>$system->getCategory(),
+                'em' => $this->getDoctrine()->getManager(),
+                'user'=>$this->getUser(),
             ));
 		$form->handleRequest($request);
 		
