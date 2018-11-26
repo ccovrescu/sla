@@ -262,7 +262,8 @@ class DefaultController extends Controller
 
         $ticketAllocation = new TicketAllocation();
 
-        $form = $this->createForm(new TicketReallocateType($this->getUser()), $ticketAllocation);
+        $form = $this->createForm(TicketReallocateType::class, $ticketAllocation,
+            array('user'=>$this->getUser()));
 
         $form->handleRequest($request);
 

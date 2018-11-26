@@ -16,16 +16,18 @@ class TicketReallocateType extends AbstractType {
 
     private $user;
 
-    public function __construct(User $user = null)
+/*    public function __construct(User $user = null)
     {
         $this->user	=	$user;
     }
-
+*/
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options) {
+	    $user = $options['user'];
+	    $this->user = $user;
         $userBranches		=	$this->user->getBranchesIds();
 
 		$builder->add(
@@ -56,7 +58,8 @@ class TicketReallocateType extends AbstractType {
 	 */
 	public function configureOptions(OptionsResolver $resolver) {
 		$resolver->setDefaults(array(
-			'data_class'	=>	'Tlt\TicketBundle\Entity\TicketAllocation'
+			'data_class'	=>	'Tlt\TicketBundle\Entity\TicketAllocation',
+            'user'=>false
 		));
 	}
 

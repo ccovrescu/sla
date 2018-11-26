@@ -13,6 +13,7 @@
 /.rules/
 *.tar
 *.gz
+*zip
 /in_plus/
 /.idea/
 /git_log.txt

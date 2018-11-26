@@ -21,7 +21,7 @@ class ChangePasswordType extends AbstractType
             )
         ));
         $builder->add('newPassword', RepeatedType::class, array(
-            'type' => 'password',
+            'type' => 'Symfony\Component\Form\Extension\Core\Type\PasswordType',
             'invalid_message' => 'Parolele trebuie sa coincida.',
             'required' => true,
             'first_options' => array(
