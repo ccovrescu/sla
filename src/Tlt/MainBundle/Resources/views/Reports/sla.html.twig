@@ -60,7 +60,13 @@
                 {{ form_widget(form.is_closed) }}
             </div>
         </div>
-        <div class="col-lg-8">
+        <div class="col-lg-4">
+            <div class="form-group">
+                {#{ form_label(form.is_closed) }#}
+                {{ form_widget(form.all_units) }}
+            </div>
+        </div>
+        <div class="col-lg-4">
             <div class="text-right">
                 <div class="form-group">
                     <br/>
@@ -101,6 +107,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                    {% set contorul =1 %}
                     {% for system in systems %}
 
                         {% if system.units_no>0 %}
@@ -113,8 +120,12 @@
                             {% set ru_disp = 0 %}
                         {% endif %}
 
+                        {# conditie introdusa la 07.01.2019 - afisez doar sisteme cu units_no>0#}
+                        {% if (system.units_no>0 or system.indisponible_time>0) or form.vars.value.getAllUnits() == 0%}
+
                         <tr>
-                            <td>{{ loop.index }}</td>
+                           <td>{{ contorul }}</td>
+                            {#<td>{{ loop.index }}</td> #}
                             <td class="length-limit">{{ system.name }}</td>
                             <td nowrap>{{ system.criticality|default('Critic: 1 ora') }}</td>
                             <td class="text-center" nowrap>{{ system.min_hour }} - {{ system.max_hour }}</td>
@@ -147,6 +158,10 @@
                                 {% endif %}
                             </td>
                         </tr>
+                            {% set contorul= contorul+1 %}
+                        {% else %}
+                        {% endif %}
+
                     {% endfor %}
                     </tbody>
                 </table>

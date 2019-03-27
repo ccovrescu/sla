@@ -1,6 +1,7 @@
 <?php
 
 use Symfony\Component\Debug\Debug;
+//use Symfony\Component\Debug\DebugClassLoader;
 use Symfony\Component\HttpFoundation\Request;
 
 // If you don't want to setup permissions the proper way, just uncomment the following PHP line
@@ -17,9 +18,10 @@ use Symfony\Component\HttpFoundation\Request;
     // exit('You are not allowed to access this file. Check '.basename(__FILE__).' for more information.');
 // }
 
-$loader = require_once __DIR__.'/../app/bootstrap.php.cache';
+//$loader = require_once __DIR__.'/../app/bootstrap.php.cache';
+$loader = require __DIR__.'/../app/autoload.php';
 Debug::enable();
-
+//DebugClassLoader::enable();
 require_once __DIR__.'/../app/AppKernel.php';
 
 $kernel = new AppKernel('dev', true);

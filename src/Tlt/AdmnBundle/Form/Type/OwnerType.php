@@ -16,11 +16,11 @@ class OwnerType extends AbstractType
 		$builder
 			->add('id', HiddenType::class)
 			->add('name',TextType::class,array(
-				'max_length' => 32,
+                'attr' => array('maxlength' => 32),
 				'label' => 'Denumirea entitatii'
 				))
             ->add('reportsOwner',TextType::class,array(
-                    'max_length' => 32,
+                'attr' => array('maxlength' => 32),
                     'label' => 'Denumirea din rapoarte'
                 ))
 			->add('salveaza', SubmitType::class)

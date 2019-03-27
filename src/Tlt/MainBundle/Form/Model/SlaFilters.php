@@ -11,10 +11,16 @@ namespace Tlt\MainBundle\Form\Model;
 class SlaFilters extends JournalFilters
 {
     /**
+ * @var integer
+ *
+ */
+    protected $is_closed;
+
+    /**
      * @var integer
      *
      */
-    protected $is_closed;
+    protected $all_units;
 
     /**
      * @return int
@@ -31,4 +37,22 @@ class SlaFilters extends JournalFilters
     {
         $this->is_closed = $is_closed;
     }
+
+    /**
+     * @param int $all_units
+     */
+    public function setAllUnits($all_units)
+    {
+        $this->all_units = $all_units;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAllUnits()
+    {
+        return $this->all_units;
+    }
+
+
 }

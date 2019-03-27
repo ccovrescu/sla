@@ -41,7 +41,7 @@ class OwnerController extends Controller
 			$user	=	$this->getUser();
 			$owner->setInsertedBy($user->getUsername());
 			$owner->setModifiedBy($user->getUsername());
-			$owner->setFromHost($this->container->get('request')->getClientIp());
+			$owner->setFromHost($request->getClientIp());
 
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
@@ -73,7 +73,8 @@ class OwnerController extends Controller
 		if ($form->isValid()) {
 			$user	=	$this->getUser();
 			$owner->setModifiedBy($user->getUsername());
-			$owner->setFromHost($this->container->get('request')->getClientIp());
+//			$owner->setFromHost($this->container->get('request')->getClientIp());
+			$owner->setFromHost($request->getClientIp());
 
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();

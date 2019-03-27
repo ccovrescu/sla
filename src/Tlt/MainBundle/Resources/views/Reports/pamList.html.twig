@@ -77,6 +77,7 @@
         <table class="table table-bordered table-hover">
             <thead>
             <tr>
+				<th>Nr</th>
                 <th>Denumire</th>
                 <th>Cantitate</th>
                 <th>Producator</th>
@@ -106,6 +107,7 @@
                     {% endif %}
 
                     <tr>
+						<td>{{loop.index}}</td>
                         <td><a href="{{ path('admin_equipments_details', {'id' : equipment.id}) }}">{{ equipment.name }}</a></td>
                         <td>{{ equipment.total }}</td>
                         <td>{{ vendor }}</td>

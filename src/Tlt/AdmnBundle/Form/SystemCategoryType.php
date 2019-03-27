@@ -23,7 +23,7 @@ class SystemCategoryType extends AbstractType
                 'label'		=> 'Departamentul'
             ))
             ->add('name',TextType::class,array(
-                'max_length' => 255,
+                'attr' => array('max_length' => 255),
                 'label' => 'Denumirea Categoriei'
             ))
 

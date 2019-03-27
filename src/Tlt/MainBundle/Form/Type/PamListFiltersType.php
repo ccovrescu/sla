@@ -3,7 +3,7 @@ namespace Tlt\MainBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
-use JsonSchema\Constraints\Object;
+//use JsonSchema\Constraints\Object;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;

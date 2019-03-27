@@ -81,7 +81,7 @@ class SystemController extends Controller
 			$user	=	$this->getUser();
 			$system->setInsertedBy($user->getUsername());
 			$system->setModifiedBy($user->getUsername());
-			$system->setFromHost($this->container->get('request')->getClientIp());
+			$system->setFromHost($request->getClientIp());
 			
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
@@ -119,7 +119,7 @@ class SystemController extends Controller
 		if ($form->isValid()) {
 			$user	=	$this->getUser();
 			$system->setModifiedBy($user->getUsername());
-			$system->setFromHost($this->container->get('request')->getClientIp());
+			$system->setFromHost($request->getClientIp());
 			
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();

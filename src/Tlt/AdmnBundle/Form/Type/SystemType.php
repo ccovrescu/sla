@@ -44,11 +44,11 @@ introdus azi 04.07.2018
 		$builder
 			->add('id', HiddenType::class)
 			->add('name',TextType::class,array(
-				'max_length' => 255,
+                'attr' => array('maxlength' => 255),
 				'label' => 'Denumire:'
 				))
             ->add('criticality',TextType::class,array(
-                    'max_length' => 64,
+                'attr' => array('maxlength' => 64),
                     'label' => 'Criticalitate:'
                 ))
 			->add('department','Symfony\Bridge\Doctrine\Form\Type\EntityType',array(

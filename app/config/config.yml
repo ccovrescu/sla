@@ -20,6 +20,7 @@ framework:
     trusted_proxies: ~
     session:         ~
     fragments:       ~
+    assets: ~
     http_method_override: true
 
 # Twig Configuration

@@ -288,7 +288,7 @@ class SystemRepository extends EntityRepository
     }
 
     public function SLA($owner, $departments, $start, $end, $isClosed) {
-
+        $end = $end." 23:59:59";
         $departments = implode(',', $departments);
 
         $rsm = new ResultSetMapping();
@@ -352,7 +352,7 @@ class SystemRepository extends EntityRepository
             $rsm
         );
 
-//           var_dump($query->getSQL());
+          //var_dump($query->getSQL());
 
         try {
             return $query->getResult();

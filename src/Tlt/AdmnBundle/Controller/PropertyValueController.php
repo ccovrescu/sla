@@ -73,7 +73,7 @@ class PropertyValueController extends Controller
 				$user	=	$this->getUser();
 				$propertyValue->setInsertedBy($user->getUsername());
 				$propertyValue->setModifiedBy($user->getUsername());
-				$propertyValue->setFromHost($this->container->get('request')->getClientIp());
+				$propertyValue->setFromHost($request->getClientIp());
 				
 				// perform some action, such as saving the task to the database
 				$em = $this->getDoctrine()->getManager();
@@ -125,7 +125,7 @@ class PropertyValueController extends Controller
 			if ($form->isValid()) {
 				$user	=	$this->getUser();
 				$propertyValue->setModifiedBy($user->getUsername());
-				$propertyValue->setFromHost($this->container->get('request')->getClientIp());
+				$propertyValue->setFromHost($request->getClientIp());
 				
 				// perform some action, such as saving the task to the database
 				$em = $this->getDoctrine()->getManager();

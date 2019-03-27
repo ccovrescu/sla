@@ -17,7 +17,7 @@ class ServiceType extends AbstractType
 		$builder
 			->add('id', HiddenType::class)
 			->add('name',TextType::class,array(
-				'max_length' => 255,
+                'attr' => array('maxlength' => 255),
 				'label' => 'Denumirea Serviciului'
 				))
 			->add('department','Symfony\Bridge\Doctrine\Form\Type\EntityType',array(

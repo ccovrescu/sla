@@ -110,7 +110,7 @@ class AnnouncerController extends Controller
             $user	=	$this->getUser();
             $announcer->setInsertedBy($user->getUsername());
             $announcer->setModifiedBy($user->getUsername());
-            $announcer->setFromHost($this->container->get('request')->getClientIp());
+            $announcer->setFromHost($request->getClientIp());
 
             // perform some action, such as saving the task to the database
             $em = $this->getDoctrine()->getManager();
@@ -146,7 +146,7 @@ class AnnouncerController extends Controller
         if ($form->isValid()) {
             $user	=	$this->getUser();
             $announcer->setModifiedBy($user->getUsername());
-            $announcer->setFromHost($this->container->get('request')->getClientIp());
+            $announcer->setFromHost($request->getClientIp());
 
             // perform some action, such as saving the task to the database
             $em = $this->getDoctrine()->getManager();

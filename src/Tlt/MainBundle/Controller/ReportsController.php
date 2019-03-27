@@ -160,6 +160,7 @@ class ReportsController extends Controller
 //		echo "<script>alert('claudiu INDISPONIBILITATE')</script>";
         $form->remove('owner');
         $form->remove('is_closed');
+		$form->remove('all_units');
 
         $form->handleRequest($request);
 
@@ -230,6 +231,7 @@ class ReportsController extends Controller
      * @Template()
      */
     public function ticketsAction(Request $request, $systemID, $owner, $from, $to) {
+        $to=$to." 23:59:00";
         $tickets = $this->getDoctrine()->getRepository('TltTicketBundle:Ticket')
             ->getSlaTickets(
                 $systemID,

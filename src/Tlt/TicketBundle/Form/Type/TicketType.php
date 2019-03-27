@@ -72,7 +72,7 @@ class TicketType extends AbstractType {
                 ));
             $builder->add(
                 'takenBy', TextType::class, array(
-                    'max_length' => 128,
+                'attr' => array('maxlength' => 128),
                     'label' => 'Preluat sesizarea:',
                     'required' => false
                 ));
@@ -97,13 +97,13 @@ class TicketType extends AbstractType {
 
             $builder->add(
                 'contactInfo', TextType::class, array(
-                    'max_length' => 128,
+                'attr' => array('maxlength' => 128),
                     'label' => 'Date de contact ale sesizantului:',
                     'required' => false
                 ));
             $builder->add(
                 'announcedTo', TextType::class, array(
-                    'max_length' => 128,
+                'attr' => array('maxlength' => 128),
                     'label' => 'Persoana anuntata:',
                     'required' => false
                 ));
@@ -163,7 +163,7 @@ class TicketType extends AbstractType {
                 ));
             $builder->add(
                 'compartment', TextType::class, array(
-                    'max_length' => 128,
+                    'attr' => array('maxlength' => 128),
                     'label' => 'Compartimentul:',
                     'required' => false
                 ));

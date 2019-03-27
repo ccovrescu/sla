@@ -41,7 +41,7 @@ class ServiceAttributeValueType extends AbstractType
 				'label' => 'Proprietatea:'
 				))
 			->add('value',TextType::class,array(
-				'max_length' => 64,
+                'attr' => array('max_length' => 64),
 				'label' => 'Denumire:'
 				))
 			->add('Salveaza', SubmitType::class);

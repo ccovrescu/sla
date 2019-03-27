@@ -47,7 +47,7 @@ class PropertyController extends Controller
 			$user	=	$this->getUser();
 			$serviceAttribute->setInsertedBy($user->getUsername());
 			$serviceAttribute->setModifiedBy($user->getUsername());
-			$serviceAttribute->setFromHost($this->container->get('request')->getClientIp());
+			$serviceAttribute->setFromHost($request->getClientIp());
 			
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
@@ -79,7 +79,7 @@ class PropertyController extends Controller
 		if ($form->isValid()) {
 			$user	=	$this->getUser();
 			$serviceAttribute->setModifiedBy($user->getUsername());
-			$serviceAttribute->setFromHost($this->container->get('request')->getClientIp());
+			$serviceAttribute->setFromHost($request->getClientIp());
 			
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();

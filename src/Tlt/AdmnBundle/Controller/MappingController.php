@@ -92,7 +92,7 @@ class MappingController extends Controller
 				$user	=	$this->getUser();
 				$mapping->setInsertedBy($user->getUsername());
 				$mapping->setModifiedBy($user->getUsername());
-				$mapping->setFromHost($this->container->get('request')->getClientIp());
+				$mapping->setFromHost($request->getClientIp());
 
 				// perform some action, such as saving the task to the database
 				$em = $this->getDoctrine()->getManager();
@@ -170,7 +170,7 @@ class MappingController extends Controller
 
                 $user	=	$this->getUser();
 				$mapping->setModifiedBy($user->getUsername());
-				$mapping->setFromHost($this->container->get('request')->getClientIp());
+				$mapping->setFromHost($request->getClientIp());
 
 				// perform some action, such as saving the task to the database
 				$em = $this->getDoctrine()->getManager();

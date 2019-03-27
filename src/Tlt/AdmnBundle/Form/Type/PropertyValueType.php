@@ -41,7 +41,7 @@ class PropertyValueType extends AbstractType
 				'label' => 'Proprietatea',
 				))
 			->add('value',TextType::class,array(
-				'max_length' => 64,
+                'attr' => array('maxlength' => 64),
 				'label' => 'Valoarea proprietatii'
 				))
 			->add('salveaza', SubmitType::class)

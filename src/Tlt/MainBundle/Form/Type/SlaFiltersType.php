@@ -92,6 +92,12 @@ class SlaFiltersType extends AbstractType
                     'required' => false
                 )
             )
+
+            ->add('all_units', CheckboxType::class, array(
+                    'label' => 'Listare doar pentru nr unitati # 0',
+                    'required' => false
+                )
+            )
             ->add('Arata', SubmitType::class);
     }
 

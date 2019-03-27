@@ -167,7 +167,7 @@ class EquipmentController extends Controller
 			$user	=	$this->getUser();
 			$equipment->setInsertedBy($user->getUsername());
 			$equipment->setModifiedBy($user->getUsername());
-			$equipment->setFromHost($this->container->get('request')->getClientIp());
+			$equipment->setFromHost($request->getClientIp());
 			
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
@@ -238,7 +238,7 @@ class EquipmentController extends Controller
 			if ($form->isValid()) {
 				$user	=	$this->getUser();
 				$equipment->setModifiedBy($user->getUsername());
-				$equipment->setFromHost($this->container->get('request')->getClientIp());
+				$equipment->setFromHost($request->getClientIp());
 
 				// perform some action, such as saving the task to the database
 				$em = $this->getDoctrine()->getManager();

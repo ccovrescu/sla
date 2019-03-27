@@ -39,7 +39,7 @@ class DepartmentController extends Controller
 			$user	=	$this->getUser();
 			$dep->setInsertedBy($user->getUsername());
 			$dep->setModifiedBy($user->getUsername());
-			$dep->setFromHost($this->container->get('request')->getClientIp());
+			$dep->setFromHost($request->getClientIp());
 			
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
@@ -72,7 +72,7 @@ class DepartmentController extends Controller
 		if ($form->isValid()) {
 			$user	=	$this->getUser();
 			$dep->setModifiedBy($user->getUsername());
-			$dep->setFromHost($this->container->get('request')->getClientIp());
+			$dep->setFromHost($request->getClientIp());
 			
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();

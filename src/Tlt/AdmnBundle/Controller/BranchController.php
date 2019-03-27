@@ -40,7 +40,7 @@ class BranchController extends Controller
 			$user	=	$this->getUser();
 			$branch->setInsertedBy($user->getUsername());
 			$branch->setModifiedBy($user->getUsername());
-			$branch->setFromHost($this->container->get('request')->getClientIp());
+			$branch->setFromHost($request->getClientIp());
 
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
@@ -72,7 +72,7 @@ class BranchController extends Controller
 		if ($form->isValid()) {
 			$user	=	$this->getUser();
 			$branch->setModifiedBy($user->getUsername());
-			$branch->setFromHost($this->container->get('request')->getClientIp());
+			$branch->setFromHost($request->getClientIp());
 
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();

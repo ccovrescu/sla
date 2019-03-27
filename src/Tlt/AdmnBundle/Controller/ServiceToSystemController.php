@@ -82,7 +82,7 @@ class ServiceToSystemController extends Controller
 			$user	=	$this->getUser();
 			$serviceToSystem->setInsertedBy($user->getUsername());
 			$serviceToSystem->setModifiedBy($user->getUsername());
-			$serviceToSystem->setFromHost($this->container->get('request')->getClientIp());
+			$serviceToSystem->setFromHost($request->getClientIp());
 
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();

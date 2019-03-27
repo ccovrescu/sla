@@ -71,7 +71,7 @@ class ServiceController extends Controller
 			$user	=	$this->getUser();
 			$service->setInsertedBy($user->getUsername());
 			$service->setModifiedBy($user->getUsername());
-			$service->setFromHost($this->container->get('request')->getClientIp());
+			$service->setFromHost($request->getClientIp());
 			
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
@@ -103,7 +103,7 @@ class ServiceController extends Controller
 		if ($form->isValid()) {
 			$user	=	$this->getUser();
 			$service->setModifiedBy($user->getUsername());
-			$service->setFromHost($this->container->get('request')->getClientIp());
+			$service->setFromHost($request->getClientIp());
 			
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();

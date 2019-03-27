@@ -71,7 +71,7 @@ class ZoneLocationController extends Controller
 			
 			$zoneLocation->setInsertedBy($user->getUsername());
 			$zoneLocation->setModifiedBy($user->getUsername());
-			$zoneLocation->setFromHost($this->container->get('request')->getClientIp());
+			$zoneLocation->setFromHost($request->getClientIp());
 
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
@@ -105,7 +105,7 @@ class ZoneLocationController extends Controller
 			if ($form->isValid()) {
 				$user	=	$this->getUser();
 				$zoneLocation->setModifiedBy($user->getUsername());
-				$zoneLocation->setFromHost($this->container->get('request')->getClientIp());
+				$zoneLocation->setFromHost($request->getClientIp());
 
 				// perform some action, such as saving the task to the database
 				$em = $this->getDoctrine()->getManager();

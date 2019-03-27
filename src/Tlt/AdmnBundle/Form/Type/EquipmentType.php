@@ -145,11 +145,11 @@ class EquipmentType extends AbstractType
 */
 // end introdus azi 18.07.2018
 				->add('name',TextType::class,array(
-					'max_length' => 64,
+                'attr' => array('maxlength' => 64),
 					'label' => 'Denumire'
 					))
 				->add('total',TextType::class,array(
-					'max_length' => 4,
+                    'attr' => array('maxlength' => 4),
 					'label' => 'Cantitate'
 					))
 				->add('inPam',CheckboxType::class,array(

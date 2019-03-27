@@ -18,11 +18,12 @@ class BranchType extends AbstractType
 			->add('name',
 					TextType::class,
 					array(
-						'max_length' => 32,
+                        'attr' => array('maxlength' => 32),
 						'label' => 'Denumire:',
 					)
 				)
-            ->add('emails', TextType::class, array('max_length'=>60, 'label'=>'Email:'))
+            ->add('emails', TextType::class, array('attr' => array('maxlength'=>60),
+                'label'=>'Email:'))
 			->add('salveaza', SubmitType::class)
 			->add('reseteaza', ResetType::class, array());
 	}

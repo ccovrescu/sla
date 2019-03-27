@@ -45,7 +45,7 @@ class LocationController extends Controller
 			$user	=	$this->getUser();
 			$location->setInsertedBy($user->getUsername());
 			$location->setModifiedBy($user->getUsername());
-			$location->setFromHost($this->container->get('request')->getClientIp());
+			$location->setFromHost($request->getClientIp());
 
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();
@@ -77,7 +77,7 @@ class LocationController extends Controller
 		if ($form->isValid()) {
 			$user	=	$this->getUser();
 			$location->setModifiedBy($user->getUsername());
-			$location->setFromHost($this->container->get('request')->getClientIp());
+			$location->setFromHost($request->getClientIp());
 
 			// perform some action, such as saving the task to the database
 			$em = $this->getDoctrine()->getManager();

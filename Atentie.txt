@@ -1,0 +1,6 @@
+Contine versiunea prog SLA cu symfony 3_4, fara erori, CU INVALIDARE SISTEME AFECTATE TOTAL si cu ultimele modificari la 06.03.2019
+- la raport SLA - filtru dupa nr. unitati >0
+- la raport PAM - numerotare, selectie dupa serviciu, sistem (de la C.Dianu)
+		
+XAMPP cu versiunea PHP 7.2
+In SLA, Symfony a fost actualizat symfony/monolog-bundle pentru PHP 7.2, pentru a elimina erorile aparute la trecerea de la PHP 7.1 la 7.2.

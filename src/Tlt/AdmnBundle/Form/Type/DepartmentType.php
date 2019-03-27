@@ -16,7 +16,7 @@ class DepartmentType extends AbstractType
 		$builder
 			->add('id', HiddenType::class)
 			->add('name',TextType::class,array(
-				'max_length' => 255,
+                'attr' => array('maxlength' => 255),
 				'label' => 'Denumirea departamentului'
 				))
 			->add('salveaza', SubmitType::class)

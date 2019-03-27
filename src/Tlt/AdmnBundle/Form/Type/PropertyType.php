@@ -16,7 +16,7 @@ class PropertyType extends AbstractType
 		$builder
 			->add('id', HiddenType::class)
 			->add('name',TextType::class,array(
-				'max_length' => 64,
+                'attr' => array('maxlength' => 64),
 				'label' => 'Denumirea proprietatii'
 				))
 			->add('salveaza', SubmitType::class)

@@ -46,21 +46,21 @@ class AnnouncerType extends AbstractType
             ->add('firstname',
                 TextType::class,
                 array(
-                    'max_length' => 128,
+                    'attr' => array('maxlength' => 128),
                     'label' => 'Prenume',
                 )
             )
             ->add('lastname',
                 TextType::class,
                 array(
-                    'max_length' => 64,
+                    'attr' => array('maxlength' => 64),
                     'label' => 'Nume',
                 )
             )
             ->add('compartment',
                 TextType::class,
                 array(
-                    'max_length' => 128,
+                    'attr' => array('maxlength' => 128),
                     'label' => 'Compartiment',
                     'required' => false
                 )

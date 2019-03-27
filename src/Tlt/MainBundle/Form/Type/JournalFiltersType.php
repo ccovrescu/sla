@@ -84,7 +84,7 @@ class JournalFiltersType extends AbstractType
                         '2015',
                         '2016',
                         '2017',
-						'2018'
+						'2018','2019'
                     ),
                     'label' => 'De la:'
                 )
@@ -96,7 +96,7 @@ class JournalFiltersType extends AbstractType
                         '2015',
                         '2016',
                         '2017',
-						'2018'
+						'2018','2019'
                     ),
                     'label' => 'Pana la:'
                 )

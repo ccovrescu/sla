@@ -177,7 +177,7 @@ class DefaultController extends Controller
 
             $ticket->setInsertedBy($user->getUsername());
             $ticket->setModifiedBy($user->getUsername());
-            $ticket->setFromHost($this->container->get('request')->getClientIp());
+            $ticket->setFromHost($request->getClientIp());
 
             $ticket->updateTicketAllocation();
 
@@ -190,7 +190,7 @@ class DefaultController extends Controller
             $mailer = $this->get('mailer');
             $message = $mailer->createMessage()
                 ->setSubject('Tichet nou')
-                ->setFrom('no-reply@teletrans.ro', 'Aplicatie SLA')
+                    ->setFrom('no-reply@teletrans.ro', 'Aplicatie SLA')
 //                ->setTo($ticket->getTicketAllocations()->last()->getBranch()->getEmails())
                 ->setBody(
                     $this->renderView(
@@ -272,7 +272,7 @@ class DefaultController extends Controller
 
             $ticketAllocation->setInsertedBy($user->getUsername());
             $ticketAllocation->setModifiedBy($user->getUsername());
-            $ticketAllocation->setFromHost($this->container->get('request')->getClientIp());
+            $ticketAllocation->setFromHost($request->getClientIp());
 
 //            $ticketAllocation->seTicketCreate( $ticketCreate );
             $ticketAllocation->seTicket($ticket);

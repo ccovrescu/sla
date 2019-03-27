@@ -8,6 +8,12 @@
     .no-print {
         display: none;
     }
+/* introdus 11.12.2018 - anulez piciorul paginii cand dau la imprimanta
+
+	footer {
+        display: none;
+    }
+*/
 
     a[href]:after {
         content: none !important;
